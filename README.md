@@ -35,12 +35,12 @@ Diseñado específicamente para desplegarse de forma gratuita en **Vercel** y fu
    git add .
    git commit -m "Smart TV Hub - Version Final"
    git branch -M main
-   git remote add origin https://github.com/alexandermmarquez076-svg/pelicuals.git
+   git remote add origin https://github.com/Alex1011m/Pelicuals.git
    git push -u origin main
    ```
 2. Entra en [vercel.com](https://vercel.com) e inicia sesión con tu cuenta de GitHub.
 3. Haz clic en **"Add New..."** -> **"Project"**.
-4. Importa el repositorio `alexandermmarquez076-svg/pelicuals`.
+4. Importa el repositorio `Alex1011m/Pelicuals`.
 5. En **Framework Preset**, déjalo en **"Other"**.
 6. Haz clic en **Deploy**. ¡En menos de 1 minuto tendrás tu enlace `https://pelicuals.vercel.app`!
 
