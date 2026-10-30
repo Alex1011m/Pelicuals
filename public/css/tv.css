@@ -1,0 +1,1075 @@
+/* public/css/tv.css */
+/* 10-FOOT UI: Diseñado para visualizarse a 3 metros en pantallas de 720p y 1080p */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+body {
+  background-color: #0d0e12;
+  color: #f1f3f5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 24px;
+  line-height: 1.4;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* ZONA SEGURA ANTI-OVERSCAN: 4% de margen para evitar cortes de borde en TVs antiguas */
+.tv-app-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 3% 4% 3% 4%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+/* ENCABEZADO / NAVBAR DE LA TV */
+.tv-header {
+  height: 60px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  border-bottom: 2px solid #232733;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+}
+
+/* BANNER HERO DE INFORMACIÓN DINÁMICA (TIPO NETFLIX / APPLE TV) */
+.tv-preview-banner {
+  height: 125px;
+  min-height: 125px;
+  padding: 12px 24px;
+  margin-bottom: 16px;
+  background: -webkit-linear-gradient(left, rgba(23, 27, 38, 0.95), rgba(16, 18, 26, 0.65));
+  background: linear-gradient(90deg, rgba(23, 27, 38, 0.95), rgba(16, 18, 26, 0.65));
+  border-left: 6px solid #00e5ff;
+  border-radius: 10px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.preview-banner-title {
+  font-size: 30px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+
+.preview-banner-meta {
+  font-size: 18px;
+  font-weight: 600;
+  color: #00e5ff;
+  margin-bottom: 4px;
+}
+
+.preview-banner-desc {
+  font-size: 16px;
+  color: #adb5bd;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tv-brand {
+  font-size: 32px;
+  font-weight: 700;
+  color: #00e5ff;
+  letter-spacing: 1px;
+}
+
+.tv-nav-tabs {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.nav-tab {
+  background: transparent;
+  color: #9aa0a6;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 8px 24px;
+  margin-left: 12px;
+  font-size: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+.nav-tab.active-tab {
+  color: #ffffff;
+  border-color: #3b4252;
+  background-color: #1e222d;
+}
+
+/* CONTENEDOR PRINCIPAL CUERPO Y MENÚ LATERAL */
+.tv-main-body {
+  position: relative;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+  height: calc(100% - 210px);
+  overflow: hidden;
+}
+
+/* MENÚ LATERAL EXPANDIBLE Y OCULTABLE (SMART TV 10-FOOT UI) */
+.tv-sidebar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 72px;
+  background: rgba(18, 21, 30, 0.94);
+  border-right: 2px solid #232733;
+  border-radius: 12px;
+  z-index: 100;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 6px 0 24px rgba(0, 0, 0, 0.7);
+  -webkit-transition: width 0.25s cubic-bezier(0.2, 0.9, 0.3, 1), background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: width 0.25s cubic-bezier(0.2, 0.9, 0.3, 1), background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.tv-sidebar.tv-sidebar-expanded {
+  width: 320px;
+  background: rgba(13, 16, 24, 0.98);
+  border-color: #00e5ff;
+  box-shadow: 16px 0 45px rgba(0, 0, 0, 0.95), 0 0 25px rgba(0, 229, 255, 0.25);
+}
+
+.sidebar-header {
+  padding: 10px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-scroll-area {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 8px 20px 8px;
+  scrollbar-width: none;
+}
+.sidebar-scroll-area::-webkit-scrollbar {
+  display: none;
+}
+
+.sidebar-nav-group {
+  margin-bottom: 14px;
+}
+
+.sidebar-group-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #00e5ff;
+  letter-spacing: 1.5px;
+  padding: 10px 14px 4px 14px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  -webkit-transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease;
+}
+
+.tv-sidebar.tv-sidebar-expanded .sidebar-group-title {
+  opacity: 1;
+}
+
+.sidebar-item {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  width: 100%;
+  min-height: 54px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  color: #cbd5e1;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  text-align: left;
+  white-space: nowrap;
+  -webkit-transition: all 0.15s ease;
+  transition: all 0.15s ease;
+}
+
+.sidebar-item .sidebar-icon {
+  font-size: 24px;
+  min-width: 38px;
+  text-align: center;
+  display: inline-block;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+}
+
+.sidebar-item .sidebar-label {
+  margin-left: 14px;
+  font-size: 19px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  -webkit-transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease;
+}
+
+.tv-sidebar.tv-sidebar-expanded .sidebar-item .sidebar-label {
+  opacity: 1;
+}
+
+.sidebar-item .sidebar-badge {
+  margin-left: auto;
+  background: #232733;
+  color: #00e5ff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  opacity: 0;
+  -webkit-transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease;
+}
+
+.tv-sidebar.tv-sidebar-expanded .sidebar-item .sidebar-badge {
+  opacity: 1;
+}
+
+.sidebar-item.active-filter {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border-left: 4px solid #00e5ff;
+}
+
+.sidebar-item.focused {
+  border-color: #00e5ff !important;
+  background-color: #00e5ff !important;
+  color: #0a0e17 !important;
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.75) !important;
+  -webkit-transform: scale(1.03);
+  transform: scale(1.03);
+}
+
+.sidebar-item.focused .sidebar-icon,
+.sidebar-item.focused .sidebar-label {
+  color: #0a0e17 !important;
+}
+
+.sidebar-item.focused .sidebar-badge {
+  background: #0a0e17;
+  color: #00e5ff;
+}
+
+/* CONTENEDOR PRINCIPAL DE CONTENIDO CON SCROLL VERTICAL */
+.tv-content-viewport {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  overflow-y: hidden;
+  position: relative;
+  margin-left: 88px;
+  width: calc(100% - 88px);
+}
+
+.tv-sections-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  -webkit-transition: -webkit-transform 0.25s ease-out;
+  transition: transform 0.25s ease-out;
+}
+
+/* SECCIONES Y FILAS HORIZONTALES (CAROUSELS TIPO NETFLIX) */
+.content-row {
+  margin-bottom: 35px;
+}
+
+.row-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #e5e9f0;
+  margin-bottom: 12px;
+  padding-left: 4px;
+}
+
+.row-carousel {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  overflow-x: hidden;
+  white-space: nowrap;
+  padding: 8px 4px 18px 4px;
+  position: relative;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* TARJETAS DE CONTENIDO LANDSCAPE (CANALES Y YOUTUBE) */
+.tv-card {
+  display: inline-block;
+  vertical-align: top;
+  width: 300px;
+  height: 240px;
+  margin-right: 22px;
+  background-color: #1a1d26;
+  border-radius: 12px;
+  border: 3px solid transparent;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0; /* IMPEDIR QUE FLEXBOX COMPRIMA LAS TARJETAS */
+  -webkit-transition: border-color 0.15s ease, -webkit-transform 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tv-card .card-thumb {
+  width: 100%;
+  height: 155px;
+  background-color: #2b303c;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+/* TARJETAS DE CANALES DE TV (LOGOTIPOS PNG CENTRADOS Y NÍTIDOS) */
+.tv-card.tv-card-channel .card-thumb {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #141721;
+}
+
+/* TARJETAS DE PÓSTER VERTICAL (PELÍCULAS Y SERIES EN FORMATO DE CINE 2:3) */
+.tv-card.tv-card-poster {
+  width: 235px;
+  height: 405px;
+  margin-right: 22px;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0; /* ANCHO FIJO DE CINE, NUNCA DELGADO */
+}
+
+.tv-card.tv-card-poster .card-thumb {
+  width: 100%;
+  height: 315px;
+  background-size: cover;
+  background-position: center top;
+}
+
+.tv-card.tv-card-poster .card-info {
+  height: 90px;
+  padding: 8px 12px;
+}
+
+.card-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: #00e5ff;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.card-info {
+  padding: 8px 12px;
+  background-color: #1a1d26;
+  height: 90px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #f8f9fa;
+  line-height: 1.25;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-height: 44px;
+}
+
+.card-subtitle {
+  font-size: 14px;
+  color: #8b92a0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+/* ========================================================= */
+/* ESTADO DE FOCO ACTIVO (CRÍTICO PARA CONTROL REMOTO D-PAD) */
+/* ========================================================= */
+.focusable.focused {
+  border-color: #00e5ff !important;
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.6) !important;
+  background-color: #222736 !important;
+  -webkit-transform: scale(1.04);
+  transform: scale(1.04);
+  z-index: 10;
+}
+
+.nav-tab.focused {
+  border-color: #00e5ff !important;
+  color: #ffffff !important;
+  background-color: #2b3040 !important;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.5) !important;
+  -webkit-transform: scale(1.05);
+  transform: scale(1.05);
+}
+
+/* BARRA INFERIOR DE AYUDA DEL CONTROL REMOTO */
+.tv-footer-legend {
+  height: 40px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  border-top: 1px solid #232733;
+  margin-top: 10px;
+  padding-top: 8px;
+  font-size: 17px;
+  color: #7b8290;
+}
+
+.key-pill {
+  display: inline-block;
+  background-color: #282d3b;
+  color: #00e5ff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  margin-right: 6px;
+}
+
+/* REPRODUCTOR DE VIDEO A PANTALLA COMPLETA */
+.tv-player-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000000;
+  z-index: 1000;
+  display: none;
+}
+
+.tv-player-modal.active {
+  display: block;
+}
+
+#main-video {
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  object-fit: contain;
+}
+
+/* ON-SCREEN DISPLAY (OSD) DEL REPRODUCTOR */
+.player-osd {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 40px 60px 40px 60px;
+  background: -webkit-linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+  opacity: 1;
+  -webkit-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
+}
+
+.player-osd.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.osd-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 15px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.osd-progress-container {
+  width: 100%;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.osd-progress-bar {
+  height: 100%;
+  background-color: #00e5ff;
+  border-radius: 4px;
+  width: 0%;
+}
+
+.osd-time-display {
+  font-size: 20px;
+  color: #d1d5db;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+
+/* MODAL DE DETALLES DE PELÍCULA / SERIE */
+.tv-detail-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(10, 12, 16, 0.96);
+  z-index: 500;
+  display: none;
+  padding: 4% 5%;
+  overflow-y: auto;
+}
+
+.tv-detail-modal.active {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.detail-header-row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin-bottom: 25px;
+}
+
+.detail-poster {
+  width: 220px;
+  height: 330px;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid #2b303c;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  margin-right: 35px;
+}
+
+.detail-meta {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+}
+
+.detail-title {
+  font-size: 38px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+.detail-badges {
+  margin-bottom: 14px;
+}
+
+.badge-tag {
+  display: inline-block;
+  background-color: #212530;
+  color: #00e5ff;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 4px 12px;
+  border-radius: 6px;
+  margin-right: 10px;
+}
+
+.detail-overview {
+  font-size: 20px;
+  color: #b0b7c3;
+  line-height: 1.5;
+  max-height: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 20px;
+}
+
+.detail-actions {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin-top: auto;
+}
+
+.btn-tv {
+  background-color: #1e222d;
+  color: #ffffff;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 12px 28px;
+  font-size: 22px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 15px;
+  outline: none;
+}
+
+.btn-tv-primary {
+  background-color: #00e5ff;
+  color: #000000;
+  font-weight: 700;
+}
+
+.detail-episodes-section {
+  margin-top: 25px;
+  border-top: 1px solid #222736;
+  padding-top: 20px;
+}
+
+.seasons-row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin-bottom: 15px;
+  overflow-x: auto;
+}
+
+.season-btn {
+  background-color: #1a1d26;
+  color: #8b92a0;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: 6px 18px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-right: 10px;
+  cursor: pointer;
+  outline: none;
+}
+
+.season-btn.active {
+  color: #ffffff;
+  border-color: #00e5ff;
+  background-color: #232a3b;
+}
+
+.episodes-carousel {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  overflow-x: hidden;
+  white-space: nowrap;
+  padding: 6px 2px 14px 2px;
+}
+
+.episode-card {
+  display: inline-block;
+  vertical-align: top;
+  width: 240px;
+  height: 160px;
+  margin-right: 16px;
+  background-color: #181b24;
+  border-radius: 8px;
+  border: 3px solid transparent;
+  overflow: hidden;
+  cursor: pointer;
+  outline: none;
+}
+
+.episode-thumb {
+  width: 100%;
+  height: 105px;
+  background-color: #242936;
+  background-size: cover;
+  background-position: center;
+}
+
+.episode-info {
+  padding: 6px 10px;
+}
+
+.episode-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f1f3f5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* VISTA DEL BUSCADOR PARA SMART TV */
+.tv-search-container {
+  width: 100%;
+  height: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  padding-top: 10px;
+  overflow-y: auto;
+}
+
+.search-input-row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin-bottom: 16px;
+}
+
+.search-input {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+  background-color: #1a1d26;
+  border: 3px solid #2b3040;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 24px;
+  padding: 12px 20px;
+  outline: none;
+  -webkit-transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input.focused {
+  border-color: #00e5ff !important;
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.6) !important;
+  background-color: #222736 !important;
+}
+
+.btn-search {
+  background-color: #00e5ff;
+  color: #0d0e12;
+  font-size: 22px;
+  font-weight: 700;
+  border: 3px solid transparent;
+  border-radius: 10px;
+  padding: 12px 30px;
+  margin-left: 14px;
+  cursor: pointer;
+  outline: none;
+}
+
+.btn-search.focused {
+  border-color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.8) !important;
+  -webkit-transform: scale(1.05);
+  transform: scale(1.05);
+}
+
+.search-chips-row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.search-chip {
+  background-color: #1a1d26;
+  color: #c0c6d0;
+  border: 2px solid #282d3b;
+  border-radius: 20px;
+  padding: 6px 18px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-right: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  outline: none;
+}
+
+.search-chip.focused {
+  border-color: #00e5ff !important;
+  color: #ffffff !important;
+  background-color: #222736 !important;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.5) !important;
+}
+
+.search-results-wrapper {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+  padding-bottom: 40px;
+}
+
+.search-results-grid {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+/* BADGES Y ALERTAS DE CALIDAD (CINE / CAM / 1XBET vs HD 1080P) */
+.card-badge.badge-cam {
+  background-color: rgba(225, 90, 0, 0.92) !important;
+  color: #ffffff !important;
+  border: 1px solid #ffb74d;
+}
+
+.card-badge.badge-hd {
+  background-color: rgba(0, 170, 210, 0.88) !important;
+  color: #ffffff !important;
+}
+
+.detail-quality-banner {
+  margin-bottom: 16px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.detail-quality-cam {
+  background-color: rgba(230, 81, 0, 0.22);
+  border-left: 5px solid #ff9800;
+  color: #ffcc80;
+}
+
+.detail-quality-hd {
+  background-color: rgba(0, 229, 255, 0.12);
+  border-left: 5px solid #00e5ff;
+  color: #e0f7fa;
+}
+
+/* BOTONES DE CONTROL DE PISTA (AUDIO / SUBTÍTULOS) Y PANTALLA COMPLETA */
+.osd-controls-row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.btn-player-action,
+.btn-fullscreen {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border: 2px solid #3b4252;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  margin-left: 12px;
+  -webkit-transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-player-action strong {
+  color: #00e5ff;
+}
+
+.btn-player-action.focused,
+.btn-fullscreen.focused {
+  border-color: #00e5ff !important;
+  background-color: #00e5ff !important;
+  color: #0d0e12 !important;
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.7) !important;
+}
+
+.btn-player-action.focused strong {
+  color: #00363a !important;
+}
+
+/* NOTIFICACIÓN TOAST VISUAL EN PANTALLA DE REPRODUCCIÓN */
+.player-toast {
+  position: absolute;
+  top: 40px;
+  right: 50px;
+  background: rgba(13, 14, 18, 0.94);
+  border: 2px solid #00e5ff;
+  border-radius: 8px;
+  padding: 12px 24px;
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 700;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 229, 255, 0.4);
+  z-index: 9999;
+  pointer-events: none;
+  -webkit-transition: opacity 0.25s ease;
+  transition: opacity 0.25s ease;
+}
+
+/* INDICADOR DE CARGA / BÚFER EN EL CENTRO DE LA PANTALLA */
+.player-buffering {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  background-color: rgba(13, 14, 18, 0.88);
+  padding: 24px 36px;
+  border-radius: 12px;
+  border: 2px solid rgba(0, 229, 255, 0.5);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.85);
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.tv-spinner {
+  width: 52px;
+  height: 52px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #00e5ff;
+  border-radius: 50%;
+  -webkit-animation: tv-spin 0.85s linear infinite;
+  animation: tv-spin 0.85s linear infinite;
+  margin-bottom: 12px;
+}
+
+@-webkit-keyframes tv-spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes tv-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.buffering-text {
+  color: #00e5ff;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
