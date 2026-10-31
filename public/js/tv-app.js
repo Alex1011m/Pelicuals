@@ -321,11 +321,16 @@
 
       var self = this;
       if (category === 'channels') {
+        if (this.cachedChannelCategories) {
+          this.renderChannelRows(this.cachedChannelCategories);
+          return;
+        }
         this.fetchJson('/api/channels', function (err, data) {
           if (err || !data || !data.categories) {
             self.renderError('No se pudieron cargar los canales de TV.');
             return;
           }
+          self.cachedChannelCategories = data.categories;
           self.renderChannelRows(data.categories);
         });
       } else if (category === 'movies') {
@@ -405,19 +410,66 @@
     performSearch: function (query) {
       var self = this;
       var resultsWrapper = document.getElementById('search-results-wrapper');
-      resultsWrapper.innerHTML = '<div style="padding: 30px; font-size: 24px; color: #00e5ff;">Buscando "' + this.escapeHtml(query) + '" en PelisPedia y todos los servidores...</div>';
+      resultsWrapper.innerHTML = '<div style="padding: 30px; font-size: 24px; color: #00e5ff;">Buscando "' + this.escapeHtml(query) + '" en Películas, Series y Canales en Vivo...</div>';
+
+      function searchChannels(q) {
+        var matches = [];
+        if (!self.cachedChannelCategories) return matches;
+        var qLower = q.toLowerCase();
+        for (var c = 0; c < self.cachedChannelCategories.length; c++) {
+          var cat = self.cachedChannelCategories[c];
+          for (var k = 0; k < cat.items.length; k++) {
+            var ch = cat.items[k];
+            var chName = (ch.title || '').toLowerCase();
+            var chOver = (ch.overview || ch.subtitle || '').toLowerCase();
+            if (chName.indexOf(qLower) !== -1 || chOver.indexOf(qLower) !== -1) {
+              matches.push(ch);
+            }
+          }
+        }
+        return matches;
+      }
 
       this.fetchJson('/api/movies?action=search&q=' + encodeURIComponent(query), function (err, res) {
-        if (err || !res || !res.items || res.items.length === 0) {
+        var movieItems = (!err && res && res.items) ? res.items : [];
+        var channelItems = searchChannels(query);
+
+        if (movieItems.length === 0 && channelItems.length === 0) {
           resultsWrapper.innerHTML = '<div style="padding: 30px; font-size: 22px; color: #ff5555;">No se encontraron resultados para "' + self.escapeHtml(query) + '". Prueba con otra palabra clave.</div>';
           return;
         }
 
-        var html = '<div class="row-title" style="margin-bottom: 20px;">' + res.items.length + ' Resultados encontrados:</div>';
+        var totalFound = movieItems.length + channelItems.length;
+        var html = '<div class="row-title" style="margin-bottom: 20px;">' + totalFound + ' Resultados encontrados:</div>';
         html += '<div class="search-results-grid">';
 
-        for (var i = 0; i < res.items.length; i++) {
-          var item = res.items[i];
+        // 1. Canales de TV en Vivo encontrados
+        for (var c = 0; c < channelItems.length; c++) {
+          var ch = channelItems[c];
+          var chMeta = ch.provider === 'pluto' ? 'PLUTO TV • EN VIVO HD' : 'CANAL EN VIVO • SEÑAL IPTV';
+          var chBadge = ch.provider === 'pluto' ? 'PLUTO TV' : 'EN VIVO';
+          var chBadgeClass = ch.provider === 'pluto' ? 'card-badge badge-pluto' : 'card-badge';
+
+          html += '    <div class="tv-card tv-card-landscape tv-card-channel focusable" tabindex="0" ';
+          html += '         data-title="' + self.escapeHtml(ch.title) + '" ';
+          html += '         data-meta="' + self.escapeHtml(chMeta) + '" ';
+          html += '         data-overview="' + self.escapeHtml(ch.overview || ch.subtitle || '') + '" ';
+          html += '         data-url="' + self.escapeHtml(ch.streamUrl) + '" ';
+          html += '         data-provider="' + self.escapeHtml(ch.provider || 'pluto') + '" ';
+          html += '         data-type="hls">';
+          html += '      <div class="card-thumb" style="background-image: url(\'' + self.escapeHtml(ch.thumb) + '\');">';
+          html += '        <span class="' + chBadgeClass + '">' + chBadge + '</span>';
+          html += '      </div>';
+          html += '      <div class="card-info">';
+          html += '        <div class="card-title">' + self.escapeHtml(ch.title) + '</div>';
+          html += '        <div class="card-subtitle">' + self.escapeHtml(ch.subtitle || '') + '</div>';
+          html += '      </div>';
+          html += '    </div>';
+        }
+
+        // 2. Películas y Series encontradas
+        for (var i = 0; i < movieItems.length; i++) {
+          var item = movieItems[i];
           var qInfo = item.qualityInfo || { isCam: false, badge: 'HD 1080p' };
           var badgeClass = qInfo.isCam ? 'badge-cam' : 'badge-hd';
           var badgeText = qInfo.badge;
@@ -489,14 +541,20 @@
 
         for (var i = 0; i < cat.items.length; i++) {
           var item = cat.items[i];
+          var metaText = item.provider === 'pluto' ? 'PLUTO TV OFICIAL • EN VIVO HD' : 'CANAL EN VIVO • SEÑAL IPTV';
+          var badgeText = item.provider === 'pluto' ? 'PLUTO TV' : (item.type === 'hls' ? 'EN VIVO' : 'VIDEO');
+          var badgeClass = item.provider === 'pluto' ? 'card-badge badge-pluto' : 'card-badge';
+          var overviewText = item.overview || item.subtitle || '';
+
           html += '    <div class="tv-card tv-card-landscape tv-card-channel focusable" tabindex="0" ';
           html += '         data-title="' + this.escapeHtml(item.title) + '" ';
-          html += '         data-meta="' + (item.type === 'hls' ? 'CANAL EN VIVO' : 'VIDEO HD') + '" ';
-          html += '         data-overview="' + this.escapeHtml(item.subtitle || '') + '" ';
+          html += '         data-meta="' + this.escapeHtml(metaText) + '" ';
+          html += '         data-overview="' + this.escapeHtml(overviewText) + '" ';
           html += '         data-url="' + this.escapeHtml(item.streamUrl) + '" ';
+          html += '         data-provider="' + this.escapeHtml(item.provider || 'iptv') + '" ';
           html += '         data-type="' + this.escapeHtml(item.type) + '">';
           html += '      <div class="card-thumb" style="background-image: url(\'' + this.escapeHtml(item.thumb) + '\');">';
-          html += '        <span class="card-badge">' + (item.type === 'hls' ? 'EN VIVO' : 'VIDEO') + '</span>';
+          html += '        <span class="' + badgeClass + '">' + badgeText + '</span>';
           html += '      </div>';
           html += '      <div class="card-info">';
           html += '        <div class="card-title">' + this.escapeHtml(item.title) + '</div>';

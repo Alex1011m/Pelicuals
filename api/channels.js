@@ -1,13 +1,13 @@
 // api/channels.js
-// Vercel Serverless Function & Local Router para Canales de TV en Vivo (IPTV Abierto Oficial)
-// Integra listas oficiales segmentadas de iptv-org por Países y Categorías Temáticas
+// Vercel Serverless Function & Local Router para Canales de TV en Vivo
+// Integra canales oficiales de Pluto TV (HLS 1080p legal) + listas abiertas de IPTV por país y temática
 var https = require('https');
 var fs = require('fs');
 var path = require('path');
+var pluto = require('../lib/pluto');
 
 var BUNDLED_CACHE_FILE = path.join(__dirname, '../lib/channels-cache.json');
 var TMP_CACHE_FILE = path.join('/tmp', 'channels-cache.json');
-var CACHE_FILE = fs.existsSync(TMP_CACHE_FILE) ? TMP_CACHE_FILE : BUNDLED_CACHE_FILE;
 var CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 horas de caché en disco
 
 var memoryCache = null;
@@ -35,23 +35,34 @@ try {
   defaultBundledChannels = null;
 }
 
+function normalizeCategories(raw) {
+  if (!raw) return null;
+  if (Array.isArray(raw)) return raw;
+  if (raw.categories && Array.isArray(raw.categories)) return raw.categories;
+  return null;
+}
+
 // Cargar caché local desde disco al iniciar para disponibilidad instantánea (0ms)
 try {
-  if (fs.existsSync(TMP_CACHE_FILE)) {
-    var rawDisk = fs.readFileSync(TMP_CACHE_FILE, 'utf8');
-    var parsed = JSON.parse(rawDisk);
-    if (parsed && parsed.categories && parsed.categories.length >= 4) {
+  var readDiskPath = fs.existsSync(TMP_CACHE_FILE) ? TMP_CACHE_FILE : (fs.existsSync(BUNDLED_CACHE_FILE) ? BUNDLED_CACHE_FILE : null);
+  if (readDiskPath) {
+    var rawDisk = fs.readFileSync(readDiskPath, 'utf8');
+    var parsed = normalizeCategories(JSON.parse(rawDisk));
+    if (parsed && parsed.length >= 4) {
       memoryCache = parsed;
-      memoryCacheTime = fs.statSync(TMP_CACHE_FILE).mtimeMs || Date.now();
+      memoryCacheTime = fs.statSync(readDiskPath).mtimeMs || Date.now();
     }
   }
 } catch (eInit) {
   memoryCache = null;
 }
 
-if (!memoryCache && defaultBundledChannels && defaultBundledChannels.categories && defaultBundledChannels.categories.length > 0) {
-  memoryCache = defaultBundledChannels;
-  memoryCacheTime = Date.now();
+if (!memoryCache) {
+  var normBundled = normalizeCategories(defaultBundledChannels);
+  if (normBundled && normBundled.length > 0) {
+    memoryCache = normBundled;
+    memoryCacheTime = Date.now();
+  }
 }
 
 function fetchText(url, callback) {
@@ -119,7 +130,8 @@ function parseM3U(m3uText, defaultSubtitle, fallbackThumb) {
         title: cleanTitle,
         subtitle: (groupMatch && groupMatch[1] && groupMatch[1] !== 'Undefined') ? groupMatch[1] : defaultSubtitle,
         thumb: logo,
-        rawTitle: rawTitle
+        rawTitle: rawTitle,
+        provider: 'iptv'
       };
     } else if (line.indexOf('http') === 0 && cur) {
       if (line.indexOf('127.0.0.1') === -1 &&
@@ -245,14 +257,16 @@ function refreshChannelsFromRemote(onComplete) {
           return c.items && c.items.length > 0;
         });
 
-        memoryCache = categories;
-        memoryCacheTime = Date.now();
-        isRefreshing = false;
+        if (categories.length >= 4) {
+          memoryCache = categories;
+          memoryCacheTime = Date.now();
+          isRefreshing = false;
 
-        try {
-          var writePath = (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) ? TMP_CACHE_FILE : BUNDLED_CACHE_FILE;
-          fs.writeFileSync(writePath, JSON.stringify(categories, null, 2), 'utf8');
-        } catch (eSave) { }
+          try {
+            var writePath = (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) ? TMP_CACHE_FILE : BUNDLED_CACHE_FILE;
+            fs.writeFileSync(writePath, JSON.stringify(categories, null, 2), 'utf8');
+          } catch (eSave) { }
+        }
 
         if (onComplete) onComplete(null, categories);
       }
@@ -260,39 +274,65 @@ function refreshChannelsFromRemote(onComplete) {
   });
 }
 
-function loadChannels(callback) {
-  // 1. Servir inmediatamente desde caché en memoria o disco (0ms)
+function loadIptvChannels(callback) {
   if (memoryCache && memoryCache.length > 0) {
     callback(null, memoryCache);
-
-    // Refrescar en segundo plano si la caché tiene más de 24 horas
     if (!isRefreshing && (Date.now() - memoryCacheTime > CACHE_TTL_MS)) {
       isRefreshing = true;
-      refreshChannelsFromRemote(function () { });
+      refreshChannelsFromRemote(function () {
+        isRefreshing = false;
+      });
     }
     return;
   }
 
-  // 2. Primera carga sin caché previa en disco
   isRefreshing = true;
-  refreshChannelsFromRemote(callback);
+  refreshChannelsFromRemote(function (err, cats) {
+    if (err && normBundled) {
+      return callback(null, normBundled);
+    }
+    callback(err, cats);
+  });
+}
+
+function loadChannels(provider, callback) {
+  loadIptvChannels(function (errIptv, iptvCats) {
+    pluto.getPlutoCategories(function (errPluto, plutoCats) {
+      var safePluto = (plutoCats && Array.isArray(plutoCats)) ? plutoCats : [];
+      var safeIptv = (iptvCats && Array.isArray(iptvCats)) ? iptvCats : [];
+
+      if (provider === 'pluto') {
+        return callback(null, safePluto);
+      }
+      if (provider === 'iptv') {
+        return callback(null, safeIptv);
+      }
+
+      // Por defecto: Señales oficiales de Pluto TV al inicio + Canales Abiertos de IPTV
+      var combined = [].concat(safePluto, safeIptv);
+      callback(null, combined);
+    });
+  });
 }
 
 module.exports = function (req, res) {
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Access-Control-Allow-Origin', '*');
 
-  loadChannels(function (err, categories) {
-    if (err || !categories) {
+  var provider = (req.query && req.query.provider) ? req.query.provider.toLowerCase() : 'all';
+
+  loadChannels(provider, function (err, categories) {
+    if (err || !categories || categories.length === 0) {
       return res.status(500).json({
         status: 'error',
-        message: 'Error al cargar canales de TV IPTV'
+        message: 'Error al cargar canales de TV'
       });
     }
 
     res.status(200).json({
       status: 'ok',
-      source: 'iptv-org (Países y Categorías Oficiales)',
+      source: 'Pluto TV Oficial + IPTV Internacional',
+      provider: provider,
       totalCategories: categories.length,
       categories: categories
     });
