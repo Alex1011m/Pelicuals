@@ -27,15 +27,31 @@ var THUMBS = {
   documental: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&q=80'
 };
 
+// Carga directa bundled con require para garantizar empaquetado en Vercel
+var defaultBundledChannels = null;
+try {
+  defaultBundledChannels = require('../lib/channels-cache.json');
+} catch (eBundled) {
+  defaultBundledChannels = null;
+}
+
 // Cargar caché local desde disco al iniciar para disponibilidad instantánea (0ms)
 try {
-  if (fs.existsSync(CACHE_FILE)) {
-    var rawDisk = fs.readFileSync(CACHE_FILE, 'utf8');
-    memoryCache = JSON.parse(rawDisk);
-    memoryCacheTime = fs.statSync(CACHE_FILE).mtimeMs || Date.now();
+  if (fs.existsSync(TMP_CACHE_FILE)) {
+    var rawDisk = fs.readFileSync(TMP_CACHE_FILE, 'utf8');
+    var parsed = JSON.parse(rawDisk);
+    if (parsed && parsed.categories && parsed.categories.length >= 4) {
+      memoryCache = parsed;
+      memoryCacheTime = fs.statSync(TMP_CACHE_FILE).mtimeMs || Date.now();
+    }
   }
 } catch (eInit) {
   memoryCache = null;
+}
+
+if (!memoryCache && defaultBundledChannels && defaultBundledChannels.categories && defaultBundledChannels.categories.length > 0) {
+  memoryCache = defaultBundledChannels;
+  memoryCacheTime = Date.now();
 }
 
 function fetchText(url, callback) {

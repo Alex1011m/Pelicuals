@@ -1,0 +1,10 @@
+{
+  "name": "Smart TV Hub",
+  "short_name": "TV Hub",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#0d0e12",
+  "theme_color": "#00e5ff",
+  "description": "Centro multimedia de Canales de TV en vivo, Películas, Series y Anime para Smart TV"
+}

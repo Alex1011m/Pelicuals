@@ -4,6 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Smart TV Hub</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#00e5ff">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="stylesheet" href="/css/tv.css">
 </head>
 <body>
@@ -60,6 +64,11 @@
               <span class="sidebar-label">Anime Completo</span>
               <span class="sidebar-badge">3</span>
             </button>
+            <button class="sidebar-item focusable" data-filter="favorites" tabindex="0">
+              <span class="sidebar-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
+              <span class="sidebar-label">Mis Favoritos</span>
+              <span id="favorites-badge" class="sidebar-badge">0</span>
+            </button>
           </div>
 
           <div class="sidebar-nav-group">
@@ -108,6 +117,58 @@
             <button class="search-chip focusable" data-query="Terror" tabindex="0">Terror</button>
             <button class="search-chip focusable" data-query="Anime" tabindex="0">Anime</button>
             <button class="search-chip focusable" data-query="Star Wars" tabindex="0">Star Wars</button>
+          </div>
+
+          <!-- TECLADO VIRTUAL EN PANTALLA PARA SMART TV -->
+          <div id="tv-virtual-keyboard" class="tv-virtual-keyboard">
+            <div class="keyboard-row">
+              <button class="tv-key focusable" data-key="1" tabindex="0">1</button>
+              <button class="tv-key focusable" data-key="2" tabindex="0">2</button>
+              <button class="tv-key focusable" data-key="3" tabindex="0">3</button>
+              <button class="tv-key focusable" data-key="4" tabindex="0">4</button>
+              <button class="tv-key focusable" data-key="5" tabindex="0">5</button>
+              <button class="tv-key focusable" data-key="6" tabindex="0">6</button>
+              <button class="tv-key focusable" data-key="7" tabindex="0">7</button>
+              <button class="tv-key focusable" data-key="8" tabindex="0">8</button>
+              <button class="tv-key focusable" data-key="9" tabindex="0">9</button>
+              <button class="tv-key focusable" data-key="0" tabindex="0">0</button>
+            </div>
+            <div class="keyboard-row">
+              <button class="tv-key focusable" data-key="Q" tabindex="0">Q</button>
+              <button class="tv-key focusable" data-key="W" tabindex="0">W</button>
+              <button class="tv-key focusable" data-key="E" tabindex="0">E</button>
+              <button class="tv-key focusable" data-key="R" tabindex="0">R</button>
+              <button class="tv-key focusable" data-key="T" tabindex="0">T</button>
+              <button class="tv-key focusable" data-key="Y" tabindex="0">Y</button>
+              <button class="tv-key focusable" data-key="U" tabindex="0">U</button>
+              <button class="tv-key focusable" data-key="I" tabindex="0">I</button>
+              <button class="tv-key focusable" data-key="O" tabindex="0">O</button>
+              <button class="tv-key focusable" data-key="P" tabindex="0">P</button>
+            </div>
+            <div class="keyboard-row">
+              <button class="tv-key focusable" data-key="A" tabindex="0">A</button>
+              <button class="tv-key focusable" data-key="S" tabindex="0">S</button>
+              <button class="tv-key focusable" data-key="D" tabindex="0">D</button>
+              <button class="tv-key focusable" data-key="F" tabindex="0">F</button>
+              <button class="tv-key focusable" data-key="G" tabindex="0">G</button>
+              <button class="tv-key focusable" data-key="H" tabindex="0">H</button>
+              <button class="tv-key focusable" data-key="J" tabindex="0">J</button>
+              <button class="tv-key focusable" data-key="K" tabindex="0">K</button>
+              <button class="tv-key focusable" data-key="L" tabindex="0">L</button>
+              <button class="tv-key focusable" data-key="Ñ" tabindex="0">Ñ</button>
+            </div>
+            <div class="keyboard-row">
+              <button class="tv-key focusable" data-key="Z" tabindex="0">Z</button>
+              <button class="tv-key focusable" data-key="X" tabindex="0">X</button>
+              <button class="tv-key focusable" data-key="C" tabindex="0">C</button>
+              <button class="tv-key focusable" data-key="V" tabindex="0">V</button>
+              <button class="tv-key focusable" data-key="B" tabindex="0">B</button>
+              <button class="tv-key focusable" data-key="N" tabindex="0">N</button>
+              <button class="tv-key focusable" data-key="M" tabindex="0">M</button>
+              <button class="tv-key tv-key-space focusable" data-action="space" tabindex="0">ESPACIO</button>
+              <button class="tv-key tv-key-action focusable" data-action="backspace" tabindex="0">&#9003; BORRAR</button>
+              <button class="tv-key tv-key-action tv-key-clear focusable" data-action="clear" tabindex="0">LIMPIAR</button>
+            </div>
           </div>
           <div id="search-results-wrapper" class="search-results-wrapper"></div>
         </div>

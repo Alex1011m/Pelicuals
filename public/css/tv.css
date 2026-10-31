@@ -1134,6 +1134,85 @@ button,
   box-shadow: 0 0 10px rgba(0, 229, 255, 0.5) !important;
 }
 
+/* TECLADO VIRTUAL EN PANTALLA PARA SMART TV */
+.tv-virtual-keyboard {
+  background: rgba(20, 24, 34, 0.88);
+  border: 2px solid #232733;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 25px;
+  max-width: 900px;
+}
+
+.keyboard-row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+
+.tv-key {
+  min-width: 58px;
+  height: 52px;
+  background-color: #1a1d26;
+  border: 2px solid #303648;
+  border-radius: 8px;
+  color: #f1f3f5;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer !important;
+  outline: none;
+  -webkit-transition: all 0.15s ease;
+  transition: all 0.15s ease;
+}
+
+.tv-key:hover,
+.tv-key:focus,
+.tv-key.focused {
+  background-color: #00e5ff !important;
+  color: #0a0e17 !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.85) !important;
+  -webkit-transform: scale(1.12);
+  transform: scale(1.12);
+  z-index: 5;
+}
+
+.tv-key-space {
+  min-width: 140px;
+}
+
+.tv-key-action {
+  min-width: 110px;
+  background-color: #262c3d;
+  color: #ff9800;
+}
+
+.tv-key-clear {
+  color: #ff5252;
+}
+
+/* BARRA DE PROGRESO DE RESUMEN EN TARJETAS */
+.card-resume-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.card-resume-bar {
+  height: 100%;
+  background-color: #00e5ff;
+}
+
 .search-results-wrapper {
   -webkit-box-flex: 1;
   -webkit-flex: 1;

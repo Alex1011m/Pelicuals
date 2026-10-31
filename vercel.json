@@ -1,6 +1,11 @@
 {
   "version": 2,
   "cleanUrls": true,
+  "functions": {
+    "api/*.js": {
+      "includeFiles": "lib/**"
+    }
+  },
   "rewrites": [
     { "source": "/", "destination": "/index.html" }
   ],

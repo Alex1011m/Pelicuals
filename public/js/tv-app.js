@@ -63,6 +63,7 @@
 
       this.setupTabs();
       this.setupSidebar();
+      this.updateFavoritesBadge();
       this.loadCategory('channels');
     },
 
@@ -192,6 +193,75 @@
       }
     },
 
+    getFavorites: function () {
+      try {
+        var raw = localStorage.getItem('tv_favorites');
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    },
+
+    isFavorite: function (slug) {
+      if (!slug) return false;
+      var favs = this.getFavorites();
+      for (var i = 0; i < favs.length; i++) {
+        if (favs[i].slug === slug) return true;
+      }
+      return false;
+    },
+
+    toggleFavorite: function (item) {
+      if (!item || !item.slug) return false;
+      var favs = this.getFavorites();
+      var foundIdx = -1;
+      for (var i = 0; i < favs.length; i++) {
+        if (favs[i].slug === item.slug) {
+          foundIdx = i;
+          break;
+        }
+      }
+      var isFavNow = false;
+      if (foundIdx !== -1) {
+        favs.splice(foundIdx, 1);
+        isFavNow = false;
+      } else {
+        favs.unshift(item);
+        isFavNow = true;
+      }
+      try {
+        localStorage.setItem('tv_favorites', JSON.stringify(favs));
+      } catch (e) {}
+      this.updateFavoritesBadge();
+      return isFavNow;
+    },
+
+    updateFavoritesBadge: function () {
+      var badge = document.getElementById('favorites-badge');
+      if (badge) {
+        var count = this.getFavorites().length;
+        badge.innerText = count;
+      }
+    },
+
+    getWatchProgressMap: function () {
+      try {
+        var raw = localStorage.getItem('tv_watch_progress');
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    },
+
+    formatTime: function (seconds) {
+      if (isNaN(seconds) || seconds < 0) return '00:00';
+      var mins = Math.floor(seconds / 60);
+      var secs = Math.floor(seconds % 60);
+      var m = mins < 10 ? '0' + mins : mins;
+      var s = secs < 10 ? '0' + secs : secs;
+      return m + ':' + s;
+    },
+
     setupTabs: function () {
       var self = this;
       var tabs = document.querySelectorAll('.nav-tab');
@@ -307,6 +377,28 @@
             self.performSearch(q);
           }, false);
         })(chips[i]);
+      }
+
+      // Conectar teclado virtual en pantalla para Smart TV
+      var keys = document.querySelectorAll('.tv-key');
+      for (var k = 0; k < keys.length; k++) {
+        (function (keyBtn) {
+          keyBtn.addEventListener('click', function () {
+            var letter = keyBtn.getAttribute('data-key');
+            var action = keyBtn.getAttribute('data-action');
+            if (letter) {
+              input.value = (input.value || '') + letter;
+            } else if (action === 'space') {
+              input.value = (input.value || '') + ' ';
+            } else if (action === 'backspace') {
+              if (input.value && input.value.length > 0) {
+                input.value = input.value.slice(0, -1);
+              }
+            } else if (action === 'clear') {
+              input.value = '';
+            }
+          }, false);
+        })(keys[k]);
       }
     },
 
@@ -449,6 +541,89 @@
       var html = '';
       var matchingCount = 0;
 
+      // 1. Vista exclusiva de Mis Favoritos
+      if (filter === 'favorites') {
+        var favItems = this.getFavorites();
+        if (favItems.length === 0) {
+          html = '<div style="padding: 40px; font-size: 24px; color: #7b8290;">Aún no has agregado títulos a Favoritos.<br><span style="font-size: 18px; color: #00e5ff;">Entra a cualquier película o serie y pulsa "☆ AGREGAR A FAVORITOS".</span></div>';
+        } else {
+          html += '<div class="content-row">';
+          html += '  <div class="row-header">';
+          html += '    <div class="row-title">★ Mis Títulos Favoritos (' + favItems.length + ')</div>';
+          html += '    <div class="carousel-nav-arrows">';
+          html += '      <button class="carousel-nav-btn btn-arrow-prev focusable" tabindex="0">&#9668;</button>';
+          html += '      <button class="carousel-nav-btn btn-arrow-next focusable" tabindex="0">&#9658;</button>';
+          html += '    </div>';
+          html += '  </div>';
+          html += '  <div class="row-carousel">';
+          for (var f = 0; f < favItems.length; f++) {
+            var fItem = favItems[f];
+            html += '    <div class="tv-card tv-card-poster focusable" tabindex="0" ';
+            html += '         data-title="' + this.escapeHtml(fItem.title) + '" ';
+            html += '         data-meta="FAVORITO • ★ ' + (fItem.rating || '7.0') + ' • ' + (fItem.year || '') + '" ';
+            html += '         data-overview="' + this.escapeHtml(fItem.overview || '') + '" ';
+            html += '         data-slug="' + this.escapeHtml(fItem.slug) + '" ';
+            html += '         data-kind="' + this.escapeHtml(fItem.kind || 'movie') + '" ';
+            html += '         data-provider="' + this.escapeHtml(fItem.provider || 'pelispedia') + '" ';
+            html += '         data-type="pelispedia">';
+            html += '      <div class="card-thumb" style="background-image: url(\'' + this.escapeHtml(fItem.poster) + '\');">';
+            html += '        <span class="card-badge badge-hd">★ FAVORITO</span>';
+            html += '      </div>';
+            html += '      <div class="card-info">';
+            html += '        <div class="card-title">' + this.escapeHtml(fItem.title) + '</div>';
+            html += '        <div class="card-subtitle">★ ' + this.escapeHtml(fItem.rating || '7.0') + ' • ' + this.escapeHtml(fItem.year || '') + '</div>';
+            html += '      </div>';
+            html += '    </div>';
+          }
+          html += '  </div>';
+          html += '</div>';
+        }
+        this.sectionsWrapper.style.transform = 'translateY(0px)';
+        this.sectionsWrapper.innerHTML = html;
+        this.attachCardEvents();
+        return;
+      }
+
+      // 2. Fila "Continuar Viendo" en la vista general (filter === 'all')
+      if (filter === 'all') {
+        var progressMap = this.getWatchProgressMap();
+        var continueKeys = Object.keys(progressMap);
+        if (continueKeys.length > 0) {
+          html += '<div class="content-row continue-watching-row">';
+          html += '  <div class="row-header">';
+          html += '    <div class="row-title">Continuar Viendo (' + continueKeys.length + ')</div>';
+          html += '    <div class="carousel-nav-arrows">';
+          html += '      <button class="carousel-nav-btn btn-arrow-prev focusable" tabindex="0">&#9668;</button>';
+          html += '      <button class="carousel-nav-btn btn-arrow-next focusable" tabindex="0">&#9658;</button>';
+          html += '    </div>';
+          html += '  </div>';
+          html += '  <div class="row-carousel">';
+          for (var cIdx = 0; cIdx < continueKeys.length; cIdx++) {
+            var cItem = progressMap[continueKeys[cIdx]];
+            var pct = cItem.percent || 0;
+            html += '    <div class="tv-card tv-card-poster focusable" tabindex="0" ';
+            html += '         data-title="' + this.escapeHtml(cItem.title) + '" ';
+            html += '         data-meta="VISTO ' + pct + '% • Reanudar en ' + this.formatTime(cItem.time) + '" ';
+            html += '         data-overview="Pulsa OK para reanudar la reproducción desde el minuto ' + this.formatTime(cItem.time) + '." ';
+            html += '         data-slug="' + this.escapeHtml(cItem.slug) + '" ';
+            html += '         data-kind="' + this.escapeHtml(cItem.kind || 'movie') + '" ';
+            html += '         data-provider="' + this.escapeHtml(cItem.provider || 'pelispedia') + '" ';
+            html += '         data-type="pelispedia">';
+            html += '      <div class="card-thumb" style="background-image: url(\'' + this.escapeHtml(cItem.poster) + '\');">';
+            html += '        <span class="card-badge badge-hd">' + pct + '% VISTO</span>';
+            html += '        <div class="card-resume-progress"><div class="card-resume-bar" style="width: ' + pct + '%;"></div></div>';
+            html += '      </div>';
+            html += '      <div class="card-info">';
+            html += '        <div class="card-title">' + this.escapeHtml(cItem.title) + '</div>';
+            html += '        <div class="card-subtitle">En ' + this.formatTime(cItem.time) + ' / ' + this.formatTime(cItem.duration) + '</div>';
+            html += '      </div>';
+            html += '    </div>';
+          }
+          html += '  </div>';
+          html += '</div>';
+        }
+      }
+
       for (var r = 0; r < rows.length; r++) {
         var row = rows[r];
         if (!row.items || row.items.length === 0) continue;
@@ -494,7 +669,7 @@
         html += '</div>';
       }
 
-      if (matchingCount === 0) {
+      if (matchingCount === 0 && filter !== 'favorites') {
         html = '<div style="padding: 40px; font-size: 24px; color: #7b8290;">No hay contenidos disponibles para este filtro.</div>';
       }
 
@@ -663,38 +838,105 @@
           document.getElementById('detail-poster').style.backgroundImage = 'url(\'' + data.poster + '\')';
         }
 
+        var progressMap = self.getWatchProgressMap();
+        var key = data.slug || data.title;
+        var savedProgress = progressMap[key];
+
+        var isFav = self.isFavorite(data.slug);
+        var favBtnText = isFav ? '★ EN FAVORITOS' : '☆ AGREGAR A FAVORITOS';
+
         var actionsHtml = '';
         if (data.kind === 'movie') {
-          actionsHtml += '<button id="btn-play-movie" class="btn-tv btn-tv-primary focusable" tabindex="0">► REPRODUCIR PELÍCULA</button>';
+          if (savedProgress && savedProgress.time > 15) {
+            actionsHtml += '<button id="btn-resume-movie" class="btn-tv btn-tv-primary focusable" tabindex="0">► REANUDAR (' + self.formatTime(savedProgress.time) + ')</button>';
+            actionsHtml += '<button id="btn-play-movie" class="btn-tv focusable" tabindex="0">DESDE EL PRINCIPIO</button>';
+          } else {
+            actionsHtml += '<button id="btn-play-movie" class="btn-tv btn-tv-primary focusable" tabindex="0">► REPRODUCIR PELÍCULA</button>';
+          }
+          actionsHtml += '<button id="btn-toggle-fav" class="btn-tv focusable" tabindex="0">' + favBtnText + '</button>';
           actionsHtml += '<button id="btn-close-modal" class="btn-tv focusable" tabindex="0">VOLVER</button>';
           document.getElementById('detail-actions').innerHTML = actionsHtml;
 
+          var resumeBtn = document.getElementById('btn-resume-movie');
           var playBtn = document.getElementById('btn-play-movie');
+          var favBtn = document.getElementById('btn-toggle-fav');
           var closeBtn = document.getElementById('btn-close-modal');
 
-          playBtn.addEventListener('click', function () {
-            playBtn.innerText = 'Extrayendo stream...';
+          function startMovie(startTime) {
+            var targetBtn = resumeBtn || playBtn;
+            if (targetBtn) targetBtn.innerText = 'Extrayendo stream...';
             var resolveApi = '/api/movies?action=resolve&player_url=' + encodeURIComponent(data.player_url) + '&provider=' + encodeURIComponent(data.provider || 'pelispedia');
             self.fetchJson(resolveApi, function (err2, res) {
-              playBtn.innerText = '► REPRODUCIR PELÍCULA';
+              if (targetBtn) targetBtn.innerText = '► REPRODUCIR';
               if (!err2 && res && res.streamUrl) {
                 self.closeDetailModal();
-                window.TVPlayer.play(data.title, res.streamUrl, res.type);
+                var movieInfo = {
+                  title: data.title,
+                  slug: data.slug,
+                  kind: data.kind,
+                  provider: data.provider || 'pelispedia',
+                  poster: data.poster
+                };
+                window.TVPlayer.play(data.title, res.streamUrl, res.type, startTime, movieInfo);
               } else {
                 alert('No se pudo extraer el stream de este servidor. Intenta con otro título.');
               }
             });
-          }, false);
+          }
+
+          if (resumeBtn) {
+            resumeBtn.addEventListener('click', function () {
+              startMovie(savedProgress.time);
+            }, false);
+          }
+
+          if (playBtn) {
+            playBtn.addEventListener('click', function () {
+              startMovie(0);
+            }, false);
+          }
+
+          if (favBtn) {
+            favBtn.addEventListener('click', function () {
+              var isNowFav = self.toggleFavorite({
+                title: data.title,
+                slug: data.slug,
+                kind: data.kind,
+                provider: data.provider || 'pelispedia',
+                poster: data.poster,
+                rating: data.rating,
+                year: data.year
+              });
+              favBtn.innerText = isNowFav ? '★ EN FAVORITOS' : '☆ AGREGAR A FAVORITOS';
+            }, false);
+          }
 
           closeBtn.addEventListener('click', function () {
             self.closeDetailModal();
           }, false);
 
-          window.SpatialNav.focusElement(playBtn);
+          window.SpatialNav.focusElement(resumeBtn || playBtn);
         } else {
           // Es una Serie o Anime
+          actionsHtml += '<button id="btn-toggle-fav" class="btn-tv focusable" tabindex="0">' + favBtnText + '</button>';
           actionsHtml += '<button id="btn-close-modal" class="btn-tv focusable" tabindex="0">VOLVER</button>';
           document.getElementById('detail-actions').innerHTML = actionsHtml;
+
+          var favBtnSerie = document.getElementById('btn-toggle-fav');
+          if (favBtnSerie) {
+            favBtnSerie.addEventListener('click', function () {
+              var isNowFav = self.toggleFavorite({
+                title: data.title,
+                slug: data.slug,
+                kind: data.kind,
+                provider: data.provider || 'pelispedia',
+                poster: data.poster,
+                rating: data.rating,
+                year: data.year
+              });
+              favBtnSerie.innerText = isNowFav ? '★ EN FAVORITOS' : '☆ AGREGAR A FAVORITOS';
+            }, false);
+          }
 
           document.getElementById('btn-close-modal').addEventListener('click', function () {
             self.closeDetailModal();
@@ -765,7 +1007,7 @@
 
         var epCards = epCarousel.querySelectorAll('.episode-card');
         for (var k = 0; k < epCards.length; k++) {
-          (function (epCard) {
+          (function (epCard, epIndex) {
             epCard.addEventListener('mouseenter', function () {
               window.SpatialNav.focusElement(epCard);
             }, false);
@@ -781,14 +1023,37 @@
                 epCard.querySelector('.episode-title').innerText = epTitle;
                 if (!err2 && res2 && res2.streamUrl) {
                   self.closeDetailModal();
-                  var fullTitle = (self.currentSerieDetail ? self.currentSerieDetail.title + ' - ' : '') + epTitle;
-                  window.TVPlayer.play(fullTitle, res2.streamUrl, res2.type);
+                  var serieTitle = self.currentSerieDetail ? self.currentSerieDetail.title : '';
+                  var fullTitle = (serieTitle ? serieTitle + ' - ' : '') + epTitle;
+                  var epInfo = {
+                    title: fullTitle,
+                    slug: (self.currentSerieDetail ? self.currentSerieDetail.slug : '') + '-s' + seasonNum + 'e' + epIndex,
+                    kind: 'serie',
+                    provider: epProvider,
+                    poster: (self.currentSerieDetail ? self.currentSerieDetail.poster : '')
+                  };
+
+                  // Auto-reproducir siguiente episodio al terminar
+                  var onNextEpisode = function () {
+                    if (epIndex + 1 < epCards.length) {
+                      window.TVPlayer.showToast('Episodio terminado. Siguiente en 4 segundos...');
+                      setTimeout(function () {
+                        if (epCards[epIndex + 1]) {
+                          epCards[epIndex + 1].click();
+                        }
+                      }, 4000);
+                    } else {
+                      window.TVPlayer.close();
+                    }
+                  };
+
+                  window.TVPlayer.play(fullTitle, res2.streamUrl, res2.type, 0, epInfo, onNextEpisode);
                 } else {
                   alert('No se pudo extraer el stream de este episodio.');
                 }
               });
             }, false);
-          })(epCards[k]);
+          })(epCards[k], k);
         }
 
         self.enableCarouselDrag();

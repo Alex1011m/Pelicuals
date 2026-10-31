@@ -30,6 +30,10 @@
     hlsInstance: null,
     hasFatalError: false,
     networkRetryCount: 0,
+    currentItemInfo: null,
+    pendingStartTime: 0,
+    onEndedCallback: null,
+    lastSaveTime: 0,
 
     // Colecciones de pistas
     audioTracks: [],
@@ -61,10 +65,22 @@
       // Eventos nativos del elemento <video>
       this.video.addEventListener('timeupdate', function () {
         self.updateProgress();
+        if (self.video && self.video.duration && self.currentItemInfo) {
+          var now = Date.now();
+          if (now - self.lastSaveTime > 3500) {
+            self.lastSaveTime = now;
+            self.saveProgress();
+          }
+        }
       }, false);
 
       this.video.addEventListener('ended', function () {
-        self.close();
+        self.saveProgress();
+        if (typeof self.onEndedCallback === 'function') {
+          self.onEndedCallback();
+        } else {
+          self.close();
+        }
       }, false);
 
       this.video.addEventListener('loadedmetadata', function () {
@@ -173,11 +189,13 @@
       this.video.addEventListener('playing', function () {
         self.showBuffering(false);
         clearTimeout(self.stallTimer);
+        self.applyPendingSeek();
       }, false);
 
       this.video.addEventListener('canplay', function () {
         self.showBuffering(false);
         clearTimeout(self.stallTimer);
+        self.applyPendingSeek();
       }, false);
 
       this.video.addEventListener('error', function (e) {
@@ -271,11 +289,16 @@
       }
     },
 
-    play: function (title, streamUrl, type) {
+    play: function (title, streamUrl, type, startTime, itemInfo, onEndedCallback) {
       this.hasFatalError = false;
       this.networkRetryCount = 0;
       this.currentStreamUrl = streamUrl;
       clearTimeout(this.stallTimer);
+
+      this.pendingStartTime = (typeof startTime === 'number' && startTime > 5) ? startTime : 0;
+      this.currentItemInfo = itemInfo || { title: title, url: streamUrl, type: type };
+      this.onEndedCallback = onEndedCallback || null;
+      this.lastSaveTime = Date.now();
 
       this.lastFocusedElement = window.SpatialNav.currentFocused;
       this.titleEl.innerText = title || 'Reproduciendo contenido...';
@@ -446,6 +469,50 @@
       });
     },
 
+    applyPendingSeek: function () {
+      if (this.pendingStartTime > 0 && this.video && this.video.duration) {
+        var targetTime = this.pendingStartTime;
+        this.pendingStartTime = 0;
+        try {
+          this.video.currentTime = targetTime;
+          this.showToast('Reanudando desde ' + this.formatTime(targetTime));
+        } catch (eSeek) {}
+      }
+    },
+
+    saveProgress: function () {
+      if (!this.video || !this.video.duration || !this.currentItemInfo) return;
+      var cur = this.video.currentTime;
+      var dur = this.video.duration;
+      var key = this.currentItemInfo.slug || this.currentItemInfo.title;
+      if (!key) return;
+
+      try {
+        var raw = localStorage.getItem('tv_watch_progress') || '{}';
+        var map = JSON.parse(raw);
+
+        if (cur > 15 && (cur / dur) < 0.95) {
+          map[key] = {
+            title: this.currentItemInfo.title,
+            slug: this.currentItemInfo.slug,
+            kind: this.currentItemInfo.kind,
+            provider: this.currentItemInfo.provider,
+            poster: this.currentItemInfo.poster,
+            url: this.currentItemInfo.url || this.currentStreamUrl,
+            type: this.currentItemInfo.type,
+            time: cur,
+            duration: dur,
+            percent: Math.round((cur / dur) * 100),
+            updatedAt: Date.now()
+          };
+          localStorage.setItem('tv_watch_progress', JSON.stringify(map));
+        } else if ((cur / dur) >= 0.95) {
+          delete map[key];
+          localStorage.setItem('tv_watch_progress', JSON.stringify(map));
+        }
+      } catch (e) {}
+    },
+
     safePlay: function (video) {
       var playPromise = video.play();
       if (playPromise !== undefined && typeof playPromise.catch === 'function') {
@@ -456,6 +523,10 @@
     },
 
     close: function () {
+      this.saveProgress();
+      this.pendingStartTime = 0;
+      this.onEndedCallback = null;
+
       var doc = window.document;
       var isFS = doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
       if (isFS) {
