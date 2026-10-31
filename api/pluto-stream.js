@@ -60,33 +60,65 @@ function proxyStream(targetUrl, token, clientIp, ua, req, res) {
     var chunks = [];
     remoteRes.on('data', function (c) { chunks.push(c); });
     remoteRes.on('end', function () {
+      var contentType = remoteRes.headers['content-type'] || '';
+      var isM3u8 = contentType.indexOf('mpegurl') !== -1 || targetUrl.indexOf('.m3u8') !== -1;
+
+      // Si es un archivo binario (.ts, .key, etc.) enviado a través del proxy
+      if (!isM3u8) {
+        var rawBuf = Buffer.concat(chunks);
+        res.writeHead(200, {
+          'Content-Type': contentType || 'application/octet-stream',
+          'Content-Length': rawBuf.length,
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': '*',
+          'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
+          'Cache-Control': 'public, max-age=3600'
+        });
+        return res.end(rawBuf);
+      }
+
       var body = Buffer.concat(chunks).toString('utf8');
 
-      // Reescritura selectiva de M3U8 para forzar CORS en playlists
+      // Reescritura selectiva de M3U8 para forzar CORS en playlists y redirigir CDN siloh
       var lines = body.split('\n');
       var rewritten = lines.map(function (line) {
         var trimmed = line.trim();
         if (!trimmed) return line;
 
+        // Normalizar cualquier CDN siloh-*.plutotv.net a siloh-cf.pluto.tv (CloudFront IPv4 con CORS *)
+        line = line.replace(/https?:\/\/[a-zA-Z0-9_-]+\.plutotv\.net/gi, 'https://siloh-cf.pluto.tv');
+        trimmed = line.trim();
+
         // Reescribir URIs en etiquetas como #EXT-X-MEDIA (subtítulos o audio)
         if (trimmed.indexOf('#EXT-X-MEDIA') === 0 && trimmed.indexOf('URI="') !== -1) {
           return trimmed.replace(/URI="([^"]+)"/, function (match, uri) {
             var fullUri = new URL(uri, targetUrl).href;
+            fullUri = fullUri.replace(/https?:\/\/[a-zA-Z0-9_-]+\.plutotv\.net/gi, 'https://siloh-cf.pluto.tv');
             return 'URI="/api/pluto-stream?url=' + encodeURIComponent(fullUri) + (token ? '&jwt=' + encodeURIComponent(token) : '') + '"';
           });
         }
 
-        // Dejar comentarios y directivas intactas
+        // Claves de cifrado AES-128 (#EXT-X-KEY)
+        if (trimmed.indexOf('#EXT-X-KEY') === 0 && trimmed.indexOf('URI="') !== -1) {
+          return trimmed.replace(/URI="([^"]+)"/, function (match, uri) {
+            var fullUri = new URL(uri, targetUrl).href;
+            fullUri = fullUri.replace(/https?:\/\/[a-zA-Z0-9_-]+\.plutotv\.net/gi, 'https://siloh-cf.pluto.tv');
+            return 'URI="' + fullUri + '"';
+          });
+        }
+
+        // Dejar otros comentarios y directivas intactas
         if (trimmed.indexOf('#') === 0) {
           return line;
         }
 
-        // Segmentos de video .ts o claves .key (los servidores siloh-ns1.plutotv.net ya tienen ACAO: *)
-        if (trimmed.indexOf('.ts') !== -1 || trimmed.indexOf('.key') !== -1) {
+        // Segmentos de video .ts, subtítulos .vtt o claves .key (con CORS nativo en siloh-cf.pluto.tv)
+        if (trimmed.indexOf('.ts') !== -1 || trimmed.indexOf('.key') !== -1 || trimmed.indexOf('.vtt') !== -1) {
           if (trimmed.indexOf('http') === 0) {
-            return line; // Ya es absoluto y con CORS abierto en CDN de Pluto
+            return trimmed.replace(/https?:\/\/[a-zA-Z0-9_-]+\.plutotv\.net/gi, 'https://siloh-cf.pluto.tv');
           }
-          return new URL(trimmed, targetUrl).href;
+          var fullSeg = new URL(trimmed, targetUrl).href;
+          return fullSeg.replace(/https?:\/\/[a-zA-Z0-9_-]+\.plutotv\.net/gi, 'https://siloh-cf.pluto.tv');
         }
 
         // Sub-listas .m3u8 (deben ser enrutadas por este proxy con el token JWT)
