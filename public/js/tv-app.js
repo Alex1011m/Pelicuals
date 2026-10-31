@@ -43,28 +43,177 @@
         }
       };
 
-      // Soporte para scroll vertical con rueda del mouse o gestos de cursor
-      var viewport = document.querySelector('.tv-content-viewport');
-      if (viewport) {
-        viewport.addEventListener('wheel', function (e) {
-          if (self.sectionsWrapper && self.sectionsWrapper.style.display !== 'none') {
-            var currentTransform = self.sectionsWrapper.style.transform || '';
-            var match = /translateY\(-?(\d+)px\)/.exec(currentTransform);
-            var currentY = match ? parseInt(match[1], 10) : 0;
-            var maxScroll = Math.max(0, self.sectionsWrapper.offsetHeight - viewport.offsetHeight + 100);
-            currentY += (e.deltaY > 0 ? 180 : -180);
-            if (currentY < 0) currentY = 0;
-            if (currentY > maxScroll) currentY = maxScroll;
-            self.sectionsWrapper.style.transform = 'translateY(-' + currentY + 'px)';
-            self.sectionsWrapper.style.webkitTransform = 'translateY(-' + currentY + 'px)';
-          }
-        }, false);
-      }
+      // Controles de navegación y desplazamiento para mouse y control remoto de Smart TV
+      this.setupPageScrollControls();
+      this.setupEdgeAndDragScroll();
 
       this.setupTabs();
       this.setupSidebar();
       this.updateFavoritesBadge();
       this.loadCategory('channels');
+    },
+
+    setupPageScrollControls: function () {
+      var self = this;
+      var btnUp = document.getElementById('btn-page-scroll-up');
+      var btnDown = document.getElementById('btn-page-scroll-down');
+      var viewport = document.querySelector('.tv-content-viewport');
+
+      function getActiveScrollable() {
+        if (self.searchContainer && self.searchContainer.style.display !== 'none') {
+          return self.searchContainer;
+        }
+        return viewport;
+      }
+
+      function updateScrollButtonsVisibility() {
+        var el = getActiveScrollable();
+        if (!el || !btnUp) return;
+        if (el.scrollTop <= 10) {
+          btnUp.style.opacity = '0.35';
+        } else {
+          btnUp.style.opacity = '1';
+        }
+      }
+
+      if (btnDown) {
+        btnDown.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var el = getActiveScrollable();
+          if (el) {
+            if (typeof el.scrollBy === 'function') {
+              el.scrollBy({ top: 480, behavior: 'smooth' });
+            } else {
+              el.scrollTop += 480;
+            }
+            setTimeout(updateScrollButtonsVisibility, 350);
+          }
+        }, false);
+      }
+
+      if (btnUp) {
+        btnUp.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var el = getActiveScrollable();
+          if (el) {
+            if (typeof el.scrollBy === 'function') {
+              el.scrollBy({ top: -480, behavior: 'smooth' });
+            } else {
+              el.scrollTop -= 480;
+            }
+            setTimeout(updateScrollButtonsVisibility, 350);
+          }
+        }, false);
+      }
+
+      if (viewport) {
+        viewport.addEventListener('scroll', updateScrollButtonsVisibility, false);
+      }
+      if (this.searchContainer) {
+        this.searchContainer.addEventListener('scroll', updateScrollButtonsVisibility, false);
+      }
+      updateScrollButtonsVisibility();
+    },
+
+    setupEdgeAndDragScroll: function () {
+      var self = this;
+      var viewport = document.querySelector('.tv-content-viewport');
+      if (!viewport) return;
+
+      function getActiveScrollable() {
+        if (self.searchContainer && self.searchContainer.style.display !== 'none') {
+          return self.searchContainer;
+        }
+        return viewport;
+      }
+
+      // 1. Soporte universal para rueda del mouse (wheel)
+      viewport.addEventListener('wheel', function (e) {
+        var target = getActiveScrollable();
+        if (target) {
+          target.scrollTop += (e.deltaY > 0 ? 180 : -180);
+        }
+      }, false);
+
+      // 2. Auto-desplazamiento al acercar el puntero/mouse a los bordes de la pantalla (Edge Scrolling)
+      var edgeScrollTimer = null;
+      var edgeDirection = 0; // 1 = abajo, -1 = arriba
+
+      function startEdgeScroll(dir) {
+        if (edgeDirection === dir && edgeScrollTimer) return;
+        edgeDirection = dir;
+        clearInterval(edgeScrollTimer);
+        edgeScrollTimer = setInterval(function () {
+          var target = getActiveScrollable();
+          if (target) {
+            target.scrollTop += (edgeDirection * 16);
+          }
+        }, 22);
+      }
+
+      function stopEdgeScroll() {
+        if (edgeDirection !== 0 || edgeScrollTimer) {
+          edgeDirection = 0;
+          clearInterval(edgeScrollTimer);
+          edgeScrollTimer = null;
+        }
+      }
+
+      window.addEventListener('mousemove', function (e) {
+        var playerModal = document.getElementById('tv-player-modal');
+        var detailModal = document.getElementById('tv-detail-modal');
+        if ((playerModal && playerModal.style.display !== 'none') || (detailModal && detailModal.style.display !== 'none')) {
+          stopEdgeScroll();
+          return;
+        }
+
+        var h = window.innerHeight;
+        var y = e.clientY;
+
+        // Borde inferior (último 12% de la pantalla) -> Desplazar hacia abajo
+        if (y > h * 0.88) {
+          startEdgeScroll(1);
+        }
+        // Borde superior (entre 10% y 22% de la pantalla, justo debajo del banner) -> Desplazar hacia arriba
+        else if (y < h * 0.22 && y > 75) {
+          startEdgeScroll(-1);
+        }
+        else {
+          stopEdgeScroll();
+        }
+      }, false);
+
+      window.addEventListener('mouseleave', stopEdgeScroll, false);
+
+      // 3. Arrastre vertical con clic sostenido (Swipe vertical para mouse de TV)
+      var isMouseDown = false;
+      var startY = 0;
+      var startScrollTop = 0;
+
+      viewport.addEventListener('mousedown', function (e) {
+        if (e.target && e.target.closest && e.target.closest('.tv-card, .btn-page-scroll, .sidebar-item, .nav-tab, button, input')) {
+          return;
+        }
+        isMouseDown = true;
+        startY = e.clientY;
+        var target = getActiveScrollable();
+        startScrollTop = target ? target.scrollTop : 0;
+      }, false);
+
+      window.addEventListener('mousemove', function (e) {
+        if (!isMouseDown) return;
+        var target = getActiveScrollable();
+        if (target) {
+          var delta = e.clientY - startY;
+          if (Math.abs(delta) > 4) {
+            target.scrollTop = startScrollTop - delta;
+          }
+        }
+      }, false);
+
+      window.addEventListener('mouseup', function () {
+        isMouseDown = false;
+      }, false);
     },
 
     handleFocusSidebar: function (elem) {
@@ -316,7 +465,7 @@
 
       this.searchContainer.style.display = 'none';
       this.sectionsWrapper.style.display = 'block';
-      this.sectionsWrapper.style.transform = 'translateY(0px)';
+      if (viewport) viewport.scrollTop = 0;
       this.sectionsWrapper.innerHTML = '<div style="padding: 40px; font-size: 26px; color: #8890a0;">Cargando catálogo para la TV...</div>';
 
       var self = this;
@@ -636,7 +785,8 @@
           html += '  </div>';
           html += '</div>';
         }
-        this.sectionsWrapper.style.transform = 'translateY(0px)';
+        var vpReset = document.querySelector('.tv-content-viewport');
+        if (vpReset) vpReset.scrollTop = 0;
         this.sectionsWrapper.innerHTML = html;
         this.attachCardEvents();
         return;
@@ -731,7 +881,8 @@
         html = '<div style="padding: 40px; font-size: 24px; color: #7b8290;">No hay contenidos disponibles para este filtro.</div>';
       }
 
-      this.sectionsWrapper.style.transform = 'translateY(0px)';
+      var vpResetMain = document.querySelector('.tv-content-viewport');
+      if (vpResetMain) vpResetMain.scrollTop = 0;
       this.sectionsWrapper.innerHTML = html;
       this.attachCardEvents();
     },

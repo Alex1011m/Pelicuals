@@ -91,16 +91,36 @@
         }
       }
 
-      // 2. Scroll vertical si está dentro del contenedor de secciones
+      // 2. Scroll vertical en viewport nativo si está dentro del catálogo
+      var viewport = document.querySelector('.tv-content-viewport');
       var section = this.findParentWithClass(elem, 'content-row');
-      var sectionsWrapper = document.getElementById('tv-sections-wrapper');
-      if (section && sectionsWrapper) {
+      if (section && viewport) {
         var sectionTop = section.offsetTop;
-        sectionsWrapper.style.transform = 'translateY(-' + Math.max(0, sectionTop - 20) + 'px)';
-        sectionsWrapper.style.webkitTransform = 'translateY(-' + Math.max(0, sectionTop - 20) + 'px)';
-      } else if (this.findParentWithClass(elem, 'tv-header') && sectionsWrapper) {
-        sectionsWrapper.style.transform = 'translateY(0px)';
-        sectionsWrapper.style.webkitTransform = 'translateY(0px)';
+        var targetY = Math.max(0, sectionTop - 15);
+        if (typeof viewport.scrollTo === 'function') {
+          viewport.scrollTo({ top: targetY, behavior: 'smooth' });
+        } else {
+          viewport.scrollTop = targetY;
+        }
+      } else if (this.findParentWithClass(elem, 'tv-header') && viewport) {
+        if (typeof viewport.scrollTo === 'function') {
+          viewport.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          viewport.scrollTop = 0;
+        }
+      }
+
+      // 2b. Scroll vertical si está dentro de los resultados del buscador
+      var searchGrid = this.findParentWithClass(elem, 'search-results-grid');
+      var searchContainer = document.getElementById('tv-search-container');
+      if (searchGrid && searchContainer) {
+        var elTop = elem.offsetTop;
+        var targetSearchY = Math.max(0, elTop - 120);
+        if (typeof searchContainer.scrollTo === 'function') {
+          searchContainer.scrollTo({ top: targetSearchY, behavior: 'smooth' });
+        } else {
+          searchContainer.scrollTop = targetSearchY;
+        }
       }
 
       // 3. Scroll vertical si está dentro del menú lateral (Sidebar)
