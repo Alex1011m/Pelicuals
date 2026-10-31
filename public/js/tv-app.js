@@ -43,6 +43,24 @@
         }
       };
 
+      // Soporte para scroll vertical con rueda del mouse o gestos de cursor
+      var viewport = document.querySelector('.tv-content-viewport');
+      if (viewport) {
+        viewport.addEventListener('wheel', function (e) {
+          if (self.sectionsWrapper && self.sectionsWrapper.style.display !== 'none') {
+            var currentTransform = self.sectionsWrapper.style.transform || '';
+            var match = /translateY\(-?(\d+)px\)/.exec(currentTransform);
+            var currentY = match ? parseInt(match[1], 10) : 0;
+            var maxScroll = Math.max(0, self.sectionsWrapper.offsetHeight - viewport.offsetHeight + 100);
+            currentY += (e.deltaY > 0 ? 180 : -180);
+            if (currentY < 0) currentY = 0;
+            if (currentY > maxScroll) currentY = maxScroll;
+            self.sectionsWrapper.style.transform = 'translateY(-' + currentY + 'px)';
+            self.sectionsWrapper.style.webkitTransform = 'translateY(-' + currentY + 'px)';
+          }
+        }, false);
+      }
+
       this.setupTabs();
       this.setupSidebar();
       this.loadCategory('channels');
@@ -368,7 +386,13 @@
       for (var c = 0; c < categories.length; c++) {
         var cat = categories[c];
         html += '<div class="content-row">';
-        html += '  <div class="row-title">' + this.escapeHtml(cat.category) + '</div>';
+        html += '  <div class="row-header">';
+        html += '    <div class="row-title">' + this.escapeHtml(cat.category) + '</div>';
+        html += '    <div class="carousel-nav-arrows">';
+        html += '      <button class="carousel-nav-btn btn-arrow-prev focusable" tabindex="0" title="Desplazar a la izquierda">&#9668;</button>';
+        html += '      <button class="carousel-nav-btn btn-arrow-next focusable" tabindex="0" title="Desplazar a la derecha">&#9658;</button>';
+        html += '    </div>';
+        html += '  </div>';
         html += '  <div class="row-carousel">';
 
         for (var i = 0; i < cat.items.length; i++) {
@@ -432,7 +456,13 @@
 
         matchingCount++;
         html += '<div class="content-row">';
-        html += '  <div class="row-title">' + this.escapeHtml(row.title) + '</div>';
+        html += '  <div class="row-header">';
+        html += '    <div class="row-title">' + this.escapeHtml(row.title) + '</div>';
+        html += '    <div class="carousel-nav-arrows">';
+        html += '      <button class="carousel-nav-btn btn-arrow-prev focusable" tabindex="0" title="Desplazar a la izquierda">&#9668;</button>';
+        html += '      <button class="carousel-nav-btn btn-arrow-next focusable" tabindex="0" title="Desplazar a la derecha">&#9658;</button>';
+        html += '    </div>';
+        html += '  </div>';
         html += '  <div class="row-carousel">';
 
         for (var i = 0; i < row.items.length; i++) {
@@ -478,6 +508,11 @@
       var cards = document.querySelectorAll('.tv-card');
       for (var i = 0; i < cards.length; i++) {
         (function (card) {
+          // Hover / Mouseenter del cursor virtual de la TV: sincronizar foco y banner de vista previa
+          card.addEventListener('mouseenter', function () {
+            window.SpatialNav.focusElement(card);
+          }, false);
+
           card.addEventListener('click', function () {
             var title = card.getAttribute('data-title');
             var url = card.getAttribute('data-url');
@@ -496,6 +531,41 @@
         })(cards[i]);
       }
 
+      // Conectar botones de flechas (◄ / ►) para desplazamiento horizontal en cada carrusel
+      var rows = document.querySelectorAll('.content-row');
+      for (var r = 0; r < rows.length; r++) {
+        (function (rowEl) {
+          var prevBtn = rowEl.querySelector('.btn-arrow-prev');
+          var nextBtn = rowEl.querySelector('.btn-arrow-next');
+          var carousel = rowEl.querySelector('.row-carousel');
+          if (carousel) {
+            if (prevBtn) {
+              prevBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                if (typeof carousel.scrollBy === 'function') {
+                  carousel.scrollBy({ left: -600, behavior: 'smooth' });
+                } else {
+                  carousel.scrollLeft -= 600;
+                }
+              }, false);
+            }
+            if (nextBtn) {
+              nextBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                if (typeof carousel.scrollBy === 'function') {
+                  carousel.scrollBy({ left: 600, behavior: 'smooth' });
+                } else {
+                  carousel.scrollLeft += 600;
+                }
+              }, false);
+            }
+          }
+        })(rows[r]);
+      }
+
+      // Habilitar arrastre fluido con mouse/puntero sobre los carruseles
+      this.enableCarouselDrag();
+
       // Si no hay ningún foco activo en pantalla, enfocar el primer elemento disponible
       if (!window.SpatialNav.currentFocused) {
         var firstCard = document.querySelector('.tv-card.focusable');
@@ -505,10 +575,53 @@
       }
     },
 
+    enableCarouselDrag: function () {
+      var carousels = document.querySelectorAll('.row-carousel, .episodes-carousel');
+      for (var i = 0; i < carousels.length; i++) {
+        (function (carousel) {
+          if (carousel.getAttribute('data-drag-bound') === 'true') return;
+          carousel.setAttribute('data-drag-bound', 'true');
+
+          var isDown = false;
+          var startX = 0;
+          var scrollLeft = 0;
+
+          carousel.addEventListener('mousedown', function (e) {
+            isDown = true;
+            startX = e.pageX - carousel.offsetLeft;
+            scrollLeft = carousel.scrollLeft;
+          }, false);
+
+          carousel.addEventListener('mouseleave', function () {
+            isDown = false;
+          }, false);
+
+          carousel.addEventListener('mouseup', function () {
+            isDown = false;
+          }, false);
+
+          carousel.addEventListener('mousemove', function (e) {
+            if (!isDown) return;
+            e.preventDefault();
+            var x = e.pageX - carousel.offsetLeft;
+            var walk = (x - startX) * 1.5;
+            carousel.scrollLeft = scrollLeft - walk;
+          }, false);
+        })(carousels[i]);
+      }
+    },
+
     openDetailModal: function (kind, slug, provider) {
       var self = this;
       provider = provider || 'pelispedia';
       this.detailModal.style.display = 'block';
+
+      var cornerCloseBtn = document.getElementById('btn-detail-corner-close');
+      if (cornerCloseBtn) {
+        cornerCloseBtn.onclick = function () {
+          self.closeDetailModal();
+        };
+      }
 
       document.getElementById('detail-title').innerText = 'Cargando detalles...';
       document.getElementById('detail-overview').innerText = '';
@@ -653,6 +766,10 @@
         var epCards = epCarousel.querySelectorAll('.episode-card');
         for (var k = 0; k < epCards.length; k++) {
           (function (epCard) {
+            epCard.addEventListener('mouseenter', function () {
+              window.SpatialNav.focusElement(epCard);
+            }, false);
+
             epCard.addEventListener('click', function () {
               var epTitle = epCard.getAttribute('data-title');
               var playerUrl = epCard.getAttribute('data-player');
@@ -673,6 +790,8 @@
             }, false);
           })(epCards[k]);
         }
+
+        self.enableCarouselDrag();
 
         // Enfocar primer episodio
         if (epCards.length > 0) {

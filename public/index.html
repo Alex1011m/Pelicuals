@@ -22,7 +22,7 @@
     <!-- BANNER HERO DE INFORMACIÓN DINÁMICA DEL ELEMENTO ENFOCADO -->
     <div id="tv-preview-banner" class="tv-preview-banner">
       <div id="preview-banner-title" class="preview-banner-title">Smart TV Hub</div>
-      <div id="preview-banner-meta" class="preview-banner-meta">Navega con las flechas del control remoto</div>
+      <div id="preview-banner-meta" class="preview-banner-meta">Navega con flechas o con el cursor del control remoto</div>
       <div id="preview-banner-desc" class="preview-banner-desc">Selecciona canales en vivo, películas completas o series de PelisPedia.</div>
     </div>
 
@@ -131,6 +131,7 @@
 
   <!-- MODAL DE DETALLES DE PELÍCULA Y SERIE -->
   <div id="tv-detail-modal" class="tv-detail-modal">
+    <button id="btn-detail-corner-close" class="btn-detail-corner-close focusable" tabindex="0" title="Cerrar">&#10005; VOLVER</button>
     <div class="detail-header-row">
       <div id="detail-poster" class="detail-poster"></div>
       <div class="detail-meta">
@@ -154,6 +155,9 @@
 
   <!-- REPRODUCTOR DE VIDEO A PANTALLA COMPLETA -->
   <div id="tv-player-modal" class="tv-player-modal">
+    <!-- BOTÓN FLOTANTE CERRAR / VOLVER PARA MOUSE VIRTUAL -->
+    <button id="btn-player-close" class="btn-player-floating-close focusable" tabindex="0" title="Cerrar reproductor">&#10005; VOLVER</button>
+
     <video id="main-video" playsinline webkit-playsinline></video>
     
     <div id="player-buffering-indicator" class="player-buffering" style="display: none;">
@@ -165,7 +169,7 @@
 
     <div id="player-osd" class="player-osd">
       <div id="osd-title" class="osd-title">Reproduciendo video</div>
-      <div class="osd-progress-container">
+      <div class="osd-progress-container" id="osd-progress-container" title="Haz clic para saltar a este minuto">
         <div id="osd-progress-bar" class="osd-progress-bar"></div>
       </div>
       <div id="osd-time-display" class="osd-time-display">
@@ -174,6 +178,9 @@
           <span>--:--</span>
         </div>
         <div class="osd-controls-row">
+          <button id="btn-player-rewind" class="btn-player-action focusable" tabindex="0" title="Retroceder 10s">&#9668;&#9668; -10s</button>
+          <button id="btn-player-playpause" class="btn-player-action btn-player-playpause focusable" tabindex="0" title="Reproducir / Pausar">&#10074;&#10074;</button>
+          <button id="btn-player-forward" class="btn-player-action focusable" tabindex="0" title="Avanzar 10s">+10s &#9658;&#9658;</button>
           <button id="btn-audio-toggle" class="btn-player-action focusable" tabindex="0" style="display: none;">Audio: Estándar</button>
           <button id="btn-subs-toggle" class="btn-player-action focusable" tabindex="0" style="display: none;">Subs: Desactivados</button>
           <button id="btn-fullscreen-toggle" class="btn-fullscreen focusable" tabindex="0">Pantalla Completa (F)</button>

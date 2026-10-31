@@ -304,6 +304,8 @@ body {
   border-left: 4px solid #00e5ff;
 }
 
+.sidebar-item:hover,
+.sidebar-item:focus,
 .sidebar-item.focused {
   border-color: #00e5ff !important;
   background-color: #00e5ff !important;
@@ -313,11 +315,17 @@ body {
   transform: scale(1.03);
 }
 
+.sidebar-item:hover .sidebar-icon,
+.sidebar-item:hover .sidebar-label,
+.sidebar-item:focus .sidebar-icon,
+.sidebar-item:focus .sidebar-label,
 .sidebar-item.focused .sidebar-icon,
 .sidebar-item.focused .sidebar-label {
   color: #0a0e17 !important;
 }
 
+.sidebar-item:hover .sidebar-badge,
+.sidebar-item:focus .sidebar-badge,
 .sidebar-item.focused .sidebar-badge {
   background: #0a0e17;
   color: #00e5ff;
@@ -349,12 +357,76 @@ body {
   margin-bottom: 35px;
 }
 
+.row-header {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-right: 15px;
+}
+
 .row-title {
   font-size: 28px;
   font-weight: 600;
   color: #e5e9f0;
-  margin-bottom: 12px;
   padding-left: 4px;
+  margin-bottom: 0;
+}
+
+/* BOTONES DE FLECHA EN CABECERA DE CARRUSEL PARA MOUSE VIRTUAL */
+.carousel-nav-arrows {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 10px;
+}
+
+.carousel-nav-btn {
+  width: 44px;
+  height: 44px;
+  background: rgba(30, 34, 45, 0.95);
+  border: 2px solid #3b4252;
+  border-radius: 50%;
+  color: #00e5ff;
+  font-size: 18px;
+  font-weight: bold;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.carousel-nav-btn:hover,
+.carousel-nav-btn:focus,
+.carousel-nav-btn.focused {
+  background: #00e5ff !important;
+  color: #0d0e12 !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.8) !important;
+  -webkit-transform: scale(1.12);
+  transform: scale(1.12);
 }
 
 .row-carousel {
@@ -362,12 +434,31 @@ body {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  overflow-x: hidden;
+  overflow-x: auto;
   white-space: nowrap;
   padding: 8px 4px 18px 4px;
   position: relative;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #232733 transparent;
+}
+
+.row-carousel::-webkit-scrollbar {
+  height: 6px;
+}
+
+.row-carousel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.row-carousel::-webkit-scrollbar-thumb {
+  background: #232733;
+  border-radius: 3px;
+}
+
+.row-carousel::-webkit-scrollbar-thumb:hover {
+  background: #00e5ff;
 }
 
 /* TARJETAS DE CONTENIDO LANDSCAPE (CANALES Y YOUTUBE) */
@@ -483,8 +574,23 @@ body {
 }
 
 /* ========================================================= */
-/* ESTADO DE FOCO ACTIVO (CRÍTICO PARA CONTROL REMOTO D-PAD) */
+/* ESTADO DE FOCO Y HOVER ACTIVO (D-PAD + MOUSE VIRTUAL DE TV) */
 /* ========================================================= */
+.focusable,
+button,
+.tv-card,
+.sidebar-item,
+.nav-tab,
+.season-btn,
+.episode-card,
+.btn-tv,
+.carousel-nav-btn,
+.search-chip {
+  cursor: pointer !important;
+}
+
+.focusable:hover,
+.focusable:focus,
 .focusable.focused {
   border-color: #00e5ff !important;
   box-shadow: 0 0 16px rgba(0, 229, 255, 0.6) !important;
@@ -494,11 +600,24 @@ body {
   z-index: 10;
 }
 
+.tv-card:hover,
+.tv-card:focus,
+.tv-card.focused {
+  border-color: #00e5ff !important;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.75) !important;
+  background-color: #222736 !important;
+  -webkit-transform: scale(1.05);
+  transform: scale(1.05);
+  z-index: 10;
+}
+
+.nav-tab:hover,
+.nav-tab:focus,
 .nav-tab.focused {
   border-color: #00e5ff !important;
   color: #ffffff !important;
   background-color: #2b3040 !important;
-  box-shadow: 0 0 12px rgba(0, 229, 255, 0.5) !important;
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.5) !important;
   -webkit-transform: scale(1.05);
   transform: scale(1.05);
 }
@@ -551,11 +670,43 @@ body {
   display: block;
 }
 
+/* BOTÓN FLOTANTE CERRAR / VOLVER EN REPRODUCTOR (MOUSE VIRTUAL Y TÁCTIL) */
+.btn-player-floating-close {
+  position: absolute;
+  top: 25px;
+  left: 35px;
+  z-index: 1001;
+  background: rgba(13, 16, 24, 0.88);
+  border: 2px solid #00e5ff;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 12px 24px;
+  border-radius: 30px;
+  cursor: pointer !important;
+  outline: none;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.8), 0 0 12px rgba(0, 229, 255, 0.4);
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.btn-player-floating-close:hover,
+.btn-player-floating-close:focus,
+.btn-player-floating-close.focused {
+  background: #00e5ff !important;
+  color: #0d0e12 !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.9) !important;
+  -webkit-transform: scale(1.08);
+  transform: scale(1.08);
+}
+
 #main-video {
   width: 100%;
   height: 100%;
   background-color: #000000;
   object-fit: contain;
+  cursor: pointer;
 }
 
 /* ON-SCREEN DISPLAY (OSD) DEL REPRODUCTOR */
@@ -585,20 +736,30 @@ body {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
+/* CONTENEDOR DE BARRA DE PROGRESO CON ZONA DE CLIC AMPLIADA */
 .osd-progress-container {
   width: 100%;
-  height: 8px;
+  height: 14px;
   background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
+  border-radius: 7px;
   position: relative;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  cursor: pointer !important;
+  padding: 2px 0;
+  -webkit-transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease;
+}
+
+.osd-progress-container:hover {
+  background-color: rgba(255, 255, 255, 0.45);
 }
 
 .osd-progress-bar {
   height: 100%;
   background-color: #00e5ff;
-  border-radius: 4px;
+  border-radius: 7px;
   width: 0%;
+  pointer-events: none;
 }
 
 .osd-time-display {
@@ -626,6 +787,36 @@ body {
   display: none;
   padding: 4% 5%;
   overflow-y: auto;
+}
+
+/* BOTÓN DE ESQUINA PARA CERRAR EL DETALLE (MOUSE VIRTUAL) */
+.btn-detail-corner-close {
+  position: absolute;
+  top: 25px;
+  right: 35px;
+  z-index: 501;
+  background: rgba(26, 29, 38, 0.9);
+  border: 2px solid #3b4252;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 10px 24px;
+  border-radius: 25px;
+  cursor: pointer !important;
+  outline: none;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.btn-detail-corner-close:hover,
+.btn-detail-corner-close:focus,
+.btn-detail-corner-close.focused {
+  background: #ff4757 !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(255, 71, 87, 0.7) !important;
+  -webkit-transform: scale(1.08);
+  transform: scale(1.08);
 }
 
 .tv-detail-modal.active {
@@ -722,9 +913,20 @@ body {
   padding: 12px 28px;
   font-size: 22px;
   font-weight: 600;
-  cursor: pointer;
+  cursor: pointer !important;
   margin-right: 15px;
   outline: none;
+  -webkit-transition: all 0.15s ease;
+  transition: all 0.15s ease;
+}
+
+.btn-tv:hover,
+.btn-tv:focus,
+.btn-tv.focused {
+  border-color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.8) !important;
+  -webkit-transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .btn-tv-primary {
@@ -757,8 +959,19 @@ body {
   font-size: 18px;
   font-weight: 600;
   margin-right: 10px;
-  cursor: pointer;
+  cursor: pointer !important;
   outline: none;
+  -webkit-transition: all 0.15s ease;
+  transition: all 0.15s ease;
+}
+
+.season-btn:hover,
+.season-btn:focus,
+.season-btn.focused {
+  color: #ffffff !important;
+  border-color: #00e5ff !important;
+  background-color: #2b3040 !important;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.5) !important;
 }
 
 .season-btn.active {
@@ -772,9 +985,11 @@ body {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  overflow-x: hidden;
+  overflow-x: auto;
   white-space: nowrap;
   padding: 6px 2px 14px 2px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
 .episode-card {
@@ -787,8 +1002,21 @@ body {
   border-radius: 8px;
   border: 3px solid transparent;
   overflow: hidden;
-  cursor: pointer;
+  cursor: pointer !important;
   outline: none;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  -webkit-transition: border-color 0.15s ease, -webkit-transform 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.episode-card:hover,
+.episode-card:focus,
+.episode-card.focused {
+  border-color: #00e5ff !important;
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.6) !important;
+  -webkit-transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .episode-thumb {
@@ -975,25 +1203,40 @@ body {
   padding: 8px 16px;
   font-size: 17px;
   font-weight: 600;
-  cursor: pointer;
+  cursor: pointer !important;
   outline: none;
   margin-left: 12px;
-  -webkit-transition: border-color 0.15s ease, background-color 0.15s ease;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  -webkit-transition: border-color 0.15s ease, background-color 0.15s ease, -webkit-transform 0.15s ease;
+  transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+}
+
+.btn-player-playpause {
+  font-size: 20px !important;
+  padding: 8px 22px !important;
+  font-weight: 700;
+  border-color: #00e5ff !important;
 }
 
 .btn-player-action strong {
   color: #00e5ff;
 }
 
+.btn-player-action:hover,
+.btn-player-action:focus,
+.btn-fullscreen:hover,
+.btn-fullscreen:focus,
 .btn-player-action.focused,
 .btn-fullscreen.focused {
   border-color: #00e5ff !important;
   background-color: #00e5ff !important;
   color: #0d0e12 !important;
   box-shadow: 0 0 14px rgba(0, 229, 255, 0.7) !important;
+  -webkit-transform: scale(1.06);
+  transform: scale(1.06);
 }
 
+.btn-player-action:hover strong,
+.btn-player-action:focus strong,
 .btn-player-action.focused strong {
   color: #00363a !important;
 }

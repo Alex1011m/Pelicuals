@@ -11,7 +11,12 @@
     osd: null,
     titleEl: null,
     progressBar: null,
+    progressContainer: null,
     timeDisplay: null,
+    btnFloatingClose: null,
+    btnPlayPause: null,
+    btnRewind: null,
+    btnForward: null,
     btnFullscreen: null,
     btnAudio: null,
     btnSubs: null,
@@ -38,7 +43,12 @@
       this.osd = document.getElementById('player-osd');
       this.titleEl = document.getElementById('osd-title');
       this.progressBar = document.getElementById('osd-progress-bar');
+      this.progressContainer = document.getElementById('osd-progress-container');
       this.timeDisplay = document.getElementById('time-labels');
+      this.btnFloatingClose = document.getElementById('btn-player-close');
+      this.btnPlayPause = document.getElementById('btn-player-playpause');
+      this.btnRewind = document.getElementById('btn-player-rewind');
+      this.btnForward = document.getElementById('btn-player-forward');
       this.btnFullscreen = document.getElementById('btn-fullscreen-toggle');
       this.btnAudio = document.getElementById('btn-audio-toggle');
       this.btnSubs = document.getElementById('btn-subs-toggle');
@@ -60,6 +70,79 @@
       this.video.addEventListener('loadedmetadata', function () {
         self.detectNativeTracks();
       }, false);
+
+      this.video.addEventListener('play', function () {
+        self.updatePlayPauseButton(false);
+      }, false);
+
+      this.video.addEventListener('pause', function () {
+        self.updatePlayPauseButton(true);
+      }, false);
+
+      // Clic directo sobre el video para reproducir/pausar (Soporte Mouse Virtual de TV)
+      this.video.addEventListener('click', function (e) {
+        e.stopPropagation();
+        self.togglePlayPause();
+      }, false);
+
+      // Despertar OSD con cualquier movimiento del ratón
+      if (this.modal) {
+        this.modal.addEventListener('mousemove', function () {
+          self.showOSD();
+        }, false);
+      }
+
+      // Botón flotante para salir del reproductor
+      if (this.btnFloatingClose) {
+        this.btnFloatingClose.addEventListener('click', function (e) {
+          e.stopPropagation();
+          self.close();
+        }, false);
+      }
+
+      // Botones OSD de Play/Pausa, -10s y +10s
+      if (this.btnPlayPause) {
+        this.btnPlayPause.addEventListener('click', function (e) {
+          e.stopPropagation();
+          self.togglePlayPause();
+        }, false);
+      }
+
+      if (this.btnRewind) {
+        this.btnRewind.addEventListener('click', function (e) {
+          e.stopPropagation();
+          if (self.video) {
+            self.video.currentTime = Math.max(0, self.video.currentTime - 10);
+            self.showOSD();
+          }
+        }, false);
+      }
+
+      if (this.btnForward) {
+        this.btnForward.addEventListener('click', function (e) {
+          e.stopPropagation();
+          if (self.video && self.video.duration) {
+            self.video.currentTime = Math.min(self.video.duration, self.video.currentTime + 10);
+            self.showOSD();
+          }
+        }, false);
+      }
+
+      // Salto interactivo haciendo clic sobre la barra de progreso
+      if (this.progressContainer) {
+        this.progressContainer.addEventListener('click', function (e) {
+          e.stopPropagation();
+          if (!self.video || !self.video.duration) return;
+          var rect = self.progressContainer.getBoundingClientRect();
+          var clickX = e.clientX - rect.left;
+          var ratio = clickX / rect.width;
+          if (ratio < 0) ratio = 0;
+          if (ratio > 1) ratio = 1;
+          self.video.currentTime = ratio * self.video.duration;
+          self.updateProgress();
+          self.showOSD();
+        }, false);
+      }
 
       // Detección de carga y almacenamiento en búfer para evitar congelamientos ("pegarse")
       this.video.addEventListener('waiting', function () {
@@ -135,6 +218,22 @@
       }
     },
 
+    togglePlayPause: function () {
+      if (!this.video) return;
+      if (this.video.paused) {
+        this.safePlay(this.video);
+      } else {
+        this.video.pause();
+      }
+      this.showOSD();
+    },
+
+    updatePlayPauseButton: function (isPaused) {
+      if (this.btnPlayPause) {
+        this.btnPlayPause.innerHTML = isPaused ? '&#9658; PLAY' : '&#10074;&#10074; PAUSA';
+      }
+    },
+
     showBuffering: function (show, text) {
       if (!this.bufferingEl) {
         this.bufferingEl = document.getElementById('player-buffering-indicator');
@@ -191,6 +290,7 @@
       this.subtitleTracks = [];
       this.currentSubtitleTrack = -1;
       this.renderTrackButtons();
+      this.updatePlayPauseButton(false);
 
       var self = this;
       var video = this.video;
@@ -678,7 +778,9 @@
 
         case KEYS.UP:
           var targetBtn = null;
-          if (this.btnAudio && this.btnAudio.style.display !== 'none') {
+          if (this.btnPlayPause) {
+            targetBtn = this.btnPlayPause;
+          } else if (this.btnAudio && this.btnAudio.style.display !== 'none') {
             targetBtn = this.btnAudio;
           } else if (this.btnSubs && this.btnSubs.style.display !== 'none') {
             targetBtn = this.btnSubs;
