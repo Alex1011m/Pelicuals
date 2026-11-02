@@ -173,7 +173,7 @@
             try {
               self.video.currentTime += 0.1;
               self.safePlay(self.video);
-            } catch (e) {}
+            } catch (e) { }
           }
         }, 12000);
       }, false);
@@ -494,7 +494,7 @@
         try {
           this.video.currentTime = targetTime;
           this.showToast('Reanudando desde ' + this.formatTime(targetTime));
-        } catch (eSeek) {}
+        } catch (eSeek) { }
       }
     },
 
@@ -528,7 +528,7 @@
           delete map[key];
           localStorage.setItem('tv_watch_progress', JSON.stringify(map));
         }
-      } catch (e) {}
+      } catch (e) { }
     },
 
     safePlay: function (video) {
@@ -912,9 +912,17 @@
 
     updateProgress: function () {
       if (!this.video || !this.video.duration) {
-        this.progressBar.style.width = '100%';
-        if (this.timeDisplay) {
-          this.timeDisplay.innerHTML = '<span>EN VIVO</span><span>TRANSMISIÓN</span>';
+        var isLive = this.currentItemInfo && (this.currentItemInfo.provider === 'pluto' || this.currentItemInfo.isLive || this.currentItemInfo.kind === 'canal');
+        if (isLive) {
+          this.progressBar.style.width = '100%';
+          if (this.timeDisplay) {
+            this.timeDisplay.innerHTML = '<span>EN VIVO</span>';
+          }
+        } else {
+          this.progressBar.style.width = '0%';
+          if (this.timeDisplay) {
+            this.timeDisplay.innerHTML = '<span>00:00</span> / <span>--:--</span>';
+          }
         }
         return;
       }

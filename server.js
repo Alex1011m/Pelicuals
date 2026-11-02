@@ -14,6 +14,7 @@ process.on('uncaughtException', function (err) {
 var channelsHandler = require('./api/channels');
 var moviesHandler = require('./api/movies');
 var plutoStreamHandler = require('./api/pluto-stream');
+var videoStreamHandler = require('./api/video-stream');
 
 var PORT = process.env.PORT || 3000;
 var PUBLIC_DIR = path.join(__dirname, 'public');
@@ -83,6 +84,9 @@ var server = http.createServer(function (req, res) {
   }
   if (pathname === '/api/pluto-stream') {
     return plutoStreamHandler(req, res);
+  }
+  if (pathname === '/api/video-stream') {
+    return videoStreamHandler(req, res);
   }
   if (pathname === '/favicon.ico') {
     res.writeHead(204);
