@@ -91,6 +91,8 @@ module.exports = function (req, res) {
       res.status(200).json({
         status: 'ok',
         streamUrl: result.streamUrl,
+        backupUrl: result.backupUrl || null,
+        backups: result.backups || [],
         type: result.type || 'hls'
       });
     });

@@ -208,6 +208,19 @@
         if (!err || err.code === 1 /* MEDIA_ERR_ABORTED */) return;
 
         console.warn('Detalle del evento error en video nativo:', err.code, err.message, self.video.currentSrc);
+
+        // Recuperación automática con fuentes o servidores de respaldo
+        if (self.backups && self.backups.length > 0) {
+          var nextBackup = self.backups.shift();
+          console.warn('Fallo en stream nativo. Probando servidor de respaldo:', nextBackup);
+          self.showToast('Reconectando con servidor alternativo...');
+          self.currentStreamUrl = nextBackup;
+          self.video.src = nextBackup;
+          self.video.load();
+          self.safePlay(self.video);
+          return;
+        }
+
         self.hasFatalError = true;
         self.showBuffering(false);
         clearTimeout(self.stallTimer);
@@ -297,9 +310,25 @@
       this.onEndedCallback = onEndedCallback || null;
       this.lastSaveTime = Date.now();
 
+      // Guardar lista de servidores / variantes de respaldo
+      this.backups = [];
+      if (itemInfo && itemInfo.backups && itemInfo.backups.length > 0) {
+        this.backups = itemInfo.backups.slice(0);
+      } else if (itemInfo && itemInfo.backupUrl) {
+        this.backups = [itemInfo.backupUrl];
+      }
+
       this.lastFocusedElement = window.SpatialNav.currentFocused;
       this.titleEl.innerText = title || 'Reproduciendo contenido...';
       this.modal.style.display = 'block';
+
+      var isLive = this.currentItemInfo && (this.currentItemInfo.provider === 'pluto' || this.currentItemInfo.isLive || this.currentItemInfo.kind === 'canal');
+      if (this.progressBar) {
+        this.progressBar.style.width = isLive ? '100%' : '0%';
+      }
+      if (this.timeDisplay) {
+        this.timeDisplay.innerHTML = isLive ? '<span>EN VIVO</span>' : '<span>00:00</span> / <span>--:--</span>';
+      }
 
       // Mostrar indicador de carga inicial
       this.showBuffering(true, 'Cargando stream...');
@@ -334,27 +363,27 @@
 
             // Configuración óptima de búfer y reciclaje de memoria para Smart TVs (evita que se caiga por OOM)
             backBufferLength: 30, // ¡CRÍTICO!: Elimina segmentos ya vistos de más de 30s para no saturar la RAM de la TV
-            maxBufferLength: 20, // 20 segundos hacia adelante
-            maxMaxBufferLength: 40,
-            maxBufferSize: 25 * 1000 * 1000, // 25 MB máximo en memoria (ideal para TVs de 512MB RAM)
-            maxBufferHole: 0.8, // Salta micro-huecos de paquetes sin congelar la imagen
+            maxBufferLength: 30, // 30 segundos hacia adelante (suficiente para aguantar picos de red lentos)
+            maxMaxBufferLength: 60,
+            maxBufferSize: 30 * 1000 * 1000, // 30 MB máximo en memoria
+            maxBufferHole: 1.0, // Salta micro-huecos de paquetes sin congelar la imagen
 
             // Inicio rápido (inicia al instante con fragmento precargado)
             startLevel: -1,
             startFragPrefetch: true,
             abrEwmaDefaultEstimate: 1200000,
 
-            // Recuperación de red automática con reintentos
-            fragLoadingTimeOut: 20000,
-            fragLoadingMaxRetry: 6,
+            // Recuperación de red automática con reintentos amplios
+            fragLoadingTimeOut: 30000,
+            fragLoadingMaxRetry: 8,
             fragLoadingRetryDelay: 1000,
-            levelLoadingTimeOut: 15000,
-            levelLoadingMaxRetry: 4,
+            levelLoadingTimeOut: 25000,
+            levelLoadingMaxRetry: 6,
 
             // Anti-atasco por desincronización de timestamps o frames corruptos
             highBufferWatchdogPeriod: 2,
-            nudgeOffset: 0.1,
-            nudgeMaxRetry: 5,
+            nudgeOffset: 0.2,
+            nudgeMaxRetry: 10,
 
             renderTextTracksNatively: true
           });
@@ -393,8 +422,17 @@
                   var isManifestError = (data.details === 'manifestLoadError');
                   var isFatalHttp = (httpCode === 403 || httpCode === 401 || httpCode === 404);
 
-                  // Solo abortar si el manifiesto principal 404/403 o tras 5 reintentos seguidos fallidos
-                  if ((isManifestError && isFatalHttp) || self.networkRetryCount > 5) {
+                  // Solo abortar si el manifiesto principal 404/403 o tras 6 reintentos seguidos fallidos
+                  if ((isManifestError && isFatalHttp) || self.networkRetryCount > 6) {
+                    if (self.backups && self.backups.length > 0) {
+                      var altHls = self.backups.shift();
+                      console.warn('Fallo de red en HLS primario. Probando señal alternativa:', altHls);
+                      self.showToast('Conectando con señal alternativa...');
+                      self.networkRetryCount = 0;
+                      self.hlsInstance.loadSource(altHls);
+                      self.hlsInstance.startLoad();
+                      break;
+                    }
                     console.warn('Fallo permanente de red en HLS (' + data.details + ', HTTP ' + httpCode + '). Deteniendo.');
                     self.hasFatalError = true;
                     self.showBuffering(false);
@@ -432,6 +470,14 @@
                       self.hlsInstance.swapAudioCodec();
                     }
                     self.hlsInstance.recoverMediaError();
+                  } else if (self.backups && self.backups.length > 0) {
+                    // Si el stream master multicódec/multiaudio falla (Alien Earth), cambiar a variante directa
+                    var directHls = self.backups.shift();
+                    console.warn('Cambiando a variante HLS directa por desincronización multimedia:', directHls);
+                    self.showToast('Optimizando códec de video...');
+                    self.mediaErrorCount = 0;
+                    self.hlsInstance.loadSource(directHls);
+                    self.hlsInstance.startLoad();
                   } else {
                     console.warn('Error irrecuperable de códec multimedia');
                     self.hasFatalError = true;
@@ -441,6 +487,14 @@
                   }
                   break;
                 default:
+                  if (self.backups && self.backups.length > 0) {
+                    var defAlt = self.backups.shift();
+                    console.warn('Error en HLS (' + data.details + '). Probando respaldo:', defAlt);
+                    self.showToast('Cargando servidor alternativo...');
+                    self.hlsInstance.loadSource(defAlt);
+                    self.hlsInstance.startLoad();
+                    break;
+                  }
                   console.warn('Error irrecuperable en HLS:', data.details);
                   self.hasFatalError = true;
                   self.showBuffering(false);
@@ -451,9 +505,9 @@
                   break;
               }
             } else if (data.details === window.Hls.ErrorDetails.BUFFER_STALLED_ERROR) {
-              // El búfer se atascó brevemente: avanzar ligeramente
+              // El búfer se atascó brevemente: avanzar ligeramente para saltar micro-huecos de paquetes
               if (self.video && !self.video.paused && self.video.currentTime > 0.5) {
-                self.video.currentTime += 0.1;
+                self.video.currentTime += 0.2;
               }
             }
           });
@@ -911,7 +965,7 @@
     },
 
     updateProgress: function () {
-      if (!this.video || !this.video.duration) {
+      if (!this.video || !this.video.duration || this.video.duration === Infinity) {
         var isLive = this.currentItemInfo && (this.currentItemInfo.provider === 'pluto' || this.currentItemInfo.isLive || this.currentItemInfo.kind === 'canal');
         if (isLive) {
           this.progressBar.style.width = '100%';

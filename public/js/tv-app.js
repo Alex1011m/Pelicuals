@@ -1577,7 +1577,9 @@
                   slug: data.slug,
                   kind: data.kind,
                   provider: data.provider || 'pelispedia',
-                  poster: data.poster
+                  poster: data.poster,
+                  backupUrl: res.backupUrl || null,
+                  backups: res.backups || []
                 };
                 window.TVPlayer.play(data.title, res.streamUrl, res.type, startTime, movieInfo);
               } else {
@@ -1732,7 +1734,9 @@
                     slug: (self.currentSerieDetail ? self.currentSerieDetail.slug : '') + '-s' + seasonNum + 'e' + epIndex,
                     kind: 'serie',
                     provider: epProvider,
-                    poster: (self.currentSerieDetail ? self.currentSerieDetail.poster : '')
+                    poster: (self.currentSerieDetail ? self.currentSerieDetail.poster : ''),
+                    backupUrl: res2.backupUrl || null,
+                    backups: res2.backups || []
                   };
 
                   // Auto-reproducir siguiente episodio al terminar
