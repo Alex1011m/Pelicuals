@@ -163,7 +163,7 @@
       // Detección de carga y almacenamiento en búfer para evitar congelamientos ("pegarse")
       this.video.addEventListener('waiting', function () {
         if (self.hasFatalError) return;
-        self.showBuffering(true, 'Almacenando búfer...');
+        self.showBuffering(true, 'Cargando...');
         clearTimeout(self.stallTimer);
         // Si el video se queda esperando datos por más de 12 segundos, intentar un nudge suave
         self.stallTimer = setTimeout(function () {

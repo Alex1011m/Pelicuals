@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Smart TV Hub</title>
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#00e5ff">
+  <meta name="theme-color" content="#009d71">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="stylesheet" href="/css/tv.css">
@@ -13,21 +13,34 @@
 <body>
 
   <div class="tv-app-container">
-    <!-- ENCABEZADO Y PESTAÑAS PRINCIPALES -->
+    <!-- ENCABEZADO Y PESTAÑAS PRINCIPALES (ESTILO NETFLIX) -->
     <header class="tv-header">
-      <div class="tv-brand">SMART TV HUB</div>
+      <div class="tv-brand"><span class="brand-accent">SMART</span> TV HUB</div>
       <nav class="tv-nav-tabs">
         <button class="nav-tab focusable active-tab" data-category="channels" tabindex="0">Canales de TV</button>
         <button class="nav-tab focusable" data-category="movies" tabindex="0">Películas y Series</button>
         <button class="nav-tab focusable" data-category="search" tabindex="0">Buscar</button>
+        <button id="btn-open-personalize" class="nav-tab nav-tab-personalize focusable" tabindex="0" title="Personalizar recomendaciones">★ Para Ti</button>
       </nav>
     </header>
 
-    <!-- BANNER HERO DE INFORMACIÓN DINÁMICA DEL ELEMENTO ENFOCADO -->
+    <!-- BANNER HERO DE INFORMACIÓN DINÁMICA ESTILO NETFLIX -->
     <div id="tv-preview-banner" class="tv-preview-banner">
-      <div id="preview-banner-title" class="preview-banner-title">Smart TV Hub</div>
-      <div id="preview-banner-meta" class="preview-banner-meta">Navega con flechas o con el cursor del control remoto</div>
-      <div id="preview-banner-desc" class="preview-banner-desc">Selecciona canales en vivo, películas completas o series de PelisPedia.</div>
+      <div class="preview-banner-content">
+        <div class="preview-banner-top-tags">
+          <span class="preview-badge-brand">RECOMENDADO</span>
+          <span id="preview-banner-quality" class="preview-badge-quality">HD 1080p</span>
+        </div>
+        <div id="preview-banner-title" class="preview-banner-title">Smart TV Hub</div>
+        <div id="preview-banner-meta" class="preview-banner-meta">★ 8.5 • 2026 • Navega con el control o ratón virtual</div>
+        <div id="preview-banner-desc" class="preview-banner-desc">Cientos de películas, series completas, anime y canales en vivo optimizados para tu televisor.</div>
+        <div id="preview-banner-actions" class="preview-banner-actions">
+          <button id="btn-banner-play" class="btn-banner-action btn-banner-play focusable" tabindex="0">▶ VER AHORA</button>
+          <button id="btn-banner-info" class="btn-banner-action btn-banner-info focusable" tabindex="0">ⓘ MÁS INFO</button>
+          <button id="btn-banner-fav" class="btn-banner-action btn-banner-fav focusable" tabindex="0">☆ MI LISTA</button>
+        </div>
+      </div>
+      <div id="preview-banner-thumb" class="preview-banner-thumb"></div>
     </div>
 
     <!-- CUERPO PRINCIPAL CON MENÚ LATERAL Y VIEWPORT -->
@@ -200,6 +213,35 @@
         <span class="key-pill">ATR&Aacute;S / ESC</span> Volver / Colapsar
       </div>
     </footer>
+  </div>
+
+  <!-- MODAL DE ONBOARDING / PERSONALIZACIÓN INICIAL (ESTILO NETFLIX) -->
+  <div id="tv-onboarding-modal" class="tv-onboarding-modal" style="display: none;">
+    <div class="onboarding-overlay"></div>
+    <div class="onboarding-container">
+      <div class="onboarding-header">
+        <div class="onboarding-brand-pill">SMART TV HUB</div>
+        <h1 class="onboarding-title">¿Qué te gustaría ver?</h1>
+        <p class="onboarding-subtitle">Elige al menos <strong class="highlight-green">3 títulos</strong> que te llamen la atención para personalizar tus recomendaciones:</p>
+        <div class="onboarding-counter-row">
+          <span id="onboarding-counter" class="onboarding-counter-badge">0 de 3 seleccionados</span>
+          <span class="onboarding-hint">Navega con las flechas o usa el ratón virtual para seleccionar</span>
+        </div>
+      </div>
+
+      <div id="onboarding-grid" class="onboarding-grid">
+        <!-- Tarjetas dinámicas inyectadas desde JS -->
+      </div>
+
+      <div class="onboarding-footer">
+        <button id="btn-onboarding-continue" class="btn-onboarding-cta focusable disabled" tabindex="0">
+          CONTINUAR (0/3)
+        </button>
+        <button id="btn-onboarding-skip" class="btn-onboarding-skip focusable" tabindex="0">
+          Omitir y ver todo el catálogo
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- MODAL DE DETALLES DE PELÍCULA Y SERIE -->

@@ -10,19 +10,146 @@
     sectionsWrapper: null,
     searchContainer: null,
     detailModal: null,
+    onboardingModal: null,
     sidebar: null,
     sidebarExpanded: false,
     currentMovieFilter: 'all',
     cachedMovieRows: null,
     lastFocusedGridItem: null,
     currentSerieDetail: null,
+    currentPreviewItem: null,
     searchEventsBound: false,
     sidebarEventsBound: false,
+
+    curatedOnboardingList: [
+      {
+        title: 'Spider-Man: Un nuevo día',
+        slug: 'spider-man-un-nuevo-dia',
+        genres: ['accion', 'marvel', 'scifi', 'aventura'],
+        kind: 'movie',
+        rating: '8.8',
+        year: '2026',
+        tag: 'Acción / Marvel',
+        poster: 'https://image.tmdb.org/t/p/w342/fBFjaDWfNslvrs6bJjknmG27wOS.jpg'
+      },
+      {
+        title: 'Street Fighter',
+        slug: 'street-fighter',
+        genres: ['accion', 'aventura', 'videojuegos'],
+        kind: 'movie',
+        rating: '7.6',
+        year: '2026',
+        tag: 'Acción / Peleas',
+        poster: 'https://image.tmdb.org/t/p/w342/j9Ukn1hRqSyv5qhHgDHd1s1Dhsg.jpg'
+      },
+      {
+        title: 'Cyberpunk Edgerunners 2',
+        slug: '6435/cyberpunk-edgerunners-2',
+        genres: ['anime', 'scifi', 'accion'],
+        kind: 'serie',
+        provider: 'tyanime',
+        rating: '8.9',
+        year: 'Anime',
+        tag: 'Anime HD',
+        poster: 'https://tyanime.net/covers/6435.jpg'
+      },
+      {
+        title: 'Los Simpson',
+        slug: 'los-simpson',
+        genres: ['comedia', 'animacion', 'humor'],
+        kind: 'serie',
+        rating: '8.7',
+        year: 'Series',
+        tag: 'Comedia / Animación',
+        poster: 'https://image.tmdb.org/t/p/w342/mpizUstxJmMbgMwc8MDEXQ6kXTP.jpg'
+      },
+      {
+        title: 'Los Expedientes Secretos X',
+        slug: 'los-expedientes-secretos-x',
+        genres: ['scifi', 'misterio', 'terror', 'series'],
+        kind: 'serie',
+        rating: '8.6',
+        year: 'Series',
+        tag: 'Misterio / Ciencia Ficción',
+        poster: 'https://image.tmdb.org/t/p/w342/73FcOklRmfmf76WflkeVTO1MAwJ.jpg'
+      },
+      {
+        title: 'Obsesión',
+        slug: 'obsesion',
+        genres: ['terror', 'suspenso', 'misterio'],
+        kind: 'movie',
+        rating: '7.8',
+        year: '2026',
+        tag: 'Terror / Suspenso',
+        poster: 'https://image.tmdb.org/t/p/w342/rmCkNtzYR2xTOO3ZXmIqB5zgYdE.jpg'
+      },
+      {
+        title: 'Padre de Familia',
+        slug: 'padre-de-familia',
+        genres: ['comedia', 'humor', 'animacion'],
+        kind: 'serie',
+        rating: '8.2',
+        year: 'Series',
+        tag: 'Humor / Adultos',
+        poster: 'https://image.tmdb.org/t/p/w342/oalgdH3vglKvg1SB4OaMyoJ29sx.jpg'
+      },
+      {
+        title: 'Anatomía según Grey',
+        slug: 'anatomia-segun-grey',
+        genres: ['drama', 'romance', 'series'],
+        kind: 'serie',
+        rating: '8.1',
+        year: 'Series',
+        tag: 'Drama / Romance',
+        poster: 'https://image.tmdb.org/t/p/w342/zOHJKejyjmfu32PdMlXGZKyy3fq.jpg'
+      },
+      {
+        title: 'Scorpion',
+        slug: 'scorpion',
+        genres: ['crimen', 'accion', 'suspenso'],
+        kind: 'serie',
+        rating: '7.9',
+        year: 'Series',
+        tag: 'Crimen / Suspenso',
+        poster: 'https://image.tmdb.org/t/p/w342/k1Edm68SE8JeOzyTafZnTOOuLTx.jpg'
+      },
+      {
+        title: 'Jackass: La última y nos vamos',
+        slug: 'jackass-la-ultima-y-nos-vamos',
+        genres: ['comedia', 'humor', 'documental'],
+        kind: 'movie',
+        rating: '7.4',
+        year: '2022',
+        tag: 'Comedia / Locuras',
+        poster: 'https://image.tmdb.org/t/p/w342/15Hs6RG2V4zOEJKi8zRazYqQ5PQ.jpg'
+      },
+      {
+        title: 'La Noche de los Muertos Vivientes',
+        slug: 'la-noche-de-los-muertos-vivientes',
+        genres: ['terror', 'clasicos', 'cine clasico'],
+        kind: 'movie',
+        rating: '8.0',
+        year: '1968',
+        tag: 'Cine Clásico / Culto',
+        poster: 'https://images.unsplash.com/photo-1509281373149-e957c6296406?w=400&q=80'
+      },
+      {
+        title: 'La 8ª Noche (WWE & Combate)',
+        slug: 'la-8-noche',
+        genres: ['wwe', 'deportes', 'accion'],
+        kind: 'movie',
+        rating: '7.5',
+        year: '2026',
+        tag: 'Deportes / Combate',
+        poster: 'https://image.tmdb.org/t/p/w342/dPR5pAL8LjoO8q4rQ7knhzu0TjO.jpg'
+      }
+    ],
 
     init: function () {
       this.sectionsWrapper = document.getElementById('tv-sections-wrapper');
       this.searchContainer = document.getElementById('tv-search-container');
       this.detailModal = document.getElementById('tv-detail-modal');
+      this.onboardingModal = document.getElementById('tv-onboarding-modal');
       this.sidebar = document.getElementById('tv-sidebar');
 
       // Inicializar submódulos
@@ -36,7 +163,9 @@
       };
 
       window.onBackKey = function () {
-        if (self.detailModal && self.detailModal.style.display === 'block') {
+        if (self.onboardingModal && self.onboardingModal.style.display !== 'none') {
+          self.closeOnboardingModal();
+        } else if (self.detailModal && self.detailModal.style.display === 'block') {
           self.closeDetailModal();
         } else if (self.sidebarExpanded) {
           self.collapseSidebar();
@@ -49,8 +178,21 @@
 
       this.setupTabs();
       this.setupSidebar();
+      this.setupBannerActions();
       this.updateFavoritesBadge();
       this.loadCategory('channels');
+
+      // Si es la primera vez que entra, desplegar el onboarding estilo Netflix para elegir 3 títulos
+      var onboardingDone = false;
+      try {
+        onboardingDone = localStorage.getItem('tv_onboarding_done') === 'true';
+      } catch (e) {}
+
+      if (!onboardingDone) {
+        setTimeout(function () {
+          self.showOnboardingModal();
+        }, 350);
+      }
     },
 
     setupPageScrollControls: function () {
@@ -314,11 +456,49 @@
       }
     },
 
+    setupBannerActions: function () {
+      var self = this;
+      var btnPlay = document.getElementById('btn-banner-play');
+      var btnInfo = document.getElementById('btn-banner-info');
+      var btnFav = document.getElementById('btn-banner-fav');
+
+      if (btnPlay) {
+        btnPlay.addEventListener('click', function () {
+          if (!self.currentPreviewItem) return;
+          if (self.currentPreviewItem.type === 'pelispedia') {
+            self.openDetailModal(self.currentPreviewItem.kind, self.currentPreviewItem.slug, self.currentPreviewItem.provider);
+          } else if (self.currentPreviewItem.url) {
+            window.TVPlayer.play(self.currentPreviewItem.title, self.currentPreviewItem.url, self.currentPreviewItem.type);
+          }
+        }, false);
+      }
+
+      if (btnInfo) {
+        btnInfo.addEventListener('click', function () {
+          if (!self.currentPreviewItem) return;
+          if (self.currentPreviewItem.type === 'pelispedia') {
+            self.openDetailModal(self.currentPreviewItem.kind, self.currentPreviewItem.slug, self.currentPreviewItem.provider);
+          }
+        }, false);
+      }
+
+      if (btnFav) {
+        btnFav.addEventListener('click', function () {
+          if (!self.currentPreviewItem) return;
+          var isFav = self.toggleFavorite(self.currentPreviewItem);
+          btnFav.innerHTML = isFav ? '★ EN MI LISTA' : '☆ MI LISTA';
+        }, false);
+      }
+    },
+
     updatePreviewBanner: function (elem) {
       if (!elem) return;
       var titleEl = document.getElementById('preview-banner-title');
       var metaEl = document.getElementById('preview-banner-meta');
       var descEl = document.getElementById('preview-banner-desc');
+      var thumbEl = document.getElementById('preview-banner-thumb');
+      var favBtn = document.getElementById('btn-banner-fav');
+      var qualityEl = document.getElementById('preview-banner-quality');
       if (!titleEl || !metaEl || !descEl) return;
 
       if (window.SpatialNav.hasClass(elem, 'sidebar-item')) {
@@ -327,18 +507,66 @@
         titleEl.innerText = 'Filtro: ' + labelText;
         metaEl.innerText = 'Menú Lateral • Películas, Series y Anime';
         descEl.innerText = 'Presiona OK o la Flecha Derecha para ver y explorar los títulos de esta categoría.';
+        if (thumbEl) thumbEl.style.display = 'none';
       } else if (window.SpatialNav.hasClass(elem, 'tv-card')) {
         var title = elem.getAttribute('data-title') || '';
         var meta = elem.getAttribute('data-meta') || '';
         var overview = elem.getAttribute('data-overview') || '';
+        var slug = elem.getAttribute('data-slug') || '';
+        var kind = elem.getAttribute('data-kind') || '';
+        var provider = elem.getAttribute('data-provider') || '';
+        var url = elem.getAttribute('data-url') || '';
+        var type = elem.getAttribute('data-type') || '';
+
+        var thumbUrl = '';
+        var cardThumb = elem.querySelector('.card-thumb');
+        if (cardThumb && cardThumb.style.backgroundImage) {
+          var bgMatch = cardThumb.style.backgroundImage.match(/url\(["']?([^"']+)["']?\)/);
+          if (bgMatch && bgMatch[1]) thumbUrl = bgMatch[1];
+        }
 
         titleEl.innerText = title;
         metaEl.innerText = meta;
         descEl.innerText = overview || 'Presiona OK para ver detalles y reproducir a pantalla completa.';
+
+        if (thumbEl) {
+          if (thumbUrl) {
+            thumbEl.style.display = 'block';
+            thumbEl.style.backgroundImage = 'url("' + thumbUrl + '")';
+          } else {
+            thumbEl.style.display = 'none';
+          }
+        }
+
+        var isCam = meta.indexOf('CINE') !== -1 || meta.indexOf('CAM') !== -1;
+        if (qualityEl) {
+          qualityEl.innerText = isCam ? 'CINE (CAM)' : 'HD 1080p';
+          qualityEl.style.color = isCam ? '#ff9800' : '#e0e8ff';
+          qualityEl.style.borderColor = isCam ? '#ff9800' : 'rgba(13, 52, 186, 0.7)';
+        }
+
+        this.currentPreviewItem = {
+          title: title,
+          meta: meta,
+          overview: overview,
+          slug: slug,
+          kind: kind,
+          provider: provider,
+          url: url,
+          type: type,
+          poster: thumbUrl,
+          thumb: thumbUrl
+        };
+
+        if (favBtn && slug) {
+          var isFav = this.isFavorite(slug);
+          favBtn.innerHTML = isFav ? '★ EN MI LISTA' : '☆ MI LISTA';
+        }
       } else if (window.SpatialNav.hasClass(elem, 'nav-tab')) {
         titleEl.innerText = 'Smart TV Hub';
         metaEl.innerText = 'Sección: ' + elem.innerText;
         descEl.innerText = 'Usa las flechas Abajo y Derecha en el mando a distancia para explorar los contenidos.';
+        if (thumbEl) thumbEl.style.display = 'none';
       }
     },
 
@@ -417,6 +645,10 @@
       for (var i = 0; i < tabs.length; i++) {
         (function (tab) {
           tab.addEventListener('click', function () {
+            if (tab.id === 'btn-open-personalize') {
+              self.showOnboardingModal();
+              return;
+            }
             for (var j = 0; j < tabs.length; j++) {
               window.SpatialNav.removeClass(tabs[j], 'active-tab');
             }
@@ -559,7 +791,7 @@
     performSearch: function (query) {
       var self = this;
       var resultsWrapper = document.getElementById('search-results-wrapper');
-      resultsWrapper.innerHTML = '<div style="padding: 30px; font-size: 24px; color: #00e5ff;">Buscando "' + this.escapeHtml(query) + '" en Películas, Series y Canales en Vivo...</div>';
+      resultsWrapper.innerHTML = '<div style="padding: 30px; font-size: 24px; color: #009d71;">Buscando "' + this.escapeHtml(query) + '" en Películas, Series y Canales en Vivo...</div>';
 
       function searchChannels(q) {
         var matches = [];
@@ -743,6 +975,222 @@
       return true;
     },
 
+    getUserPreferences: function () {
+      try {
+        var raw = localStorage.getItem('tv_user_preferences');
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        return null;
+      }
+    },
+
+    getPersonalizedRecommendations: function (rows, userPrefs) {
+      if (!rows || !userPrefs || !userPrefs.genres) return [];
+      var targetGenres = userPrefs.genres;
+      var scored = [];
+      var seenSlugs = {};
+
+      if (userPrefs.selectedSlugs) {
+        for (var s = 0; s < userPrefs.selectedSlugs.length; s++) {
+          seenSlugs[userPrefs.selectedSlugs[s]] = true;
+        }
+      }
+
+      for (var r = 0; r < rows.length; r++) {
+        var row = rows[r];
+        var rowTitleLow = (row.title || '').toLowerCase();
+        var items = row.items || [];
+
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          if (!item.slug || seenSlugs[item.slug]) continue;
+
+          var itemTitleLow = (item.title || '').toLowerCase();
+          var itemDescLow = (item.overview || '').toLowerCase();
+          var score = 0;
+
+          for (var g = 0; g < targetGenres.length; g++) {
+            var gen = targetGenres[g].toLowerCase();
+            if (rowTitleLow.indexOf(gen) !== -1) score += 3;
+            if (itemTitleLow.indexOf(gen) !== -1) score += 2;
+            if (itemDescLow.indexOf(gen) !== -1) score += 1;
+          }
+
+          if (score > 0) {
+            seenSlugs[item.slug] = true;
+            var numRating = parseFloat(item.rating) || 7.0;
+            scored.push({
+              score: score * 10 + numRating,
+              item: item
+            });
+          }
+        }
+      }
+
+      scored.sort(function (a, b) {
+        return b.score - a.score;
+      });
+
+      var result = [];
+      for (var k = 0; k < Math.min(scored.length, 20); k++) {
+        result.push(scored[k].item);
+      }
+      return result;
+    },
+
+    showOnboardingModal: function () {
+      var self = this;
+      if (!this.onboardingModal) {
+        this.onboardingModal = document.getElementById('tv-onboarding-modal');
+      }
+      if (!this.onboardingModal) return;
+
+      var grid = document.getElementById('onboarding-grid');
+      var counterEl = document.getElementById('onboarding-counter');
+      var btnContinue = document.getElementById('btn-onboarding-continue');
+      var btnSkip = document.getElementById('btn-onboarding-skip');
+
+      var existingPrefs = this.getUserPreferences();
+      var selectedMap = {};
+      if (existingPrefs && existingPrefs.selectedSlugs) {
+        for (var s = 0; s < existingPrefs.selectedSlugs.length; s++) {
+          selectedMap[existingPrefs.selectedSlugs[s]] = true;
+        }
+      }
+
+      function getSelectedCount() {
+        return Object.keys(selectedMap).length;
+      }
+
+      function updateUI() {
+        var count = getSelectedCount();
+        if (counterEl) {
+          counterEl.innerText = count + ' de 3 seleccionados' + (count >= 3 ? ' ✓' : '');
+          if (count >= 3) {
+            window.SpatialNav.addClass(counterEl, 'ready');
+          } else {
+            window.SpatialNav.removeClass(counterEl, 'ready');
+          }
+        }
+        if (btnContinue) {
+          btnContinue.innerText = count >= 3 ? 'CONTINUAR AHORA (' + count + ')' : 'CONTINUAR (' + count + '/3)';
+          if (count >= 3) {
+            window.SpatialNav.removeClass(btnContinue, 'disabled');
+          } else {
+            window.SpatialNav.addClass(btnContinue, 'disabled');
+          }
+        }
+      }
+
+      var html = '';
+      for (var i = 0; i < this.curatedOnboardingList.length; i++) {
+        var item = this.curatedOnboardingList[i];
+        var isSelected = !!selectedMap[item.slug];
+        html += '<div class="onboarding-card focusable' + (isSelected ? ' is-selected' : '') + '" ';
+        html += '     tabindex="0" ';
+        html += '     data-slug="' + self.escapeHtml(item.slug) + '" ';
+        html += '     style="background-image: url(\'' + self.escapeHtml(item.poster) + '\');">';
+        html += '  <div class="onboarding-card-info">';
+        html += '    <div class="onboarding-card-title">' + self.escapeHtml(item.title) + '</div>';
+        html += '    <div class="onboarding-card-tag">' + self.escapeHtml(item.tag || 'Popular') + '</div>';
+        html += '  </div>';
+        html += '</div>';
+      }
+      grid.innerHTML = html;
+      updateUI();
+
+      var cards = grid.querySelectorAll('.onboarding-card');
+      for (var c = 0; c < cards.length; c++) {
+        (function (card) {
+          card.addEventListener('mouseenter', function () {
+            window.SpatialNav.focusElement(card);
+          }, false);
+
+          card.addEventListener('click', function () {
+            var slug = card.getAttribute('data-slug');
+            if (selectedMap[slug]) {
+              delete selectedMap[slug];
+              window.SpatialNav.removeClass(card, 'is-selected');
+            } else {
+              selectedMap[slug] = true;
+              window.SpatialNav.addClass(card, 'is-selected');
+            }
+            updateUI();
+          }, false);
+        })(cards[c]);
+      }
+
+      btnContinue.onclick = function () {
+        var count = getSelectedCount();
+        if (count < 3) return;
+
+        var selectedSlugs = Object.keys(selectedMap);
+        var chosenGenres = {};
+        for (var j = 0; j < self.curatedOnboardingList.length; j++) {
+          var candidate = self.curatedOnboardingList[j];
+          if (selectedMap[candidate.slug]) {
+            for (var g = 0; g < candidate.genres.length; g++) {
+              chosenGenres[candidate.genres[g]] = true;
+            }
+          }
+        }
+
+        var prefs = {
+          completed: true,
+          selectedSlugs: selectedSlugs,
+          genres: Object.keys(chosenGenres),
+          savedAt: Date.now()
+        };
+
+        try {
+          localStorage.setItem('tv_user_preferences', JSON.stringify(prefs));
+          localStorage.setItem('tv_onboarding_done', 'true');
+        } catch (e) {}
+
+        self.onboardingModal.style.display = 'none';
+
+        if (self.currentCategory === 'movies' && self.cachedMovieRows) {
+          self.renderMovieRows(self.cachedMovieRows, self.currentMovieFilter);
+        } else {
+          var tabs = document.querySelectorAll('.nav-tab');
+          for (var t = 0; t < tabs.length; t++) {
+            if (tabs[t].getAttribute('data-category') === 'movies') {
+              window.SpatialNav.addClass(tabs[t], 'active-tab');
+            } else {
+              window.SpatialNav.removeClass(tabs[t], 'active-tab');
+            }
+          }
+          self.loadCategory('movies');
+        }
+      };
+
+      btnSkip.onclick = function () {
+        try {
+          localStorage.setItem('tv_onboarding_done', 'true');
+        } catch (e) {}
+        self.onboardingModal.style.display = 'none';
+        var firstTab = document.querySelector('.nav-tab.active-tab') || document.querySelector('.nav-tab');
+        if (firstTab) window.SpatialNav.focusElement(firstTab);
+      };
+
+      this.onboardingModal.style.display = 'flex';
+
+      var firstCard = grid.querySelector('.onboarding-card');
+      if (firstCard) {
+        window.SpatialNav.focusElement(firstCard);
+      }
+    },
+
+    closeOnboardingModal: function () {
+      if (this.onboardingModal) {
+        this.onboardingModal.style.display = 'none';
+      }
+      var firstTab = document.querySelector('.nav-tab.active-tab') || document.querySelector('.nav-tab');
+      if (firstTab) {
+        window.SpatialNav.focusElement(firstTab);
+      }
+    },
+
     renderMovieRows: function (rows, filter) {
       filter = filter || this.currentMovieFilter || 'all';
       var html = '';
@@ -752,7 +1200,7 @@
       if (filter === 'favorites') {
         var favItems = this.getFavorites();
         if (favItems.length === 0) {
-          html = '<div style="padding: 40px; font-size: 24px; color: #7b8290;">Aún no has agregado títulos a Favoritos.<br><span style="font-size: 18px; color: #00e5ff;">Entra a cualquier película o serie y pulsa "☆ AGREGAR A FAVORITOS".</span></div>';
+          html = '<div style="padding: 40px; font-size: 24px; color: #7b8290;">Aún no has agregado títulos a Favoritos.<br><span style="font-size: 18px; color: #009d71;">Entra a cualquier película o serie y pulsa "☆ AGREGAR A FAVORITOS".</span></div>';
         } else {
           html += '<div class="content-row">';
           html += '  <div class="row-header">';
@@ -790,6 +1238,51 @@
         this.sectionsWrapper.innerHTML = html;
         this.attachCardEvents();
         return;
+      }
+
+      // 1. Fila "★ Recomendado para ti (Según tus gustos)" (ESTILO NETFLIX)
+      if (filter === 'all') {
+        var userPrefs = this.getUserPreferences();
+        if (userPrefs && userPrefs.genres && userPrefs.genres.length > 0) {
+          var recItems = this.getPersonalizedRecommendations(rows, userPrefs);
+          if (recItems.length > 0) {
+            html += '<div class="content-row recommended-for-you-row">';
+            html += '  <div class="row-header">';
+            html += '    <div class="row-title" style="color: #009d71;">★ Recomendado para ti (según tus gustos)</div>';
+            html += '    <div class="carousel-nav-arrows">';
+            html += '      <button class="carousel-nav-btn btn-arrow-prev focusable" tabindex="0" title="Desplazar a la izquierda">&#9668;</button>';
+            html += '      <button class="carousel-nav-btn btn-arrow-next focusable" tabindex="0" title="Desplazar a la derecha">&#9658;</button>';
+            html += '    </div>';
+            html += '  </div>';
+            html += '  <div class="row-carousel">';
+            for (var rec = 0; rec < recItems.length; rec++) {
+              var rItem = recItems[rec];
+              var qInfoR = rItem.qualityInfo || { isCam: false, badge: 'HD 1080p' };
+              var bClassR = qInfoR.isCam ? 'badge-cam' : 'badge-hd';
+              var bTextR = qInfoR.badge;
+              var mTextR = 'PARA TI • ★ ' + (rItem.rating || '8.0') + ' • ' + (rItem.year || '2026');
+
+              html += '    <div class="tv-card tv-card-poster focusable" tabindex="0" ';
+              html += '         data-title="' + this.escapeHtml(rItem.title) + '" ';
+              html += '         data-meta="' + this.escapeHtml(mTextR) + '" ';
+              html += '         data-overview="' + this.escapeHtml((qInfoR.notice ? qInfoR.notice + ' | ' : '') + (rItem.overview || '')) + '" ';
+              html += '         data-slug="' + this.escapeHtml(rItem.slug) + '" ';
+              html += '         data-kind="' + this.escapeHtml(rItem.kind || 'movie') + '" ';
+              html += '         data-provider="' + this.escapeHtml(rItem.provider || 'pelispedia') + '" ';
+              html += '         data-type="pelispedia">';
+              html += '      <div class="card-thumb" style="background-image: url(\'' + this.escapeHtml(rItem.poster) + '\');">';
+              html += '        <span class="card-badge ' + bClassR + '">★ PARA TI</span>';
+              html += '      </div>';
+              html += '      <div class="card-info">';
+              html += '        <div class="card-title">' + this.escapeHtml(rItem.title) + '</div>';
+              html += '        <div class="card-subtitle">★ ' + this.escapeHtml(rItem.rating || '8.0') + ' • ' + this.escapeHtml(rItem.year || '') + '</div>';
+              html += '      </div>';
+              html += '    </div>';
+            }
+            html += '  </div>';
+            html += '</div>';
+          }
+        }
       }
 
       // 2. Fila "Continuar Viendo" en la vista general (filter === 'all')

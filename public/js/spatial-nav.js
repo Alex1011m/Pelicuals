@@ -41,6 +41,34 @@
     },
 
     getFocusableElements: function () {
+      // 1. Si el modal de Onboarding / Personalización está activo, restringir foco al modal
+      var onboarding = document.getElementById('tv-onboarding-modal');
+      if (onboarding && onboarding.style.display !== 'none' && window.getComputedStyle(onboarding).display !== 'none') {
+        var obElements = onboarding.querySelectorAll('.focusable');
+        var obVisible = [];
+        for (var o = 0; o < obElements.length; o++) {
+          var oEl = obElements[o];
+          if (oEl.offsetWidth > 0 && oEl.offsetHeight > 0 && window.getComputedStyle(oEl).display !== 'none') {
+            obVisible.push(oEl);
+          }
+        }
+        return obVisible;
+      }
+
+      // 2. Si el modal de detalles está activo, restringir foco al modal
+      var detail = document.getElementById('tv-detail-modal');
+      if (detail && detail.style.display !== 'none' && window.getComputedStyle(detail).display !== 'none') {
+        var dtElements = detail.querySelectorAll('.focusable');
+        var dtVisible = [];
+        for (var d = 0; d < dtElements.length; d++) {
+          var dEl = dtElements[d];
+          if (dEl.offsetWidth > 0 && dEl.offsetHeight > 0 && window.getComputedStyle(dEl).display !== 'none') {
+            dtVisible.push(dEl);
+          }
+        }
+        return dtVisible;
+      }
+
       var elements = document.querySelectorAll('.focusable');
       var visible = [];
       for (var i = 0; i < elements.length; i++) {
@@ -135,6 +163,21 @@
           sidebarScroll.scrollTop = Math.max(0, itemTop - 30);
         } else if (itemTop + itemHeight > scrollTop + containerHeight - 30) {
           sidebarScroll.scrollTop = itemTop + itemHeight - containerHeight + 40;
+        }
+      }
+
+      // 4. Scroll vertical si está dentro del grid de Onboarding / Personalización
+      var onboardingGrid = this.findParentWithClass(elem, 'onboarding-grid');
+      if (onboardingGrid) {
+        var obTop = elem.offsetTop;
+        var obHeight = elem.offsetHeight;
+        var obContainerHeight = onboardingGrid.offsetHeight;
+        var obScrollTop = onboardingGrid.scrollTop;
+
+        if (obTop < obScrollTop + 30) {
+          onboardingGrid.scrollTop = Math.max(0, obTop - 30);
+        } else if (obTop + obHeight > obScrollTop + obContainerHeight - 30) {
+          onboardingGrid.scrollTop = obTop + obHeight - obContainerHeight + 50;
         }
       }
     },
