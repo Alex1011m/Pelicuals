@@ -468,7 +468,16 @@
           if (self.currentPreviewItem.type === 'pelispedia') {
             self.openDetailModal(self.currentPreviewItem.kind, self.currentPreviewItem.slug, self.currentPreviewItem.provider);
           } else if (self.currentPreviewItem.url) {
-            window.TVPlayer.play(self.currentPreviewItem.title, self.currentPreviewItem.url, self.currentPreviewItem.type);
+            var isLiveBanner = (self.currentPreviewItem.kind === 'canal') || (self.currentPreviewItem.provider === 'pluto') || (self.currentPreviewItem.provider === 'channels') || (self.currentPreviewItem.provider === 'iptv') || (self.currentCategory === 'channels');
+            var bannerPlayInfo = {
+              title: self.currentPreviewItem.title,
+              url: self.currentPreviewItem.url,
+              type: self.currentPreviewItem.type,
+              kind: isLiveBanner ? 'canal' : (self.currentPreviewItem.kind || 'movie'),
+              isLive: isLiveBanner,
+              provider: self.currentPreviewItem.provider || (isLiveBanner ? 'channels' : 'pelispedia')
+            };
+            window.TVPlayer.play(self.currentPreviewItem.title, self.currentPreviewItem.url, self.currentPreviewItem.type, 0, bannerPlayInfo);
           }
         }, false);
       }
@@ -624,7 +633,41 @@
     getWatchProgressMap: function () {
       try {
         var raw = localStorage.getItem('tv_watch_progress');
-        return raw ? JSON.parse(raw) : {};
+        if (!raw) return {};
+        var map = JSON.parse(raw);
+        var cleaned = {};
+        var changed = false;
+        var keys = Object.keys(map);
+
+        for (var i = 0; i < keys.length; i++) {
+          var k = keys[i];
+          var item = map[k];
+          if (!item) continue;
+
+          // Descartar canales de televisión en vivo (Pluto TV, IPTV, transmisiones continuas)
+          var isLiveChannel = (item.kind === 'canal') ||
+                              (item.provider === 'pluto') ||
+                              (item.provider === 'channels') ||
+                              (item.provider === 'iptv') ||
+                              (item.isLive === true) ||
+                              (!item.duration || item.duration < 300) || // Ventanas deslizantes cortas de HLS en vivo (< 5 min)
+                              (!item.slug && item.type === 'hls');
+
+          if (isLiveChannel) {
+            changed = true;
+          } else {
+            cleaned[k] = item;
+          }
+        }
+
+        // Si se encontraron canales de TV antiguos en localStorage, limpiarlos permanentemente
+        if (changed) {
+          try {
+            localStorage.setItem('tv_watch_progress', JSON.stringify(cleaned));
+          } catch (eClean) { }
+        }
+
+        return cleaned;
       } catch (e) {
         return {};
       }
@@ -837,6 +880,8 @@
           html += '         data-overview="' + self.escapeHtml(ch.overview || ch.subtitle || '') + '" ';
           html += '         data-url="' + self.escapeHtml(ch.streamUrl) + '" ';
           html += '         data-provider="' + self.escapeHtml(ch.provider || 'pluto') + '" ';
+          html += '         data-kind="canal" ';
+          html += '         data-is-live="true" ';
           html += '         data-type="hls">';
           html += '      <div class="card-thumb" style="background-image: url(\'' + self.escapeHtml(ch.thumb) + '\');">';
           html += '        <span class="' + chBadgeClass + '">' + chBadge + '</span>';
@@ -933,6 +978,8 @@
           html += '         data-overview="' + this.escapeHtml(overviewText) + '" ';
           html += '         data-url="' + this.escapeHtml(item.streamUrl) + '" ';
           html += '         data-provider="' + this.escapeHtml(item.provider || 'iptv') + '" ';
+          html += '         data-kind="canal" ';
+          html += '         data-is-live="true" ';
           html += '         data-type="' + this.escapeHtml(item.type) + '">';
           html += '      <div class="card-thumb" style="background-image: url(\'' + this.escapeHtml(item.thumb) + '\');">';
           html += '        <span class="' + badgeClass + '">' + badgeText + '</span>';
@@ -1405,12 +1452,22 @@
             var slug = card.getAttribute('data-slug');
             var kind = card.getAttribute('data-kind');
             var provider = card.getAttribute('data-provider') || 'pelispedia';
+            var isLiveAttr = card.getAttribute('data-is-live') === 'true';
 
             if (type === 'pelispedia') {
               self.lastFocusedGridItem = card;
               self.openDetailModal(kind, slug, provider);
             } else {
-              window.TVPlayer.play(title, url, type);
+              var isChannel = isLiveAttr || (kind === 'canal') || (provider === 'pluto') || (provider === 'iptv') || (provider === 'channels') || (self.currentCategory === 'channels');
+              var playInfo = {
+                title: title,
+                url: url,
+                type: type,
+                kind: isChannel ? 'canal' : (kind || 'movie'),
+                isLive: isChannel,
+                provider: provider || (isChannel ? 'channels' : 'pelispedia')
+              };
+              window.TVPlayer.play(title, url, type, 0, playInfo);
             }
           }, false);
         })(cards[i]);

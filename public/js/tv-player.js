@@ -559,6 +559,30 @@
       var key = this.currentItemInfo.slug || this.currentItemInfo.title;
       if (!key) return;
 
+      // ¡NUNCA guardar canales de televisión en vivo (Pluto TV, IPTV, transmisiones continuas) en "Continuar Viendo"!
+      var isLiveChannel = (this.currentItemInfo.kind === 'canal') ||
+                          (this.currentItemInfo.provider === 'pluto') ||
+                          (this.currentItemInfo.provider === 'channels') ||
+                          (this.currentItemInfo.provider === 'iptv') ||
+                          (this.currentItemInfo.isLive === true) ||
+                          (dur < 300) || // Ventanas deslizantes HLS en vivo (ej: 50s, 70s, 110s)
+                          (dur === Infinity);
+
+      if (isLiveChannel) {
+        // Asegurar que si existía previamente una entrada para este canal, se purgue de localStorage
+        try {
+          var rawOld = localStorage.getItem('tv_watch_progress');
+          if (rawOld) {
+            var mapOld = JSON.parse(rawOld);
+            if (mapOld[key]) {
+              delete mapOld[key];
+              localStorage.setItem('tv_watch_progress', JSON.stringify(mapOld));
+            }
+          }
+        } catch (eClean) { }
+        return;
+      }
+
       try {
         var raw = localStorage.getItem('tv_watch_progress') || '{}';
         var map = JSON.parse(raw);
@@ -567,7 +591,7 @@
           map[key] = {
             title: this.currentItemInfo.title,
             slug: this.currentItemInfo.slug,
-            kind: this.currentItemInfo.kind,
+            kind: this.currentItemInfo.kind || 'movie',
             provider: this.currentItemInfo.provider,
             poster: this.currentItemInfo.poster,
             url: this.currentItemInfo.url || this.currentStreamUrl,
