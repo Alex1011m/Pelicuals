@@ -1148,6 +1148,8 @@
         } catch (e) {}
 
         self.onboardingModal.style.display = 'none';
+        var scrollCtrls = document.getElementById('tv-page-scroll-controls');
+        if (scrollCtrls) scrollCtrls.style.display = 'flex';
 
         if (self.currentCategory === 'movies' && self.cachedMovieRows) {
           self.renderMovieRows(self.cachedMovieRows, self.currentMovieFilter);
@@ -1169,10 +1171,14 @@
           localStorage.setItem('tv_onboarding_done', 'true');
         } catch (e) {}
         self.onboardingModal.style.display = 'none';
+        var scrollCtrls = document.getElementById('tv-page-scroll-controls');
+        if (scrollCtrls) scrollCtrls.style.display = 'flex';
         var firstTab = document.querySelector('.nav-tab.active-tab') || document.querySelector('.nav-tab');
         if (firstTab) window.SpatialNav.focusElement(firstTab);
       };
 
+      var scrollCtrls = document.getElementById('tv-page-scroll-controls');
+      if (scrollCtrls) scrollCtrls.style.display = 'none';
       this.onboardingModal.style.display = 'flex';
 
       var firstCard = grid.querySelector('.onboarding-card');
@@ -1185,6 +1191,8 @@
       if (this.onboardingModal) {
         this.onboardingModal.style.display = 'none';
       }
+      var scrollCtrls = document.getElementById('tv-page-scroll-controls');
+      if (scrollCtrls) scrollCtrls.style.display = 'flex';
       var firstTab = document.querySelector('.nav-tab.active-tab') || document.querySelector('.nav-tab');
       if (firstTab) {
         window.SpatialNav.focusElement(firstTab);
