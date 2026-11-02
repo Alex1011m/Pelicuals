@@ -165,20 +165,17 @@
         if (self.hasFatalError) return;
         self.showBuffering(true, 'Almacenando búfer...');
         clearTimeout(self.stallTimer);
-        // Si el video ya había comenzado (>0.5s) y se atascó por falta de datos
+        // Si el video se queda esperando datos por más de 12 segundos, intentar un nudge suave
         self.stallTimer = setTimeout(function () {
           if (self.hasFatalError) return;
-          if (self.video && !self.video.paused && self.video.currentTime > 0.5 && self.video.readyState >= 2) {
-            console.warn('Reproductor en espera >3.2s. Forzando desatasco de frames...');
-            if (self.hlsInstance) {
-              self.hlsInstance.recoverMediaError();
-            }
+          if (self.video && !self.video.paused && self.video.currentTime > 0.5) {
+            console.warn('Reproductor en espera prolongada. Ajustando posición de reproducción...');
             try {
-              self.video.currentTime += 0.2;
+              self.video.currentTime += 0.1;
               self.safePlay(self.video);
             } catch (e) {}
           }
-        }, 3200);
+        }, 12000);
       }, false);
 
       this.video.addEventListener('stalled', function () {
@@ -332,15 +329,15 @@
         // Priorizar HLS.js si está soportado para tener control total de búfer y anti-freeze
         if (window.Hls && window.Hls.isSupported()) {
           this.hlsInstance = new window.Hls({
-            enableWorker: true,
-            // ¡CRÍTICO!: Desactivar lowLatencyMode en películas/series para tener búfer amplio y evitar cortes
+            enableWorker: false, // ¡ESENCIAL para Smart TVs! Evita fallos de concurrencia y límites de memoria en hilos de TV
             lowLatencyMode: false,
 
-            // Configuración óptima de búfer amplio (30 a 60 segundos por adelantado)
-            maxBufferLength: 30,
-            maxMaxBufferLength: 60,
-            maxBufferSize: 60 * 1000 * 1000, // 60 MB
-            maxBufferHole: 0.6, // Salta micro-huecos de paquetes sin congelar la imagen
+            // Configuración óptima de búfer y reciclaje de memoria para Smart TVs (evita que se caiga por OOM)
+            backBufferLength: 30, // ¡CRÍTICO!: Elimina segmentos ya vistos de más de 30s para no saturar la RAM de la TV
+            maxBufferLength: 20, // 20 segundos hacia adelante
+            maxMaxBufferLength: 40,
+            maxBufferSize: 25 * 1000 * 1000, // 25 MB máximo en memoria (ideal para TVs de 512MB RAM)
+            maxBufferHole: 0.8, // Salta micro-huecos de paquetes sin congelar la imagen
 
             // Inicio rápido (inicia al instante con fragmento precargado)
             startLevel: -1,
@@ -370,6 +367,13 @@
             self.safePlay(video);
           });
 
+          // ¡CRÍTICO!: Reiniciar contadores de reintento de red y decodificación en cada fragmento cargado
+          this.hlsInstance.on(window.Hls.Events.FRAG_LOADED, function () {
+            self.networkRetryCount = 0;
+            self.mediaErrorCount = 0;
+            self.showBuffering(false);
+          });
+
           this.hlsInstance.on(window.Hls.Events.AUDIO_TRACKS_UPDATED, function () {
             self.detectHlsTracks();
           });
@@ -387,22 +391,22 @@
                 case window.Hls.ErrorTypes.NETWORK_ERROR:
                   self.networkRetryCount = (self.networkRetryCount || 0) + 1;
                   var isManifestError = (data.details === 'manifestLoadError');
-                  var isFatalHttp = (httpCode === 403 || httpCode === 401 || httpCode === 404 || httpCode >= 500);
+                  var isFatalHttp = (httpCode === 403 || httpCode === 401 || httpCode === 404);
 
-                  // Si el manifiesto falla (CORS / Servidor caído / 504 / 403 / 404) o supera 1 reintento: ABORTAR inmediatamente
-                  if (isManifestError || isFatalHttp || self.networkRetryCount > 1) {
+                  // Solo abortar si el manifiesto principal 404/403 o tras 5 reintentos seguidos fallidos
+                  if ((isManifestError && isFatalHttp) || self.networkRetryCount > 5) {
                     console.warn('Fallo permanente de red en HLS (' + data.details + ', HTTP ' + httpCode + '). Deteniendo.');
                     self.hasFatalError = true;
                     self.showBuffering(false);
                     clearTimeout(self.stallTimer);
 
-                    var msg = 'Canal fuera de transmisión temporalmente. Pulsa ATRÁS para elegir otro.';
+                    var msg = 'Error de conexión con el video. Pulsa ATRÁS para elegir otro.';
                     if (httpCode === 403) {
-                      msg = 'Canal restringido o bloqueado (Error 403). Pulsa ATRÁS.';
+                      msg = 'Contenido restringido o bloqueado (Error 403). Pulsa ATRÁS.';
                     } else if (httpCode === 404) {
-                      msg = 'Señal fuera de servicio (Error 404). Pulsa ATRÁS.';
+                      msg = 'Video no encontrado en el servidor (Error 404). Pulsa ATRÁS.';
                     } else if (httpCode >= 500) {
-                      msg = 'Servidor del canal caído (Error ' + httpCode + '). Pulsa ATRÁS.';
+                      msg = 'Servidor temporalmente fuera de servicio (Error ' + httpCode + '). Pulsa ATRÁS.';
                     } else if (isManifestError && httpCode === 0) {
                       msg = 'Señal no disponible (Sin respuesta del servidor). Pulsa ATRÁS.';
                     }
@@ -414,16 +418,30 @@
                     }
                     break;
                   }
-                  console.warn('Reintentando carga por fallo de red (intento ' + self.networkRetryCount + ')...');
-                  self.showToast('Reconectando con el servidor...');
+                  console.warn('Reintentando carga por red (intento ' + self.networkRetryCount + ')...');
+                  self.showBuffering(true, 'Reconectando video...');
                   self.hlsInstance.startLoad();
                   break;
                 case window.Hls.ErrorTypes.MEDIA_ERROR:
-                  console.warn('Recuperando error de decodificación...');
-                  self.hlsInstance.recoverMediaError();
+                  console.warn('Recuperando error de decodificación multimedia...');
+                  self.mediaErrorCount = (self.mediaErrorCount || 0) + 1;
+                  if (self.mediaErrorCount <= 2) {
+                    self.hlsInstance.recoverMediaError();
+                  } else if (self.mediaErrorCount === 3) {
+                    if (self.hlsInstance.swapAudioCodec) {
+                      self.hlsInstance.swapAudioCodec();
+                    }
+                    self.hlsInstance.recoverMediaError();
+                  } else {
+                    console.warn('Error irrecuperable de códec multimedia');
+                    self.hasFatalError = true;
+                    self.showToast('Error de decodificación en tu TV. Pulsa ATRÁS.');
+                    self.hlsInstance.destroy();
+                    self.hlsInstance = null;
+                  }
                   break;
                 default:
-                  console.warn('Error irrecuperable en HLS');
+                  console.warn('Error irrecuperable en HLS:', data.details);
                   self.hasFatalError = true;
                   self.showBuffering(false);
                   clearTimeout(self.stallTimer);
