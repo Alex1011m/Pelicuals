@@ -912,8 +912,18 @@ button,
   cursor: pointer !important;
   outline: none;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.8), 0 0 12px rgba(0, 157, 113, 0.4);
-  -webkit-transition: all 0.2s ease;
-  transition: all 0.2s ease;
+  opacity: 1;
+  -webkit-transform: translateY(0);
+  transform: translateY(0);
+  -webkit-transition: opacity 0.35s ease, -webkit-transform 0.35s ease, background 0.2s ease, box-shadow 0.2s ease;
+  transition: opacity 0.35s ease, transform 0.35s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-player-floating-close.hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  -webkit-transform: translateY(-20px) !important;
+  transform: translateY(-20px) !important;
 }
 
 .btn-player-floating-close:hover,
@@ -925,6 +935,12 @@ button,
   box-shadow: 0 0 20px rgba(0, 157, 113, 0.9) !important;
   -webkit-transform: scale(1.08);
   transform: scale(1.08);
+}
+
+/* OCULTAMIENTO AUTOMÁTICO DEL CURSOR / RATÓN VIRTUAL DE LA SMART TV DURANTE LA REPRODUCCIÓN */
+.tv-player-modal.cursor-hidden,
+.tv-player-modal.cursor-hidden * {
+  cursor: none !important;
 }
 
 #main-video {

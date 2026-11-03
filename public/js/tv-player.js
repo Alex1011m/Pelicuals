@@ -95,17 +95,25 @@
         self.updatePlayPauseButton(true);
       }, false);
 
-      // Clic directo sobre el video para reproducir/pausar (Soporte Mouse Virtual de TV)
+      // Clic directo sobre el video para reproducir/pausar o despertar controles
       this.video.addEventListener('click', function (e) {
         e.stopPropagation();
-        self.togglePlayPause();
+        if (self.isOsdHidden()) {
+          self.showOSD();
+        } else {
+          self.togglePlayPause();
+        }
       }, false);
 
-      // Despertar OSD con cualquier movimiento del ratón
+      // Despertar OSD y restaurar cursor con cualquier interacción de ratón / touch / puntero
       if (this.modal) {
-        this.modal.addEventListener('mousemove', function () {
+        var onUserActivity = function () {
           self.showOSD();
-        }, false);
+        };
+        this.modal.addEventListener('mousemove', onUserActivity, false);
+        this.modal.addEventListener('pointermove', onUserActivity, false);
+        this.modal.addEventListener('touchstart', onUserActivity, false);
+        this.modal.addEventListener('click', onUserActivity, false);
       }
 
       // Botón flotante para salir del reproductor
@@ -652,6 +660,17 @@
         this.toastEl.style.display = 'none';
       }
 
+      clearTimeout(this.osdTimer);
+      if (this.modal) {
+        window.SpatialNav.removeClass(this.modal, 'cursor-hidden');
+      }
+      if (this.osd) {
+        window.SpatialNav.removeClass(this.osd, 'hidden');
+      }
+      if (this.btnFloatingClose) {
+        window.SpatialNav.removeClass(this.btnFloatingClose, 'hidden');
+      }
+
       // Restaurar el control a la navegación espacial normal
       window.SpatialNav.setKeyHandler(null);
       if (this.lastFocusedElement) {
@@ -973,20 +992,51 @@
       return false;
     },
 
+    isOsdHidden: function () {
+      if (!this.osd) return false;
+      return window.SpatialNav.hasClass(this.osd, 'hidden');
+    },
+
     showOSD: function () {
       var self = this;
       if (this.osd) {
         window.SpatialNav.removeClass(this.osd, 'hidden');
       }
+      if (this.btnFloatingClose) {
+        window.SpatialNav.removeClass(this.btnFloatingClose, 'hidden');
+      }
+      if (this.modal) {
+        window.SpatialNav.removeClass(this.modal, 'cursor-hidden');
+      }
+
       clearTimeout(this.osdTimer);
       this.osdTimer = setTimeout(function () {
         var activeEl = document.activeElement;
-        var isOsdFocused = activeEl && self.osd && self.osd.contains(activeEl);
+        var currentNav = window.SpatialNav ? window.SpatialNav.currentFocused : null;
+        var isFocusedOnControls = (activeEl && (
+          (self.osd && self.osd.contains(activeEl)) ||
+          (self.btnFloatingClose && self.btnFloatingClose === activeEl)
+        )) || (currentNav && (
+          (self.osd && self.osd.contains(currentNav)) ||
+          self.btnFloatingClose === currentNav
+        ));
 
-        if (!self.video.paused && self.osd && !isOsdFocused) {
-          window.SpatialNav.addClass(self.osd, 'hidden');
+        if (!self.video.paused && !isFocusedOnControls) {
+          self.hideOSD();
         }
-      }, 4500);
+      }, 4000);
+    },
+
+    hideOSD: function () {
+      if (this.osd) {
+        window.SpatialNav.addClass(this.osd, 'hidden');
+      }
+      if (this.btnFloatingClose) {
+        window.SpatialNav.addClass(this.btnFloatingClose, 'hidden');
+      }
+      if (this.modal) {
+        window.SpatialNav.addClass(this.modal, 'cursor-hidden');
+      }
     },
 
     updateProgress: function () {
