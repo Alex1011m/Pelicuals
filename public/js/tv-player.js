@@ -431,17 +431,19 @@
                   var isManifestError = (data.details === 'manifestLoadError');
                   var isFatalHttp = (httpCode === 403 || httpCode === 401 || httpCode === 404);
 
+                  // Si el manifiesto falló o la red falla reiteradamente, probar respaldo de inmediato si existe
+                  if (self.backups && self.backups.length > 0 && (isManifestError || self.networkRetryCount >= 2)) {
+                    var altHls = self.backups.shift();
+                    console.warn('Fallo de red en HLS primario. Probando señal alternativa:', altHls);
+                    self.showToast('Conectando con señal alternativa...');
+                    self.networkRetryCount = 0;
+                    self.hlsInstance.loadSource(altHls);
+                    self.hlsInstance.startLoad();
+                    break;
+                  }
+
                   // Solo abortar si el manifiesto principal 404/403 o tras 6 reintentos seguidos fallidos
                   if ((isManifestError && isFatalHttp) || self.networkRetryCount > 6) {
-                    if (self.backups && self.backups.length > 0) {
-                      var altHls = self.backups.shift();
-                      console.warn('Fallo de red en HLS primario. Probando señal alternativa:', altHls);
-                      self.showToast('Conectando con señal alternativa...');
-                      self.networkRetryCount = 0;
-                      self.hlsInstance.loadSource(altHls);
-                      self.hlsInstance.startLoad();
-                      break;
-                    }
                     console.warn('Fallo permanente de red en HLS (' + data.details + ', HTTP ' + httpCode + '). Deteniendo.');
                     self.hasFatalError = true;
                     self.showBuffering(false);
@@ -472,21 +474,22 @@
                 case window.Hls.ErrorTypes.MEDIA_ERROR:
                   console.warn('Recuperando error de decodificación multimedia...');
                   self.mediaErrorCount = (self.mediaErrorCount || 0) + 1;
-                  if (self.mediaErrorCount <= 2) {
+                  if (self.backups && self.backups.length > 0 && self.mediaErrorCount >= 2) {
+                    var directHls = self.backups.shift();
+                    console.warn('Cambiando a variante HLS directa por desincronización multimedia:', directHls);
+                    self.showToast('Optimizando señal de video...');
+                    self.mediaErrorCount = 0;
+                    self.hlsInstance.loadSource(directHls);
+                    self.hlsInstance.startLoad();
+                    break;
+                  }
+                  if (self.mediaErrorCount === 1) {
                     self.hlsInstance.recoverMediaError();
-                  } else if (self.mediaErrorCount === 3) {
+                  } else if (self.mediaErrorCount === 2) {
                     if (self.hlsInstance.swapAudioCodec) {
                       self.hlsInstance.swapAudioCodec();
                     }
                     self.hlsInstance.recoverMediaError();
-                  } else if (self.backups && self.backups.length > 0) {
-                    // Si el stream master multicódec/multiaudio falla (Alien Earth), cambiar a variante directa
-                    var directHls = self.backups.shift();
-                    console.warn('Cambiando a variante HLS directa por desincronización multimedia:', directHls);
-                    self.showToast('Optimizando códec de video...');
-                    self.mediaErrorCount = 0;
-                    self.hlsInstance.loadSource(directHls);
-                    self.hlsInstance.startLoad();
                   } else {
                     console.warn('Error irrecuperable de códec multimedia');
                     self.hasFatalError = true;
