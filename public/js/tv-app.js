@@ -1357,6 +1357,7 @@
           for (var cIdx = 0; cIdx < continueKeys.length; cIdx++) {
             var cItem = progressMap[continueKeys[cIdx]];
             var pct = cItem.percent || 0;
+            var posterImg = cItem.poster || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&q=80';
             html += '    <div class="tv-card tv-card-poster focusable" tabindex="0" ';
             html += '         data-title="' + this.escapeHtml(cItem.title) + '" ';
             html += '         data-meta="VISTO ' + pct + '% • Reanudar en ' + this.formatTime(cItem.time) + '" ';
@@ -1365,7 +1366,7 @@
             html += '         data-kind="' + this.escapeHtml(cItem.kind || 'movie') + '" ';
             html += '         data-provider="' + this.escapeHtml(cItem.provider || 'pelispedia') + '" ';
             html += '         data-type="pelispedia">';
-            html += '      <div class="card-thumb" style="background-image: url(\'' + this.escapeHtml(cItem.poster) + '\');">';
+            html += '      <div class="card-thumb" style="background-image: url(\'' + this.escapeHtml(posterImg) + '\');">';
             html += '        <span class="card-badge badge-hd">' + pct + '% VISTO</span>';
             html += '        <div class="card-resume-progress"><div class="card-resume-bar" style="width: ' + pct + '%;"></div></div>';
             html += '      </div>';
@@ -1557,6 +1558,9 @@
       var self = this;
       provider = provider || 'pelispedia';
       this.detailModal.style.display = 'block';
+
+      var scrollCtrls = document.getElementById('tv-page-scroll-controls');
+      if (scrollCtrls) scrollCtrls.style.display = 'none';
 
       var cornerCloseBtn = document.getElementById('btn-detail-corner-close');
       if (cornerCloseBtn) {
@@ -1844,6 +1848,8 @@
       if (this.detailModal) {
         this.detailModal.style.display = 'none';
       }
+      var scrollCtrls = document.getElementById('tv-page-scroll-controls');
+      if (scrollCtrls) scrollCtrls.style.display = 'flex';
       if (this.lastFocusedGridItem) {
         window.SpatialNav.focusElement(this.lastFocusedGridItem);
       }
