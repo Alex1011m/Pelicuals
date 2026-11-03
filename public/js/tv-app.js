@@ -1794,9 +1794,13 @@
                   self.closeDetailModal();
                   var serieTitle = self.currentSerieDetail ? self.currentSerieDetail.title : '';
                   var fullTitle = (serieTitle ? serieTitle + ' - ' : '') + epTitle;
+                  var baseSlug = (self.currentSerieDetail ? (self.currentSerieDetail.slug || self.currentSerieDetail.id) : '');
                   var epInfo = {
                     title: fullTitle,
-                    slug: (self.currentSerieDetail ? self.currentSerieDetail.slug : '') + '-s' + seasonNum + 'e' + epIndex,
+                    slug: baseSlug,
+                    episodeKey: baseSlug + '-s' + seasonNum + 'e' + epIndex,
+                    season: seasonNum,
+                    episode: epIndex + 1,
                     kind: 'serie',
                     provider: epProvider,
                     poster: (self.currentSerieDetail ? self.currentSerieDetail.poster : ''),

@@ -322,7 +322,8 @@
       this.titleEl.innerText = title || 'Reproduciendo contenido...';
       this.modal.style.display = 'block';
 
-      var isLive = this.currentItemInfo && (this.currentItemInfo.provider === 'pluto' || this.currentItemInfo.isLive || this.currentItemInfo.kind === 'canal');
+      var isVod = this.currentItemInfo && (this.currentItemInfo.kind === 'serie' || this.currentItemInfo.kind === 'movie' || this.currentItemInfo.kind === 'anime');
+      var isLive = !isVod && this.currentItemInfo && (this.currentItemInfo.provider === 'pluto' || this.currentItemInfo.isLive === true || this.currentItemInfo.kind === 'canal');
       if (this.progressBar) {
         this.progressBar.style.width = isLive ? '100%' : '0%';
       }
@@ -556,7 +557,7 @@
       if (!this.video || !this.video.duration || !this.currentItemInfo) return;
       var cur = this.video.currentTime;
       var dur = this.video.duration;
-      var key = this.currentItemInfo.slug || this.currentItemInfo.title;
+      var key = this.currentItemInfo.episodeKey || this.currentItemInfo.slug || this.currentItemInfo.title;
       if (!key) return;
 
       // ¡NUNCA guardar canales de televisión en vivo (Pluto TV, IPTV, transmisiones continuas) en "Continuar Viendo"!
@@ -990,7 +991,8 @@
 
     updateProgress: function () {
       if (!this.video || !this.video.duration || this.video.duration === Infinity) {
-        var isLive = this.currentItemInfo && (this.currentItemInfo.provider === 'pluto' || this.currentItemInfo.isLive || this.currentItemInfo.kind === 'canal');
+        var isVod = this.currentItemInfo && (this.currentItemInfo.kind === 'serie' || this.currentItemInfo.kind === 'movie' || this.currentItemInfo.kind === 'anime');
+      var isLive = !isVod && this.currentItemInfo && (this.currentItemInfo.provider === 'pluto' || this.currentItemInfo.isLive === true || this.currentItemInfo.kind === 'canal');
         if (isLive) {
           this.progressBar.style.width = '100%';
           if (this.timeDisplay) {
