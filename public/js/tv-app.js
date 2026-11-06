@@ -2293,7 +2293,7 @@
             statusEl.innerHTML = '<span style="color:#009d71; font-weight:800;">✓ ¡Control celular conectado con éxito!</span>';
           }
           if (window.TVPlayer && typeof window.TVPlayer.showToast === 'function') {
-            window.TVPlayer.showToast('📱 Control celular vinculado');
+            window.TVPlayer.showToast('Control celular vinculado');
           }
           break;
 
