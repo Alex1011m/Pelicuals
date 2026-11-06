@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#009d71">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="stylesheet" href="/css/tv.css?v=2.1.3">
+  <link rel="stylesheet" href="/css/tv.css?v=2.1.5">
 </head>
 <body>
 
@@ -40,7 +40,18 @@
           <button id="btn-banner-fav" class="btn-banner-action btn-banner-fav focusable" tabindex="0">☆ MI LISTA</button>
         </div>
       </div>
-      <div id="preview-banner-thumb" class="preview-banner-thumb"></div>
+      <!-- ÁREA MULTIMEDIA: PÓSTER Y VISTA PREVIA DE TRÁILER ESTILO NETFLIX -->
+      <div id="preview-banner-media" class="preview-banner-media">
+        <div id="preview-banner-thumb" class="preview-banner-thumb"></div>
+        <div id="preview-banner-video-container" class="preview-banner-video-container" style="display: none;">
+          <iframe id="preview-banner-iframe" class="preview-banner-iframe" src="about:blank" frameborder="0" allow="autoplay; encrypted-media"></iframe>
+          <div class="preview-banner-video-overlay"></div>
+          <div id="preview-trailer-badge" class="preview-trailer-badge">
+            <span class="pulse-dot"></span> TRÁILER
+          </div>
+          <button id="btn-preview-mute-toggle" class="btn-preview-mute-toggle focusable" tabindex="0" title="Activar/Desactivar sonido">&#128263;</button>
+        </div>
+      </div>
     </div>
 
     <!-- CUERPO PRINCIPAL CON MENÚ LATERAL Y VIEWPORT -->
@@ -306,9 +317,9 @@
 
   <!-- SCRIPTS EN ES5 PURO (ORDEN ESTRICTO DE CARGA) -->
   <script src="/js/hls.min.js"></script>
-  <script src="/js/spatial-nav.js?v=2.1.4"></script>
-  <script src="/js/tv-player.js?v=2.1.4"></script>
-  <script src="/js/tv-app.js?v=2.1.4"></script>
+  <script src="/js/spatial-nav.js?v=2.1.5"></script>
+  <script src="/js/tv-player.js?v=2.1.5"></script>
+  <script src="/js/tv-app.js?v=2.1.5"></script>
 </body>
 </html>
 

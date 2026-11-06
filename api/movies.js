@@ -99,5 +99,24 @@ module.exports = function (req, res) {
     return;
   }
 
+  // 7. Búsqueda y extracción de tráiler oficial para el Banner Hero
+  if (action === 'trailer') {
+    var trailerQuery = req.query.q || req.query.title || req.query.slug;
+    if (!trailerQuery) return res.status(400).json({ status: 'error', message: 'Falta parámetro q o title' });
+
+    var youtubeModule = require('./youtube');
+    youtubeModule.searchTrailer(trailerQuery, function (err, key) {
+      if (err || !key) {
+        return res.status(404).json({ status: 'error', message: err ? err.message : 'No encontrado' });
+      }
+      res.status(200).json({
+        status: 'ok',
+        key: key,
+        embedUrl: 'https://www.youtube-nocookie.com/embed/' + key + '?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&loop=1&playlist=' + key
+      });
+    });
+    return;
+  }
+
   res.status(400).json({ status: 'error', message: 'Acción no válida' });
 };

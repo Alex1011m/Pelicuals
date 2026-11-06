@@ -228,18 +228,150 @@ body {
   transform: scale(1.06);
 }
 
-.preview-banner-thumb {
-  width: 95px;
-  height: 135px;
-  border-radius: 8px;
-  background-size: cover;
-  background-position: center;
-  border: 2px solid rgba(13, 52, 186, 0.4);
+/* ÁREA MULTIMEDIA DEL BANNER (PÓSTER / TRÁILER NETFLIX) */
+.preview-banner-media {
+  position: relative;
+  width: 250px;
+  height: 140px;
+  border-radius: 10px;
+  overflow: hidden;
   -webkit-flex-shrink: 0;
   flex-shrink: 0;
   background-color: #050c26;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(13, 52, 186, 0.45);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+
+.preview-banner-thumb {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center top;
   display: block;
+  -webkit-transition: opacity 0.35s ease;
+  transition: opacity 0.35s ease;
+}
+
+.preview-banner-video-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  background: #000000;
+  overflow: hidden;
+}
+
+.preview-banner-iframe {
+  position: absolute;
+  top: -15%;
+  left: -10%;
+  width: 120%;
+  height: 130%;
+  border: none;
+  pointer-events: none; /* Previene que el foco de navegación quede atrapado en el reproductor de YouTube */
+}
+
+.preview-banner-video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: -webkit-linear-gradient(right, transparent 70%, rgba(2, 7, 24, 0.7) 100%);
+  background: linear-gradient(270deg, transparent 70%, rgba(2, 7, 24, 0.7) 100%);
+}
+
+.preview-trailer-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(0, 157, 113, 0.92);
+  color: #020718;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  z-index: 3;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  display: inline-block;
+  -webkit-animation: pulse-red 1.2s infinite;
+  animation: pulse-red 1.2s infinite;
+}
+
+@-webkit-keyframes pulse-red {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+@keyframes pulse-red {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+
+.btn-preview-mute-toggle {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(2, 7, 24, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+  cursor: pointer;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  z-index: 4;
+}
+
+.btn-preview-mute-toggle:hover,
+.btn-preview-mute-toggle:focus,
+.btn-preview-mute-toggle.focused {
+  border-color: #009d71;
+  background: #009d71;
+  color: #020718;
+  -webkit-transform: scale(1.15);
+  transform: scale(1.15);
 }
 
 .tv-brand {

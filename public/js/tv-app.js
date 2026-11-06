@@ -20,6 +20,10 @@
     currentPreviewItem: null,
     searchEventsBound: false,
     sidebarEventsBound: false,
+    trailerTimer: null,
+    currentTrailerKey: null,
+    trailerMuted: true,
+    trailerKeyCache: {},
 
     curatedOnboardingList: [
       {
@@ -498,6 +502,14 @@
           btnFav.innerHTML = isFav ? '★ EN MI LISTA' : '☆ MI LISTA';
         }, false);
       }
+
+      var btnMute = document.getElementById('btn-preview-mute-toggle');
+      if (btnMute) {
+        btnMute.addEventListener('click', function (e) {
+          e.stopPropagation();
+          self.toggleTrailerMute();
+        }, false);
+      }
     },
 
     updatePreviewBanner: function (elem) {
@@ -509,6 +521,13 @@
       var favBtn = document.getElementById('btn-banner-fav');
       var qualityEl = document.getElementById('preview-banner-quality');
       if (!titleEl || !metaEl || !descEl) return;
+
+      // Resetear cualquier timer de tráiler previo y apagar vista previa
+      if (this.trailerTimer) {
+        clearTimeout(this.trailerTimer);
+        this.trailerTimer = null;
+      }
+      this.stopTrailerPreview();
 
       if (window.SpatialNav.hasClass(elem, 'sidebar-item')) {
         var labelEl = elem.querySelector('.sidebar-label');
@@ -526,12 +545,16 @@
         var provider = elem.getAttribute('data-provider') || '';
         var url = elem.getAttribute('data-url') || '';
         var type = elem.getAttribute('data-type') || '';
+        var trailer = elem.getAttribute('data-trailer') || '';
+        var backdrop = elem.getAttribute('data-backdrop') || '';
 
-        var thumbUrl = '';
-        var cardThumb = elem.querySelector('.card-thumb');
-        if (cardThumb && cardThumb.style.backgroundImage) {
-          var bgMatch = cardThumb.style.backgroundImage.match(/url\(["']?([^"']+)["']?\)/);
-          if (bgMatch && bgMatch[1]) thumbUrl = bgMatch[1];
+        var thumbUrl = backdrop || '';
+        if (!thumbUrl) {
+          var cardThumb = elem.querySelector('.card-thumb');
+          if (cardThumb && cardThumb.style.backgroundImage) {
+            var bgMatch = cardThumb.style.backgroundImage.match(/url\(["']?([^"']+)["']?\)/);
+            if (bgMatch && bgMatch[1]) thumbUrl = bgMatch[1];
+          }
         }
 
         titleEl.innerText = title;
@@ -564,18 +587,122 @@
           url: url,
           type: type,
           poster: thumbUrl,
-          thumb: thumbUrl
+          thumb: thumbUrl,
+          trailer: trailer
         };
 
         if (favBtn && slug) {
           var isFav = this.isFavorite(slug);
           favBtn.innerHTML = isFav ? '★ EN MI LISTA' : '☆ MI LISTA';
         }
+
+        // Si el usuario permanece detenido más de 2.5 segundos sobre una película/serie, reproducir tráiler silencioso (Estilo Netflix)
+        var isLiveChannel = (kind === 'canal') || (provider === 'pluto') || (provider === 'channels') || (provider === 'iptv') || (this.currentCategory === 'channels');
+        if (!isLiveChannel && (title || slug)) {
+          var self = this;
+          this.trailerTimer = setTimeout(function () {
+            self.startTrailerPreview(elem);
+          }, 2500);
+        }
       } else if (window.SpatialNav.hasClass(elem, 'nav-tab')) {
         titleEl.innerText = 'Smart TV Hub';
         metaEl.innerText = 'Sección: ' + elem.innerText;
         descEl.innerText = 'Usa las flechas Abajo y Derecha en el mando a distancia para explorar los contenidos.';
         if (thumbEl) thumbEl.style.display = 'none';
+      }
+    },
+
+    startTrailerPreview: function (elem) {
+      if (!elem || window.SpatialNav.currentFocused !== elem) return;
+      if (this.detailModal && this.detailModal.style.display === 'block') return;
+      if (window.TVPlayer && window.TVPlayer.modal && window.TVPlayer.modal.style.display === 'block') return;
+
+      var self = this;
+      var title = elem.getAttribute('data-title') || (this.currentPreviewItem ? this.currentPreviewItem.title : '');
+      var slug = elem.getAttribute('data-slug') || (this.currentPreviewItem ? this.currentPreviewItem.slug : '');
+      var trailerKey = elem.getAttribute('data-trailer');
+
+      if (trailerKey) {
+        return this.playTrailerIframe(trailerKey, elem);
+      }
+
+      var cacheKey = (slug || title).toLowerCase();
+      if (this.trailerKeyCache[cacheKey]) {
+        return this.playTrailerIframe(this.trailerKeyCache[cacheKey], elem);
+      }
+
+      var trailerQuery = title || slug;
+      if (!trailerQuery) return;
+
+      var trailerApi = '/api/movies?action=trailer&q=' + encodeURIComponent(trailerQuery);
+      this.fetchJson(trailerApi, function (err, res) {
+        if (err || !res || !res.key) return;
+        if (window.SpatialNav.currentFocused !== elem) return;
+        self.trailerKeyCache[cacheKey] = res.key;
+        elem.setAttribute('data-trailer', res.key);
+        self.playTrailerIframe(res.key, elem);
+      });
+    },
+
+    playTrailerIframe: function (key, elem) {
+      if (!key) return;
+      if (elem && window.SpatialNav.currentFocused !== elem) return;
+      if (this.detailModal && this.detailModal.style.display === 'block') return;
+      if (window.TVPlayer && window.TVPlayer.modal && window.TVPlayer.modal.style.display === 'block') return;
+
+      var container = document.getElementById('preview-banner-video-container');
+      var iframe = document.getElementById('preview-banner-iframe');
+      var thumb = document.getElementById('preview-banner-thumb');
+      var muteBtn = document.getElementById('btn-preview-mute-toggle');
+      if (!container || !iframe) return;
+
+      this.currentTrailerKey = key;
+      var muteVal = this.trailerMuted ? 1 : 0;
+      if (muteBtn) {
+        muteBtn.innerHTML = this.trailerMuted ? '&#128263;' : '&#128266;';
+        muteBtn.title = this.trailerMuted ? 'Activar sonido' : 'Silenciar sonido';
+      }
+
+      var embedUrl = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(key) +
+                     '?autoplay=1&mute=' + muteVal +
+                     '&controls=0&modestbranding=1&rel=0&loop=1&playlist=' + encodeURIComponent(key) +
+                     '&enablejsapi=1';
+
+      iframe.src = embedUrl;
+      container.style.display = 'block';
+      if (thumb) {
+        thumb.style.opacity = '0';
+      }
+    },
+
+    stopTrailerPreview: function () {
+      if (this.trailerTimer) {
+        clearTimeout(this.trailerTimer);
+        this.trailerTimer = null;
+      }
+      this.currentTrailerKey = null;
+      var container = document.getElementById('preview-banner-video-container');
+      var iframe = document.getElementById('preview-banner-iframe');
+      var thumb = document.getElementById('preview-banner-thumb');
+      if (container) {
+        container.style.display = 'none';
+      }
+      if (iframe && iframe.src && iframe.src !== 'about:blank') {
+        iframe.src = 'about:blank';
+      }
+      if (thumb) {
+        thumb.style.opacity = '1';
+      }
+    },
+
+    toggleTrailerMute: function () {
+      this.trailerMuted = !this.trailerMuted;
+      var muteBtn = document.getElementById('btn-preview-mute-toggle');
+      if (muteBtn) {
+        muteBtn.innerHTML = this.trailerMuted ? '&#128263;' : '&#128266;';
+      }
+      if (this.currentTrailerKey) {
+        this.playTrailerIframe(this.currentTrailerKey);
       }
     },
 
@@ -908,6 +1035,8 @@
           html += '         data-slug="' + self.escapeHtml(item.slug) + '" ';
           html += '         data-kind="' + self.escapeHtml(item.kind) + '" ';
           html += '         data-provider="' + self.escapeHtml(item.provider || 'pelispedia') + '" ';
+          html += '         data-backdrop="' + self.escapeHtml(item.backdrop || '') + '" ';
+          html += '         data-trailer="' + self.escapeHtml(item.trailer || '') + '" ';
           html += '         data-type="pelispedia">';
           html += '      <div class="card-thumb" style="background-image: url(\'' + self.escapeHtml(item.poster) + '\');">';
           html += '        <span class="card-badge ' + badgeClass + '">' + badgeText + '</span>';
@@ -1275,6 +1404,8 @@
             html += '         data-slug="' + this.escapeHtml(fItem.slug) + '" ';
             html += '         data-kind="' + this.escapeHtml(fItem.kind || 'movie') + '" ';
             html += '         data-provider="' + this.escapeHtml(fItem.provider || 'pelispedia') + '" ';
+            html += '         data-backdrop="' + this.escapeHtml(fItem.backdrop || '') + '" ';
+            html += '         data-trailer="' + this.escapeHtml(fItem.trailer || '') + '" ';
             html += '         data-type="pelispedia">';
             html += '      <div class="card-thumb" style="background-image: url(\'' + this.escapeHtml(fItem.poster) + '\');">';
             html += '        <span class="card-badge badge-hd">★ FAVORITO</span>';
@@ -1324,6 +1455,8 @@
               html += '         data-slug="' + this.escapeHtml(rItem.slug) + '" ';
               html += '         data-kind="' + this.escapeHtml(rItem.kind || 'movie') + '" ';
               html += '         data-provider="' + this.escapeHtml(rItem.provider || 'pelispedia') + '" ';
+              html += '         data-backdrop="' + this.escapeHtml(rItem.backdrop || '') + '" ';
+              html += '         data-trailer="' + this.escapeHtml(rItem.trailer || '') + '" ';
               html += '         data-type="pelispedia">';
               html += '      <div class="card-thumb" style="background-image: url(\'' + this.escapeHtml(rItem.poster) + '\');">';
               html += '        <span class="card-badge ' + bClassR + '">★ PARA TI</span>';
@@ -1411,6 +1544,8 @@
           html += '         data-slug="' + this.escapeHtml(item.slug) + '" ';
           html += '         data-kind="' + this.escapeHtml(item.kind) + '" ';
           html += '         data-provider="' + this.escapeHtml(item.provider || 'pelispedia') + '" ';
+          html += '         data-backdrop="' + this.escapeHtml(item.backdrop || '') + '" ';
+          html += '         data-trailer="' + this.escapeHtml(item.trailer || '') + '" ';
           html += '         data-type="pelispedia">';
           html += '      <div class="card-thumb" style="background-image: url(\'' + this.escapeHtml(item.poster) + '\');">';
           html += '        <span class="card-badge ' + badgeClass + '">' + badgeText + '</span>';
@@ -1447,6 +1582,7 @@
           }, false);
 
           card.addEventListener('click', function () {
+            self.stopTrailerPreview();
             var title = card.getAttribute('data-title');
             var url = card.getAttribute('data-url');
             var type = card.getAttribute('data-type');
@@ -1556,6 +1692,7 @@
 
     openDetailModal: function (kind, slug, provider) {
       var self = this;
+      this.stopTrailerPreview();
       provider = provider || 'pelispedia';
       this.detailModal.style.display = 'block';
 
@@ -1634,6 +1771,7 @@
           var closeBtn = document.getElementById('btn-close-modal');
 
           function startMovie(startTime) {
+            self.stopTrailerPreview();
             var targetBtn = resumeBtn || playBtn;
             if (targetBtn) targetBtn.innerText = 'Extrayendo stream...';
             var resolveApi = '/api/movies?action=resolve&player_url=' + encodeURIComponent(data.player_url) + '&provider=' + encodeURIComponent(data.provider || 'pelispedia');
