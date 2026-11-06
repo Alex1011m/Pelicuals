@@ -311,6 +311,44 @@
       }
     },
 
+    forward: function (sec) {
+      if (!this.video) return;
+      var s = (typeof sec === 'number' && sec > 0) ? sec : 10;
+      if (this.video.duration) {
+        this.video.currentTime = Math.min(this.video.duration, this.video.currentTime + s);
+      } else {
+        this.video.currentTime += s;
+      }
+      this.showOSD();
+      this.showToast('+' + s + 's');
+    },
+
+    rewind: function (sec) {
+      if (!this.video) return;
+      var s = (typeof sec === 'number' && sec > 0) ? sec : 10;
+      this.video.currentTime = Math.max(0, this.video.currentTime - s);
+      this.showOSD();
+      this.showToast('-' + s + 's');
+    },
+
+    setVolume: function (delta) {
+      if (!this.video) return;
+      var curVol = typeof this.video.volume === 'number' ? this.video.volume : 1;
+      var newVol = Math.max(0, Math.min(1, curVol + delta));
+      this.video.volume = newVol;
+      this.video.muted = (newVol === 0);
+      this.showOSD();
+      this.showToast('Volumen: ' + Math.round(newVol * 100) + '%');
+    },
+
+    toggleMute: function () {
+      if (!this.video) return;
+      this.video.muted = !this.video.muted;
+      this.showOSD();
+      var pct = Math.round((typeof this.video.volume === 'number' ? this.video.volume : 1) * 100);
+      this.showToast(this.video.muted ? 'Sonido silenciado' : 'Sonido activado (' + pct + '%)');
+    },
+
     play: function (title, streamUrl, type, startTime, itemInfo, onEndedCallback) {
       this.hasFatalError = false;
       this.networkRetryCount = 0;

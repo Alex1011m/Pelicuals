@@ -24,6 +24,9 @@
     currentTrailerKey: null,
     trailerMuted: true,
     trailerKeyCache: {},
+    remotePin: null,
+    remoteModal: null,
+    remoteMqttClient: null,
 
     curatedOnboardingList: [
       {
@@ -154,11 +157,14 @@
       this.searchContainer = document.getElementById('tv-search-container');
       this.detailModal = document.getElementById('tv-detail-modal');
       this.onboardingModal = document.getElementById('tv-onboarding-modal');
+      this.remoteModal = document.getElementById('tv-remote-modal');
       this.sidebar = document.getElementById('tv-sidebar');
 
       // Inicializar submódulos
       window.SpatialNav.init();
       window.TVPlayer.init();
+      this.setupRemoteModal();
+      this.setupRemoteReceiver();
 
       var self = this;
       window.SpatialNav.onFocusChange = function (elem) {
@@ -167,7 +173,9 @@
       };
 
       window.onBackKey = function () {
-        if (self.onboardingModal && self.onboardingModal.style.display !== 'none') {
+        if (self.remoteModal && self.remoteModal.style.display !== 'none') {
+          self.closeRemoteModal();
+        } else if (self.onboardingModal && self.onboardingModal.style.display !== 'none') {
           self.closeOnboardingModal();
         } else if (self.detailModal && self.detailModal.style.display === 'block') {
           self.closeDetailModal();
@@ -2126,6 +2134,330 @@
       if (scrollCtrls) scrollCtrls.style.display = 'flex';
       if (this.lastFocusedGridItem) {
         window.SpatialNav.focusElement(this.lastFocusedGridItem);
+      }
+    },
+
+    setupRemoteModal: function () {
+      var self = this;
+      var btnOpenRemote = document.getElementById('btn-open-remote-modal');
+      var btnCloseRemote = document.getElementById('btn-remote-close');
+      var btnDoneRemote = document.getElementById('btn-remote-done');
+
+      if (btnOpenRemote) {
+        btnOpenRemote.addEventListener('click', function (e) {
+          e.preventDefault();
+          self.openRemoteModal();
+        }, false);
+      }
+
+      if (btnCloseRemote) {
+        btnCloseRemote.addEventListener('click', function (e) {
+          e.preventDefault();
+          self.closeRemoteModal();
+        }, false);
+      }
+
+      if (btnDoneRemote) {
+        btnDoneRemote.addEventListener('click', function (e) {
+          e.preventDefault();
+          self.closeRemoteModal();
+        }, false);
+      }
+    },
+
+    openRemoteModal: function () {
+      if (!this.remoteModal) return;
+      this.remoteModal.style.display = 'flex';
+
+      var pin = this.remotePin || '1234';
+      var pinBadge = document.getElementById('remote-pin-display');
+      if (pinBadge) pinBadge.innerText = pin;
+
+      var origin = window.location.origin || (window.location.protocol + '//' + window.location.host);
+      var remoteUrl = origin + '/remote.html?pin=' + pin;
+      var urlPill = document.getElementById('remote-url-text');
+      if (urlPill) urlPill.innerText = remoteUrl;
+
+      var qrImg = document.getElementById('remote-qr-img');
+      if (qrImg) {
+        var qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(remoteUrl);
+        qrImg.src = qrSrc;
+      }
+
+      var scrollCtrls = document.getElementById('tv-page-scroll-controls');
+      if (scrollCtrls) scrollCtrls.style.display = 'none';
+
+      var btnDone = document.getElementById('btn-remote-done');
+      if (btnDone) {
+        window.SpatialNav.focusElement(btnDone);
+      }
+    },
+
+    closeRemoteModal: function () {
+      if (!this.remoteModal) return;
+      this.remoteModal.style.display = 'none';
+
+      var scrollCtrls = document.getElementById('tv-page-scroll-controls');
+      if (scrollCtrls) scrollCtrls.style.display = 'flex';
+
+      var btnOpen = document.getElementById('btn-open-remote-modal');
+      if (btnOpen) {
+        window.SpatialNav.focusElement(btnOpen);
+      }
+    },
+
+    setupRemoteReceiver: function () {
+      var self = this;
+      if (!window.Paho || !window.Paho.MQTT) {
+        console.warn('Librería Paho MQTT no detectada en la TV.');
+        return;
+      }
+
+      // Generar o reutilizar PIN de 4 dígitos persistente durante la sesión
+      var savedPin = null;
+      try {
+        savedPin = sessionStorage.getItem('tv_session_pin');
+      } catch (ePin) { }
+
+      if (!savedPin || savedPin.length !== 4) {
+        savedPin = String(Math.floor(1000 + Math.random() * 9000));
+        try {
+          sessionStorage.setItem('tv_session_pin', savedPin);
+        } catch (eSave) { }
+      }
+      this.remotePin = savedPin;
+
+      var rxClientId = 'tv_rx_' + this.remotePin + '_' + Math.random().toString(16).substr(2, 6);
+      var client = new window.Paho.MQTT.Client('broker.hivemq.com', 8884, '/mqtt', rxClientId);
+      this.remoteMqttClient = client;
+
+      client.onConnectionLost = function (responseObject) {
+        console.warn('Conexión MQTT receptor de TV perdida:', responseObject);
+        var statusEl = document.getElementById('remote-tv-status');
+        if (statusEl) {
+          statusEl.innerHTML = '<span class="pulse-dot" style="background:#ffaa00;"></span> Reconectando receptor...';
+        }
+        setTimeout(function () {
+          self.setupRemoteReceiver();
+        }, 5000);
+      };
+
+      client.onMessageArrived = function (message) {
+        try {
+          var payload = JSON.parse(message.payloadString);
+          self.handleRemoteCommand(payload);
+        } catch (eMsg) {
+          console.warn('Error leyendo comando del control remoto:', eMsg);
+        }
+      };
+
+      var topic = 'smart_tv_hub_' + this.remotePin;
+      client.connect({
+        useSSL: true,
+        timeout: 10,
+        keepAliveInterval: 30,
+        cleanSession: true,
+        onSuccess: function () {
+          console.log('TV MQTT Receiver listo en canal:', topic);
+          client.subscribe(topic, { qos: 0 });
+          var statusEl = document.getElementById('remote-tv-status');
+          if (statusEl) {
+            statusEl.innerHTML = '<span class="pulse-dot"></span> Esperando conexión del celular...';
+          }
+        },
+        onFailure: function (err) {
+          console.warn('Error al iniciar receptor MQTT TV:', err);
+          setTimeout(function () {
+            self.setupRemoteReceiver();
+          }, 6000);
+        }
+      });
+    },
+
+    handleRemoteCommand: function (data) {
+      if (!data || !data.action) return;
+      var action = data.action;
+      var payload = data.payload || {};
+      var self = this;
+
+      var isPlayerOpen = false;
+      var playerModal = document.getElementById('tv-player-modal');
+      if (playerModal && playerModal.style.display !== 'none' && window.getComputedStyle(playerModal).display !== 'none') {
+        isPlayerOpen = true;
+      }
+
+      switch (action) {
+        case 'phone_connected':
+          var statusEl = document.getElementById('remote-tv-status');
+          if (statusEl) {
+            statusEl.innerHTML = '<span style="color:#009d71; font-weight:800;">✓ ¡Control celular conectado con éxito!</span>';
+          }
+          if (window.TVPlayer && typeof window.TVPlayer.showToast === 'function') {
+            window.TVPlayer.showToast('📱 Control celular vinculado');
+          }
+          break;
+
+        case 'up':
+          if (isPlayerOpen && window.TVPlayer) {
+            window.TVPlayer.showOSD();
+            window.SpatialNav.move('up');
+          } else {
+            window.SpatialNav.move('up');
+          }
+          break;
+
+        case 'down':
+          if (isPlayerOpen && window.TVPlayer) {
+            window.TVPlayer.showOSD();
+            window.SpatialNav.move('down');
+          } else {
+            window.SpatialNav.move('down');
+          }
+          break;
+
+        case 'left':
+          if (isPlayerOpen && window.TVPlayer) {
+            window.TVPlayer.showOSD();
+            window.SpatialNav.move('left');
+          } else {
+            window.SpatialNav.move('left');
+          }
+          break;
+
+        case 'right':
+          if (isPlayerOpen && window.TVPlayer) {
+            window.TVPlayer.showOSD();
+            window.SpatialNav.move('right');
+          } else {
+            window.SpatialNav.move('right');
+          }
+          break;
+
+        case 'ok':
+          if (isPlayerOpen && window.TVPlayer) {
+            var active = document.activeElement;
+            var osd = document.getElementById('tv-player-osd');
+            if (active && osd && osd.contains(active)) {
+              active.click();
+            } else {
+              window.TVPlayer.togglePlayPause();
+            }
+          } else if (window.SpatialNav && window.SpatialNav.currentFocused) {
+            window.SpatialNav.currentFocused.click();
+          }
+          break;
+
+        case 'back':
+          if (isPlayerOpen && window.TVPlayer) {
+            window.TVPlayer.close();
+          } else if (self.remoteModal && self.remoteModal.style.display !== 'none') {
+            self.closeRemoteModal();
+          } else if (self.onboardingModal && self.onboardingModal.style.display !== 'none') {
+            self.closeOnboardingModal();
+          } else if (self.detailModal && self.detailModal.style.display === 'block') {
+            self.closeDetailModal();
+          } else if (self.sidebarExpanded) {
+            self.collapseSidebar();
+          }
+          break;
+
+        case 'home':
+          if (isPlayerOpen && window.TVPlayer) {
+            window.TVPlayer.close();
+          }
+          if (self.remoteModal && self.remoteModal.style.display !== 'none') {
+            self.closeRemoteModal();
+          }
+          if (self.detailModal && self.detailModal.style.display === 'block') {
+            self.closeDetailModal();
+          }
+          self.loadCategory('movies');
+          break;
+
+        case 'menu':
+          if (self.sidebarExpanded) {
+            self.collapseSidebar();
+          } else {
+            self.expandSidebar();
+          }
+          break;
+
+        case 'playpause':
+          if (window.TVPlayer) {
+            window.TVPlayer.togglePlayPause();
+          }
+          break;
+
+        case 'forward':
+          if (window.TVPlayer) {
+            window.TVPlayer.forward(10);
+          }
+          break;
+
+        case 'rewind':
+          if (window.TVPlayer) {
+            window.TVPlayer.rewind(10);
+          }
+          break;
+
+        case 'audio':
+          if (window.TVPlayer) {
+            window.TVPlayer.cycleAudioTrack();
+          }
+          break;
+
+        case 'subs':
+          if (window.TVPlayer) {
+            window.TVPlayer.cycleSubtitleTrack();
+          }
+          break;
+
+        case 'volup':
+          if (window.TVPlayer) {
+            window.TVPlayer.setVolume(0.1);
+          }
+          break;
+
+        case 'voldown':
+          if (window.TVPlayer) {
+            window.TVPlayer.setVolume(-0.1);
+          }
+          break;
+
+        case 'mute':
+          if (window.TVPlayer) {
+            window.TVPlayer.toggleMute();
+          }
+          break;
+
+        case 'fullscreen':
+          if (window.TVPlayer) {
+            window.TVPlayer.toggleFullscreen();
+          }
+          break;
+
+        case 'search':
+          var q = payload.query;
+          if (q && q.length > 0) {
+            if (isPlayerOpen && window.TVPlayer) {
+              window.TVPlayer.close();
+            }
+            if (self.remoteModal && self.remoteModal.style.display !== 'none') {
+              self.closeRemoteModal();
+            }
+            if (self.detailModal && self.detailModal.style.display === 'block') {
+              self.closeDetailModal();
+            }
+            self.loadCategory('search');
+            setTimeout(function () {
+              var searchInput = document.getElementById('search-input');
+              if (searchInput) {
+                searchInput.value = q;
+              }
+              self.performSearch(q);
+            }, 100);
+          }
+          break;
       }
     },
 

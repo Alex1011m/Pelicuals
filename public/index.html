@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#009d71">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="stylesheet" href="/css/tv.css?v=2.1.8">
+  <link rel="stylesheet" href="/css/tv.css?v=2.2.0">
 </head>
 <body>
 
@@ -26,6 +26,7 @@
         <button class="nav-tab focusable" data-category="movies" tabindex="0">Películas y Series</button>
         <button class="nav-tab focusable" data-category="search" tabindex="0">Buscar</button>
         <button id="btn-open-personalize" class="nav-tab nav-tab-personalize focusable" tabindex="0" title="Personalizar recomendaciones">★ Para Ti</button>
+        <button id="btn-open-remote-modal" class="nav-tab nav-tab-remote focusable" tabindex="0" title="Conectar Control Celular">📱 Control</button>
       </nav>
     </header>
 
@@ -284,6 +285,46 @@
     </div>
   </div>
 
+  <!-- MODAL DE EMPAREJAMIENTO DE CONTROL REMOTO CELULAR -->
+  <div id="tv-remote-modal" class="tv-remote-modal" style="display: none;">
+    <div class="tv-remote-box">
+      <button id="btn-remote-close" class="modal-corner-close focusable" tabindex="0" title="Cerrar ventana">&#10005;</button>
+      <div class="remote-modal-header">
+        <img src="/img/Nombre.jpg" alt="Logo" class="remote-modal-logo">
+        <h2 style="color: #ffffff; font-size: 26px; margin-top: 6px;">Usa tu Celular como Control Remoto</h2>
+        <p style="color: #9aa0a6; font-size: 16px; margin-top: 4px;">Escanea el código QR o entra a la dirección desde tu teléfono:</p>
+      </div>
+
+      <div class="remote-modal-body">
+        <div class="remote-qr-wrapper">
+          <img id="remote-qr-img" class="remote-qr-img" src="" alt="Código QR Control Remoto">
+        </div>
+
+        <div class="remote-info-wrapper">
+          <div class="remote-step">
+            <span class="step-num">1</span>
+            <span>Abre con tu teléfono este enlace:</span>
+          </div>
+          <div class="remote-link-pill" id="remote-url-text">cargando enlace...</div>
+
+          <div class="remote-step" style="margin-top: 14px;">
+            <span class="step-num">2</span>
+            <span>O ingresa manualmente este PIN:</span>
+          </div>
+          <div id="remote-pin-display" class="remote-pin-badge">----</div>
+
+          <div id="remote-tv-status" class="remote-tv-status">
+            <span class="pulse-dot"></span> Esperando conexión del celular...
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px; display: flex; justify-content: center;">
+        <button id="btn-remote-done" class="btn-tv btn-tv-primary focusable" tabindex="0">CERRAR VENTANA</button>
+      </div>
+    </div>
+  </div>
+
   <!-- REPRODUCTOR DE VIDEO A PANTALLA COMPLETA -->
   <div id="tv-player-modal" class="tv-player-modal">
     <!-- BOTÓN FLOTANTE CERRAR / VOLVER PARA MOUSE VIRTUAL -->
@@ -321,10 +362,11 @@
   </div>
 
   <!-- SCRIPTS EN ES5 PURO (ORDEN ESTRICTO DE CARGA) -->
+  <script src="/js/paho-mqtt.min.js"></script>
   <script src="/js/hls.min.js"></script>
-  <script src="/js/spatial-nav.js?v=2.1.8"></script>
-  <script src="/js/tv-player.js?v=2.1.8"></script>
-  <script src="/js/tv-app.js?v=2.1.8"></script>
+  <script src="/js/spatial-nav.js?v=2.2.0"></script>
+  <script src="/js/tv-player.js?v=2.2.0"></script>
+  <script src="/js/tv-app.js?v=2.2.0"></script>
 </body>
 </html>
 

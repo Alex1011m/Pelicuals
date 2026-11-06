@@ -69,6 +69,20 @@
         return dtVisible;
       }
 
+      // 3. Si el modal de control remoto está activo, restringir foco al modal
+      var remoteModal = document.getElementById('tv-remote-modal');
+      if (remoteModal && remoteModal.style.display !== 'none' && window.getComputedStyle(remoteModal).display !== 'none') {
+        var rmElements = remoteModal.querySelectorAll('.focusable');
+        var rmVisible = [];
+        for (var r = 0; r < rmElements.length; r++) {
+          var rEl = rmElements[r];
+          if (rEl.offsetWidth > 0 && rEl.offsetHeight > 0 && window.getComputedStyle(rEl).display !== 'none') {
+            rmVisible.push(rEl);
+          }
+        }
+        return rmVisible;
+      }
+
       var elements = document.querySelectorAll('.focusable');
       var visible = [];
       for (var i = 0; i < elements.length; i++) {
