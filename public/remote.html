@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Control Remoto - Smart TV Hub</title>
   <link rel="icon" type="image/jpeg" href="/img/Icono.jpg">
   <link rel="apple-touch-icon" href="/img/Icono.jpg">
@@ -35,7 +35,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 10px 12px max(14px, env(safe-area-inset-bottom, 14px));
+      padding: 12px 14px max(18px, env(safe-area-inset-bottom, 18px));
       box-sizing: border-box;
     }
 
@@ -45,11 +45,11 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 12px;
+      padding: 12px 14px;
       background: rgba(8, 26, 74, 0.7);
       border: 1px solid rgba(13, 52, 186, 0.5);
-      border-radius: 12px;
-      margin-bottom: 10px;
+      border-radius: 16px;
+      margin-bottom: 12px;
       flex-shrink: 0;
       backdrop-filter: blur(8px);
     }
@@ -57,12 +57,12 @@
     .remote-brand {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     .remote-logo {
-      height: min(7vw, 32px);
-      max-width: 110px;
+      height: 34px;
+      max-width: 130px;
       object-fit: contain;
       border-radius: 4px;
     }
@@ -70,14 +70,14 @@
     .remote-status {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: clamp(11px, 3.5vw, 14px);
-      font-weight: 600;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
     }
 
     .status-dot {
-      width: 9px;
-      height: 9px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       background: #ff5555;
       transition: background 0.3s;
@@ -96,21 +96,22 @@
       background: rgba(255, 255, 255, 0.12);
       border: 1px solid rgba(255, 255, 255, 0.25);
       color: #fff;
-      padding: 5px 10px;
+      padding: 6px 12px;
       border-radius: 20px;
-      font-size: clamp(10px, 3vw, 12px);
+      font-size: 13px;
       font-weight: bold;
       cursor: pointer;
     }
 
-    /* CONTENEDOR PRINCIPAL - 100% ANCHO DE PANTALLA */
+    /* CONTENEDOR PRINCIPAL REPARTIDO VERTICALMENTE */
     .remote-body {
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: min(3.5vw, 14px);
+      justify-content: space-between;
       flex: 1;
+      gap: 12px;
     }
 
     /* BUSCADOR */
@@ -118,11 +119,11 @@
       width: 100%;
       background: rgba(8, 26, 74, 0.6);
       border: 1px solid rgba(13, 52, 186, 0.5);
-      border-radius: 12px;
-      padding: 8px 10px;
+      border-radius: 16px;
+      padding: 10px 12px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .search-sync-input {
@@ -130,9 +131,9 @@
       background: #020718;
       border: 1px solid rgba(13, 52, 186, 0.8);
       color: #ffffff;
-      padding: 10px 12px;
-      border-radius: 8px;
-      font-size: clamp(13px, 4vw, 16px);
+      padding: 14px 14px;
+      border-radius: 12px;
+      font-size: 16px;
       outline: none;
     }
 
@@ -145,59 +146,59 @@
       background: #009d71;
       color: #020718;
       border: none;
-      padding: 10px 14px;
-      border-radius: 8px;
+      padding: 14px 18px;
+      border-radius: 12px;
       font-weight: 800;
-      font-size: clamp(12px, 3.8vw, 15px);
+      font-size: 15px;
       cursor: pointer;
       flex-shrink: 0;
     }
 
-    /* BOTONES AUXILIARES Y MULTIMEDIA EN GRID EXPANSIBLE */
+    /* GRIDS DE BOTONES */
     .controls-grid {
       width: 100%;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      gap: 10px;
     }
 
     .controls-grid-2 {
       width: 100%;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
+      gap: 10px;
     }
 
     .controls-grid-3 {
       width: 100%;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: 10px;
     }
 
     .remote-btn {
       background: #081a4a;
       border: 1px solid rgba(13, 52, 186, 0.7);
       color: #f1f3f5;
-      padding: min(3vw, 12px) 4px;
-      border-radius: 12px;
-      font-size: clamp(11px, 3.4vw, 14px);
+      padding: 14px 6px;
+      border-radius: 16px;
+      font-size: 14px;
       font-weight: 700;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 6px;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
       transition: all 0.12s ease;
       touch-action: manipulation;
-      min-height: min(14vw, 58px);
+      min-height: 64px;
     }
 
     .remote-btn svg {
-      width: clamp(18px, 5.5vw, 24px);
-      height: clamp(18px, 5.5vw, 24px);
+      width: 26px;
+      height: 26px;
     }
 
     .remote-btn:active {
@@ -218,11 +219,11 @@
       color: #020718;
     }
 
-    /* D-PAD COMPLETAMENTE ADAPTATIVO AL ANCHO */
+    /* D-PAD AMPLIADO Y CENTRADO */
     .dpad-container {
       position: relative;
-      width: min(76vw, 280px);
-      height: min(76vw, 280px);
+      width: min(80vw, 310px);
+      height: min(80vw, 310px);
       background: radial-gradient(circle, #081a4a 35%, #030a21 75%);
       border: 3px solid rgba(13, 52, 186, 0.6);
       border-radius: 50%;
@@ -230,7 +231,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 4px 0;
+      margin: 6px 0;
       flex-shrink: 0;
     }
 
@@ -239,7 +240,7 @@
       background: #081a4a;
       border: 1px solid rgba(13, 52, 186, 0.5);
       color: #ffffff;
-      font-size: clamp(18px, 5vw, 24px);
+      font-size: 26px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -255,48 +256,44 @@
     }
 
     .dpad-up {
-      top: 6%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 38%;
-      height: 25%;
-      border-radius: 40px 40px 10px 10px;
+      top: 8px;
+      left: calc(50% - 55px);
+      width: 110px;
+      height: 72px;
+      border-radius: 55px 55px 14px 14px;
     }
 
     .dpad-down {
-      bottom: 6%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 38%;
-      height: 25%;
-      border-radius: 10px 10px 40px 40px;
+      bottom: 8px;
+      left: calc(50% - 55px);
+      width: 110px;
+      height: 72px;
+      border-radius: 14px 14px 55px 55px;
     }
 
     .dpad-left {
-      left: 6%;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 25%;
-      height: 38%;
-      border-radius: 40px 10px 10px 40px;
+      left: 8px;
+      top: calc(50% - 55px);
+      width: 72px;
+      height: 110px;
+      border-radius: 55px 14px 14px 55px;
     }
 
     .dpad-right {
-      right: 6%;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 25%;
-      height: 38%;
-      border-radius: 10px 40px 40px 10px;
+      right: 8px;
+      top: calc(50% - 55px);
+      width: 72px;
+      height: 110px;
+      border-radius: 14px 55px 55px 14px;
     }
 
     .dpad-center-ok {
-      width: 34%;
-      height: 34%;
+      width: 104px;
+      height: 104px;
       border-radius: 50%;
       background: linear-gradient(135deg, #00ba88 0%, #00875e 100%);
       color: #020718;
-      font-size: clamp(16px, 5.5vw, 24px);
+      font-size: 26px;
       font-weight: 900;
       border: 3px solid #ffffff;
       box-shadow: 0 4px 18px rgba(0, 157, 113, 0.6);
@@ -425,7 +422,7 @@
       </button>
     </div>
 
-    <!-- CRUCETA D-PAD PORCENTUAL -->
+    <!-- CRUCETA D-PAD -->
     <div class="dpad-container">
       <button class="dpad-btn dpad-up" data-action="up" aria-label="Arriba">&#9650;</button>
       <button class="dpad-btn dpad-down" data-action="down" aria-label="Abajo">&#9660;</button>
