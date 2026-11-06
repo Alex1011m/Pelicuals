@@ -1491,13 +1491,17 @@
             var cItem = progressMap[continueKeys[cIdx]];
             var pct = cItem.percent || 0;
             var posterImg = cItem.poster || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&q=80';
-            html += '    <div class="tv-card tv-card-poster focusable" tabindex="0" ';
+            html += '    <div class="tv-card tv-card-poster focusable tv-card-continue" tabindex="0" ';
             html += '         data-title="' + this.escapeHtml(cItem.title) + '" ';
             html += '         data-meta="VISTO ' + pct + '% • Reanudar en ' + this.formatTime(cItem.time) + '" ';
             html += '         data-overview="Pulsa OK para reanudar la reproducción desde el minuto ' + this.formatTime(cItem.time) + '." ';
-            html += '         data-slug="' + this.escapeHtml(cItem.slug) + '" ';
+            html += '         data-slug="' + this.escapeHtml(cItem.slug || '') + '" ';
             html += '         data-kind="' + this.escapeHtml(cItem.kind || 'movie') + '" ';
             html += '         data-provider="' + this.escapeHtml(cItem.provider || 'pelispedia') + '" ';
+            html += '         data-url="' + this.escapeHtml(cItem.url || '') + '" ';
+            html += '         data-player-url="' + this.escapeHtml(cItem.playerUrl || '') + '" ';
+            html += '         data-resume-time="' + (cItem.time || 0) + '" ';
+            html += '         data-is-continue="true" ';
             html += '         data-type="pelispedia">';
             html += '      <div class="card-thumb" style="background-image: url(\'' + this.escapeHtml(posterImg) + '\');">';
             html += '        <span class="card-badge badge-hd">' + pct + '% VISTO</span>';
@@ -1590,10 +1594,42 @@
             var kind = card.getAttribute('data-kind');
             var provider = card.getAttribute('data-provider') || 'pelispedia';
             var isLiveAttr = card.getAttribute('data-is-live') === 'true';
+            var isContinue = card.getAttribute('data-is-continue') === 'true';
+            var resumeTime = parseFloat(card.getAttribute('data-resume-time') || '0');
+            var playerUrl = card.getAttribute('data-player-url');
+
+            if (isContinue) {
+              self.lastFocusedGridItem = card;
+              if (playerUrl) {
+                var resolveApi = '/api/movies?action=resolve&player_url=' + encodeURIComponent(playerUrl) + '&provider=' + encodeURIComponent(provider);
+                self.fetchJson(resolveApi, function (errRes, resRes) {
+                  if (!errRes && resRes && resRes.streamUrl) {
+                    var continueInfo = {
+                      title: title,
+                      slug: slug,
+                      kind: kind,
+                      provider: provider,
+                      playerUrl: playerUrl,
+                      backupUrl: resRes.backupUrl || null,
+                      backups: resRes.backups || []
+                    };
+                    window.TVPlayer.play(title, resRes.streamUrl, resRes.type || 'hls', resumeTime, continueInfo);
+                  } else if (url) {
+                    window.TVPlayer.play(title, url, 'hls', resumeTime, { title: title, slug: slug, kind: kind, provider: provider, playerUrl: playerUrl });
+                  } else {
+                    self.openDetailModal(kind, slug, provider, title);
+                  }
+                });
+                return;
+              } else if (url) {
+                window.TVPlayer.play(title, url, 'hls', resumeTime, { title: title, slug: slug, kind: kind, provider: provider });
+                return;
+              }
+            }
 
             if (type === 'pelispedia') {
               self.lastFocusedGridItem = card;
-              self.openDetailModal(kind, slug, provider);
+              self.openDetailModal(kind, slug, provider, title);
             } else {
               var isChannel = isLiveAttr || (kind === 'canal') || (provider === 'pluto') || (provider === 'iptv') || (provider === 'channels') || (self.currentCategory === 'channels');
               var playInfo = {
@@ -1690,7 +1726,7 @@
       }
     },
 
-    openDetailModal: function (kind, slug, provider) {
+    openDetailModal: function (kind, slug, provider, itemTitle) {
       var self = this;
       this.stopTrailerPreview();
       provider = provider || 'pelispedia';
@@ -1706,12 +1742,12 @@
         };
       }
 
-      document.getElementById('detail-title').innerText = 'Cargando detalles...';
+      document.getElementById('detail-title').innerText = itemTitle || 'Cargando detalles...';
       document.getElementById('detail-overview').innerText = '';
       document.getElementById('detail-actions').innerHTML = '';
       document.getElementById('detail-episodes-section').style.display = 'none';
 
-      var detailApi = '/api/movies?action=detail&kind=' + encodeURIComponent(kind) + '&slug=' + encodeURIComponent(slug) + '&provider=' + encodeURIComponent(provider);
+      var detailApi = '/api/movies?action=detail&kind=' + encodeURIComponent(kind) + '&slug=' + encodeURIComponent(slug) + '&provider=' + encodeURIComponent(provider) + (itemTitle ? '&title=' + encodeURIComponent(itemTitle) : '');
       this.fetchJson(detailApi, function (err, data) {
         if (err || !data || data.status !== 'ok') {
           alert('Error al cargar la información del contenido.');
@@ -1719,6 +1755,7 @@
           return;
         }
 
+        data.slug = data.slug || slug;
         self.currentSerieDetail = data;
 
         document.getElementById('detail-title').innerText = data.title;
@@ -1784,6 +1821,7 @@
                   slug: data.slug,
                   kind: data.kind,
                   provider: data.provider || 'pelispedia',
+                  playerUrl: data.player_url || null,
                   poster: data.poster,
                   backupUrl: res.backupUrl || null,
                   backups: res.backups || []
@@ -1945,6 +1983,7 @@
                     episode: epIndex + 1,
                     kind: 'serie',
                     provider: epProvider,
+                    playerUrl: playerUrl,
                     poster: (self.currentSerieDetail ? self.currentSerieDetail.poster : ''),
                     backupUrl: res2.backupUrl || null,
                     backups: res2.backups || []

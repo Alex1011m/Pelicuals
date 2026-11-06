@@ -53,14 +53,65 @@ module.exports = function (req, res) {
   if (action === 'detail') {
     var kind = req.query.kind || 'movie';
     var slug = req.query.slug;
-    if (!slug) return res.status(400).json({ status: 'error', message: 'Falta slug' });
+    var titleQuery = req.query.title;
+    if (!slug && !titleQuery) return res.status(400).json({ status: 'error', message: 'Falta slug o título' });
 
-    scraperManager.getDetail(providerId, kind, slug, function (err, data) {
-      if (err || !data) {
-        return res.status(500).json({ status: 'error', message: 'Error al obtener detalles' });
-      }
-      res.status(200).json(Object.assign({ status: 'ok' }, data));
-    });
+    function tryGetDetail(targetSlug, cb) {
+      scraperManager.getDetail(providerId, kind, targetSlug, function (err, data) {
+        if (!err && data) {
+          data.slug = data.slug || targetSlug;
+          return cb(null, data);
+        }
+        cb(err || new Error('No detail'));
+      });
+    }
+
+    var isNumericSlug = slug && /^\d+$/.test(String(slug).trim());
+
+    if (slug && !isNumericSlug) {
+      tryGetDetail(slug, function (err, data) {
+        if (!err && data) {
+          return res.status(200).json(Object.assign({ status: 'ok' }, data));
+        }
+        if (titleQuery) {
+          fallbackSearch(titleQuery);
+        } else {
+          res.status(500).json({ status: 'error', message: 'Error al obtener detalles' });
+        }
+      });
+    } else if (titleQuery || slug) {
+      fallbackSearch(titleQuery || slug);
+    } else {
+      res.status(400).json({ status: 'error', message: 'Falta slug o título' });
+    }
+
+    function fallbackSearch(queryStr) {
+      var cleanTitle = String(queryStr).replace(/\s*-\s*(?:piloto|temp\w*|ep\w*|episodio\w*|\d+).*$/i, '').trim();
+      scraperManager.search(cleanTitle, providerId, function (errSearch, searchResults) {
+        if (errSearch || !searchResults || searchResults.length === 0) {
+          return res.status(500).json({ status: 'error', message: 'Error al obtener detalles' });
+        }
+        var match = null;
+        if (isNumericSlug) {
+          for (var s = 0; s < searchResults.length; s++) {
+            if (String(searchResults[s].id) === String(slug)) {
+              match = searchResults[s];
+              break;
+            }
+          }
+        }
+        if (!match) {
+          match = searchResults[0];
+        }
+
+        tryGetDetail(match.slug, function (err2, data2) {
+          if (!err2 && data2) {
+            return res.status(200).json(Object.assign({ status: 'ok' }, data2));
+          }
+          res.status(500).json({ status: 'error', message: 'Error al obtener detalles' });
+        });
+      });
+    }
     return;
   }
 
