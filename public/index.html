@@ -4,18 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Smart TV Hub</title>
+  <link rel="icon" type="image/jpeg" href="/img/Icono.jpg">
+  <link rel="shortcut icon" href="/img/Icono.jpg">
+  <link rel="apple-touch-icon" href="/img/Icono.jpg">
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#009d71">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="stylesheet" href="/css/tv.css?v=2.1.7">
+  <link rel="stylesheet" href="/css/tv.css?v=2.1.8">
 </head>
 <body>
 
   <div class="tv-app-container">
     <!-- ENCABEZADO Y PESTAÑAS PRINCIPALES (ESTILO NETFLIX) -->
     <header class="tv-header">
-      <div class="tv-brand"><span class="brand-accent">SMART</span> TV HUB</div>
+      <div class="tv-brand">
+        <img src="/img/Nombre.jpg" alt="Smart TV Hub" class="brand-logo-img">
+      </div>
       <nav class="tv-nav-tabs">
         <button class="nav-tab focusable active-tab" data-category="channels" tabindex="0">Canales de TV</button>
         <button class="nav-tab focusable" data-category="movies" tabindex="0">Películas y Series</button>
@@ -317,9 +322,9 @@
 
   <!-- SCRIPTS EN ES5 PURO (ORDEN ESTRICTO DE CARGA) -->
   <script src="/js/hls.min.js"></script>
-  <script src="/js/spatial-nav.js?v=2.1.7"></script>
-  <script src="/js/tv-player.js?v=2.1.7"></script>
-  <script src="/js/tv-app.js?v=2.1.7"></script>
+  <script src="/js/spatial-nav.js?v=2.1.8"></script>
+  <script src="/js/tv-player.js?v=2.1.8"></script>
+  <script src="/js/tv-app.js?v=2.1.8"></script>
 </body>
 </html>
 

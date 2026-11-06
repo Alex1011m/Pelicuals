@@ -191,6 +191,10 @@
         self.showBuffering(true, 'Conexión lenta...');
       }, false);
 
+      this.video.addEventListener('loadedmetadata', function () {
+        self.applyPendingSeek();
+      }, false);
+
       this.video.addEventListener('playing', function () {
         self.showBuffering(false);
         clearTimeout(self.stallTimer);
@@ -379,6 +383,7 @@
 
             // Inicio rápido (inicia al instante con fragmento precargado)
             startLevel: -1,
+            startPosition: (startTime > 0 ? startTime : -1),
             startFragPrefetch: true,
             abrEwmaDefaultEstimate: 1200000,
 
@@ -591,12 +596,15 @@
     },
 
     applyPendingSeek: function () {
-      if (this.pendingStartTime > 0 && this.video && this.video.duration) {
+      if (this.pendingStartTime > 0 && this.video) {
         var targetTime = this.pendingStartTime;
-        this.pendingStartTime = 0;
         try {
-          this.video.currentTime = targetTime;
-          this.showToast('Reanudando desde ' + this.formatTime(targetTime));
+          var isReady = (this.video.readyState >= 1) || (this.video.duration && !isNaN(this.video.duration) && this.video.duration > 0);
+          if (isReady) {
+            this.pendingStartTime = 0;
+            this.video.currentTime = targetTime;
+            this.showToast('Reanudando desde ' + this.formatTime(targetTime));
+          }
         } catch (eSeek) { }
       }
     },

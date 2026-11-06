@@ -1600,8 +1600,9 @@
 
             if (isContinue) {
               self.lastFocusedGridItem = card;
-              if (playerUrl) {
-                var resolveApi = '/api/movies?action=resolve&player_url=' + encodeURIComponent(playerUrl) + '&provider=' + encodeURIComponent(provider);
+
+              function resumeWithPlayerUrl(pUrl) {
+                var resolveApi = '/api/movies?action=resolve&player_url=' + encodeURIComponent(pUrl) + '&provider=' + encodeURIComponent(provider);
                 self.fetchJson(resolveApi, function (errRes, resRes) {
                   if (!errRes && resRes && resRes.streamUrl) {
                     var continueInfo = {
@@ -1609,7 +1610,7 @@
                       slug: slug,
                       kind: kind,
                       provider: provider,
-                      playerUrl: playerUrl,
+                      playerUrl: pUrl,
                       backupUrl: resRes.backupUrl || null,
                       backups: resRes.backups || []
                     };
@@ -1618,10 +1619,44 @@
                     self.openDetailModal(kind, slug, provider, title);
                   }
                 });
+              }
+
+              if (playerUrl) {
+                return resumeWithPlayerUrl(playerUrl);
+              }
+
+              if (kind === 'movie') {
+                var detailApiM = '/api/movies?action=detail&kind=movie&slug=' + encodeURIComponent(slug) + '&provider=' + encodeURIComponent(provider) + (title ? '&title=' + encodeURIComponent(title) : '');
+                self.fetchJson(detailApiM, function (errD, dRes) {
+                  if (!errD && dRes && dRes.player_url) {
+                    return resumeWithPlayerUrl(dRes.player_url);
+                  }
+                  self.openDetailModal(kind, slug, provider, title);
+                });
                 return;
               } else {
-                // Si la entrada antigua no tiene playerUrl, abrir modal de detalles con slug resuelto automáticamente
-                self.openDetailModal(kind, slug, provider, title);
+                var detailApiS = '/api/movies?action=detail&kind=serie&slug=' + encodeURIComponent(slug) + '&provider=' + encodeURIComponent(provider) + (title ? '&title=' + encodeURIComponent(title) : '');
+                self.fetchJson(detailApiS, function (errD2, dRes2) {
+                  if (!errD2 && dRes2 && dRes2.id) {
+                    self.fetchJson('/api/movies?action=episodes&item_id=' + encodeURIComponent(dRes2.id) + '&season=1&provider=' + encodeURIComponent(provider), function (errEps, epsRes) {
+                      if (!errEps && epsRes && epsRes.episodes && epsRes.episodes.length > 0) {
+                        var targetEp = epsRes.episodes[0];
+                        for (var epI = 0; epI < epsRes.episodes.length; epI++) {
+                          if (title && epsRes.episodes[epI].title && title.indexOf(epsRes.episodes[epI].title) !== -1) {
+                            targetEp = epsRes.episodes[epI];
+                            break;
+                          }
+                        }
+                        if (targetEp && targetEp.player_url) {
+                          return resumeWithPlayerUrl(targetEp.player_url);
+                        }
+                      }
+                      self.openDetailModal(kind, slug, provider, title);
+                    });
+                    return;
+                  }
+                  self.openDetailModal(kind, slug, provider, title);
+                });
                 return;
               }
             }
@@ -1783,8 +1818,22 @@
         }
 
         var progressMap = self.getWatchProgressMap();
-        var key = data.slug || data.title;
-        var savedProgress = progressMap[key];
+        var savedProgress = null;
+        var pKeys = Object.keys(progressMap);
+        for (var pk = 0; pk < pKeys.length; pk++) {
+          var pItem = progressMap[pKeys[pk]];
+          if (!pItem) continue;
+          var matchSlug = (data.slug && pItem.slug === data.slug) ||
+                          (slug && pItem.slug === slug) ||
+                          (data.id && String(pItem.slug) === String(data.id));
+          var matchTitle = (data.title && pItem.title && pItem.title.toLowerCase().indexOf(data.title.toLowerCase()) !== -1) ||
+                           (itemTitle && pItem.title && pItem.title.toLowerCase().indexOf(itemTitle.toLowerCase()) !== -1) ||
+                           (pItem.title && data.title && data.title.toLowerCase().indexOf(pItem.title.toLowerCase()) !== -1);
+          if (matchSlug || matchTitle) {
+            savedProgress = pItem;
+            break;
+          }
+        }
 
         var isFav = self.isFavorite(data.slug);
         var favBtnText = isFav ? '★ EN FAVORITOS' : '☆ AGREGAR A FAVORITOS';
@@ -1866,9 +1915,45 @@
           window.SpatialNav.focusElement(resumeBtn || playBtn);
         } else {
           // Es una Serie o Anime
+          if (savedProgress && savedProgress.time > 15) {
+            actionsHtml += '<button id="btn-resume-serie" class="btn-tv btn-tv-primary focusable" tabindex="0">► REANUDAR ' + self.escapeHtml(savedProgress.title) + ' (' + self.formatTime(savedProgress.time) + ')</button>';
+          }
           actionsHtml += '<button id="btn-toggle-fav" class="btn-tv focusable" tabindex="0">' + favBtnText + '</button>';
           actionsHtml += '<button id="btn-close-modal" class="btn-tv focusable" tabindex="0">VOLVER</button>';
           document.getElementById('detail-actions').innerHTML = actionsHtml;
+
+          var resumeSerieBtn = document.getElementById('btn-resume-serie');
+          if (resumeSerieBtn) {
+            resumeSerieBtn.addEventListener('click', function () {
+              self.stopTrailerPreview();
+              if (savedProgress.playerUrl) {
+                resumeSerieBtn.innerText = 'Extrayendo...';
+                var resolveApi = '/api/movies?action=resolve&player_url=' + encodeURIComponent(savedProgress.playerUrl) + '&provider=' + encodeURIComponent(savedProgress.provider || data.provider || 'pelispedia');
+                self.fetchJson(resolveApi, function (errR, resR) {
+                  resumeSerieBtn.innerText = '► REANUDAR';
+                  if (!errR && resR && resR.streamUrl) {
+                    self.closeDetailModal();
+                    var epInfo = {
+                      title: savedProgress.title,
+                      slug: data.slug,
+                      kind: 'serie',
+                      provider: data.provider || 'pelispedia',
+                      playerUrl: savedProgress.playerUrl,
+                      poster: data.poster,
+                      backupUrl: resR.backupUrl || null,
+                      backups: resR.backups || []
+                    };
+                    window.TVPlayer.play(savedProgress.title, resR.streamUrl, resR.type || 'hls', savedProgress.time, epInfo);
+                  } else {
+                    alert('No se pudo extraer el stream de este episodio.');
+                  }
+                });
+              } else {
+                var firstEp = document.querySelector('.episode-card');
+                if (firstEp) firstEp.click();
+              }
+            }, false);
+          }
 
           var favBtnSerie = document.getElementById('btn-toggle-fav');
           if (favBtnSerie) {
@@ -2002,7 +2087,20 @@
                     }
                   };
 
-                  window.TVPlayer.play(fullTitle, res2.streamUrl, res2.type, 0, epInfo, onNextEpisode);
+                  var epStartTime = 0;
+                  var progressMap = self.getWatchProgressMap();
+                  var pKeys = Object.keys(progressMap);
+                  for (var pk = 0; pk < pKeys.length; pk++) {
+                    var pItem = progressMap[pKeys[pk]];
+                    if (pItem && pItem.title && (pItem.title.indexOf(epTitle) !== -1 || epTitle.indexOf(pItem.title) !== -1 || pItem.episodeKey === epInfo.episodeKey)) {
+                      if (pItem.time > 15) {
+                        epStartTime = pItem.time;
+                        break;
+                      }
+                    }
+                  }
+
+                  window.TVPlayer.play(fullTitle, res2.streamUrl, res2.type, epStartTime, epInfo, onNextEpisode);
                 } else {
                   alert('No se pudo extraer el stream de este episodio.');
                 }
