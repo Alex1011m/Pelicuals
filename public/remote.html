@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Control Remoto - Smart TV Hub</title>
   <link rel="icon" type="image/jpeg" href="/img/Icono.jpg">
   <link rel="apple-touch-icon" href="/img/Icono.jpg">
@@ -19,39 +19,37 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    html, body {
+    html {
       width: 100%;
-      min-height: 100vh;
-      min-height: 100dvh;
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-      overflow-y: auto;
+      height: 100%;
+      background-color: #020718;
     }
 
     body {
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
       background: radial-gradient(circle at 50% 15%, #081a4a 0%, #020718 80%);
       color: #f1f3f5;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 12px 14px max(16px, env(safe-area-inset-bottom, 16px));
+      padding: 10px 12px max(14px, env(safe-area-inset-bottom, 14px));
       box-sizing: border-box;
     }
 
     /* BARRA SUPERIOR */
     .remote-header {
       width: 100%;
-      max-width: 600px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 14px;
+      padding: 8px 12px;
       background: rgba(8, 26, 74, 0.7);
       border: 1px solid rgba(13, 52, 186, 0.5);
-      border-radius: 14px;
-      margin-bottom: 14px;
+      border-radius: 12px;
+      margin-bottom: 10px;
       flex-shrink: 0;
       backdrop-filter: blur(8px);
     }
@@ -59,12 +57,12 @@
     .remote-brand {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .remote-logo {
-      height: 32px;
-      max-width: 130px;
+      height: min(7vw, 32px);
+      max-width: 110px;
       object-fit: contain;
       border-radius: 4px;
     }
@@ -73,13 +71,13 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 14px;
+      font-size: clamp(11px, 3.5vw, 14px);
       font-weight: 600;
     }
 
     .status-dot {
-      width: 10px;
-      height: 10px;
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
       background: #ff5555;
       transition: background 0.3s;
@@ -98,21 +96,21 @@
       background: rgba(255, 255, 255, 0.12);
       border: 1px solid rgba(255, 255, 255, 0.25);
       color: #fff;
-      padding: 6px 12px;
+      padding: 5px 10px;
       border-radius: 20px;
-      font-size: 13px;
+      font-size: clamp(10px, 3vw, 12px);
       font-weight: bold;
       cursor: pointer;
     }
 
-    /* CONTENEDOR PRINCIPAL */
+    /* CONTENEDOR PRINCIPAL - 100% ANCHO DE PANTALLA */
     .remote-body {
       width: 100%;
-      max-width: 600px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 16px;
+      gap: min(3.5vw, 14px);
+      flex: 1;
     }
 
     /* BUSCADOR */
@@ -120,11 +118,11 @@
       width: 100%;
       background: rgba(8, 26, 74, 0.6);
       border: 1px solid rgba(13, 52, 186, 0.5);
-      border-radius: 14px;
-      padding: 10px 12px;
+      border-radius: 12px;
+      padding: 8px 10px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .search-sync-input {
@@ -132,9 +130,9 @@
       background: #020718;
       border: 1px solid rgba(13, 52, 186, 0.8);
       color: #ffffff;
-      padding: 12px 14px;
-      border-radius: 10px;
-      font-size: 16px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: clamp(13px, 4vw, 16px);
       outline: none;
     }
 
@@ -147,59 +145,59 @@
       background: #009d71;
       color: #020718;
       border: none;
-      padding: 12px 18px;
-      border-radius: 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
       font-weight: 800;
-      font-size: 15px;
+      font-size: clamp(12px, 3.8vw, 15px);
       cursor: pointer;
       flex-shrink: 0;
     }
 
-    /* GRIDS DE BOTONES */
+    /* BOTONES AUXILIARES Y MULTIMEDIA EN GRID EXPANSIBLE */
     .controls-grid {
       width: 100%;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+      gap: 8px;
     }
 
     .controls-grid-2 {
       width: 100%;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+      gap: 8px;
     }
 
     .controls-grid-3 {
       width: 100%;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      gap: 8px;
     }
 
     .remote-btn {
       background: #081a4a;
       border: 1px solid rgba(13, 52, 186, 0.7);
       color: #f1f3f5;
-      padding: 12px 6px;
-      border-radius: 14px;
-      font-size: 14px;
+      padding: min(3vw, 12px) 4px;
+      border-radius: 12px;
+      font-size: clamp(11px, 3.4vw, 14px);
       font-weight: 700;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 4px;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
       transition: all 0.12s ease;
       touch-action: manipulation;
-      min-height: 62px;
+      min-height: min(14vw, 58px);
     }
 
     .remote-btn svg {
-      width: 24px;
-      height: 24px;
+      width: clamp(18px, 5.5vw, 24px);
+      height: clamp(18px, 5.5vw, 24px);
     }
 
     .remote-btn:active {
@@ -220,11 +218,11 @@
       color: #020718;
     }
 
-    /* CRUCETA D-PAD PROPORCIONAL Y ESCALADA */
+    /* D-PAD COMPLETAMENTE ADAPTATIVO AL ANCHO */
     .dpad-container {
       position: relative;
-      width: min(85vw, 300px);
-      height: min(85vw, 300px);
+      width: min(76vw, 280px);
+      height: min(76vw, 280px);
       background: radial-gradient(circle, #081a4a 35%, #030a21 75%);
       border: 3px solid rgba(13, 52, 186, 0.6);
       border-radius: 50%;
@@ -232,7 +230,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 10px 0;
+      margin: 4px 0;
       flex-shrink: 0;
     }
 
@@ -241,7 +239,7 @@
       background: #081a4a;
       border: 1px solid rgba(13, 52, 186, 0.5);
       color: #ffffff;
-      font-size: 24px;
+      font-size: clamp(18px, 5vw, 24px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -257,44 +255,48 @@
     }
 
     .dpad-up {
-      top: 10px;
-      left: calc(50% - 50px);
-      width: 100px;
-      height: 70px;
-      border-radius: 50px 50px 14px 14px;
+      top: 6%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 38%;
+      height: 25%;
+      border-radius: 40px 40px 10px 10px;
     }
 
     .dpad-down {
-      bottom: 10px;
-      left: calc(50% - 50px);
-      width: 100px;
-      height: 70px;
-      border-radius: 14px 14px 50px 50px;
+      bottom: 6%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 38%;
+      height: 25%;
+      border-radius: 10px 10px 40px 40px;
     }
 
     .dpad-left {
-      left: 10px;
-      top: calc(50% - 50px);
-      width: 70px;
-      height: 100px;
-      border-radius: 50px 14px 14px 50px;
+      left: 6%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 25%;
+      height: 38%;
+      border-radius: 40px 10px 10px 40px;
     }
 
     .dpad-right {
-      right: 10px;
-      top: calc(50% - 50px);
-      width: 70px;
-      height: 100px;
-      border-radius: 14px 50px 50px 14px;
+      right: 6%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 25%;
+      height: 38%;
+      border-radius: 10px 40px 40px 10px;
     }
 
     .dpad-center-ok {
-      width: min(30vw, 100px);
-      height: min(30vw, 100px);
+      width: 34%;
+      height: 34%;
       border-radius: 50%;
       background: linear-gradient(135deg, #00ba88 0%, #00875e 100%);
       color: #020718;
-      font-size: 24px;
+      font-size: clamp(16px, 5.5vw, 24px);
       font-weight: 900;
       border: 3px solid #ffffff;
       box-shadow: 0 4px 18px rgba(0, 157, 113, 0.6);
@@ -314,7 +316,7 @@
       box-shadow: 0 0 25px #009d71;
     }
 
-    /* MODAL PIN */
+    /* MODAL DE EMPAREJAMIENTO DE PIN */
     .pair-modal {
       position: fixed;
       top: 0;
@@ -331,7 +333,7 @@
     }
 
     .pair-box {
-      width: 100%;
+      width: 90%;
       max-width: 340px;
       background: #081a4a;
       border: 2px solid #009d71;
@@ -371,7 +373,7 @@
 </head>
 <body>
 
-  <!-- MODAL PARA INGRESAR PIN -->
+  <!-- MODAL DE PIN -->
   <div id="pair-modal" class="pair-modal" style="display: none;">
     <div class="pair-box">
       <img src="/img/Nombre.jpg" alt="Logo" style="height: 36px; max-width: 140px; object-fit: contain; margin-bottom: 10px;">
@@ -382,7 +384,7 @@
     </div>
   </div>
 
-  <!-- BARRA DE ESTADO SUPERIOR -->
+  <!-- BARRA DE ESTADO -->
   <header class="remote-header">
     <div class="remote-brand">
       <img src="/img/Nombre.jpg" alt="Smart TV Hub" class="remote-logo">
@@ -394,7 +396,7 @@
     <button id="btn-change-pin" class="btn-pin-pill">PIN: <span id="label-pin">----</span></button>
   </header>
 
-  <!-- CUERPO PRINCIPAL DEL CONTROL -->
+  <!-- CUERPO DEL CONTROL -->
   <main class="remote-body">
 
     <!-- BUSCADOR -->
@@ -403,7 +405,7 @@
       <button id="btn-remote-search-submit" class="btn-search-send">Buscar</button>
     </div>
 
-    <!-- NAVEGACIÓN Y ACCIONES DEL SISTEMA -->
+    <!-- ACCIONES DE NAVEGACIÓN -->
     <div class="controls-grid">
       <button class="remote-btn" data-action="back" title="Volver / Salir">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
@@ -423,7 +425,7 @@
       </button>
     </div>
 
-    <!-- CRUCETA DE MOVIMIENTO D-PAD -->
+    <!-- CRUCETA D-PAD PORCENTUAL -->
     <div class="dpad-container">
       <button class="dpad-btn dpad-up" data-action="up" aria-label="Arriba">&#9650;</button>
       <button class="dpad-btn dpad-down" data-action="down" aria-label="Abajo">&#9660;</button>
@@ -432,7 +434,7 @@
       <button class="dpad-center-ok" data-action="ok" aria-label="OK">OK</button>
     </div>
 
-    <!-- SELECTOR DE AUDIO Y SUBTÍTULOS -->
+    <!-- AUDIO Y SUBTÍTULOS -->
     <div class="controls-grid-2">
       <button class="remote-btn remote-btn-accent" data-action="audio" title="Cambiar pista de Audio">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"/></svg>
@@ -444,7 +446,7 @@
       </button>
     </div>
 
-    <!-- CONTROLES MULTIMEDIA -->
+    <!-- REPRODUCCIÓN -->
     <div class="controls-grid-3">
       <button class="remote-btn" data-action="rewind" title="Retroceder 10 segundos">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
@@ -460,7 +462,7 @@
       </button>
     </div>
 
-    <!-- VOLUMEN Y SILENCIO -->
+    <!-- VOLUMEN -->
     <div class="controls-grid-3">
       <button class="remote-btn" data-action="voldown" title="Bajar Volumen">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM5 9v6h4l5 5V4L9 9H5z"/></svg>
