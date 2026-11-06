@@ -442,6 +442,43 @@
                     break;
                   }
 
+                  // Si el error es 403 (enlace temporal caducado) y tenemos playerUrl, renovar señal automáticamente
+                  if (httpCode === 403 && self.currentItemInfo && self.currentItemInfo.playerUrl && !self.reExtracting) {
+                    self.reExtracting = true;
+                    self.showToast('El enlace temporal caducó. Renovando señal...');
+                    var rProvider = self.currentItemInfo.provider || 'pelispedia';
+                    var rApi = '/api/movies?action=resolve&player_url=' + encodeURIComponent(self.currentItemInfo.playerUrl) + '&provider=' + encodeURIComponent(rProvider);
+                    var xhrR = new XMLHttpRequest();
+                    xhrR.open('GET', rApi, true);
+                    xhrR.onreadystatechange = function () {
+                      if (xhrR.readyState === 4) {
+                        self.reExtracting = false;
+                        if (xhrR.status === 200) {
+                          try {
+                            var freshRes = JSON.parse(xhrR.responseText);
+                            if (freshRes && freshRes.streamUrl) {
+                              console.warn('Señal renovada con éxito tras error 403:', freshRes.streamUrl);
+                              self.hasFatalError = false;
+                              self.networkRetryCount = 0;
+                              self.currentStreamUrl = freshRes.streamUrl;
+                              if (freshRes.backups && freshRes.backups.length > 0) {
+                                self.backups = freshRes.backups;
+                              }
+                              var currentPos = (self.video && self.video.currentTime) ? self.video.currentTime : (self.pendingStartTime || 0);
+                              self.pendingStartTime = currentPos;
+                              self.hlsInstance.loadSource(freshRes.streamUrl);
+                              self.hlsInstance.startLoad();
+                              return;
+                            }
+                          } catch (eFresh) { }
+                        }
+                        self.showToast('No se pudo renovar la señal (Error 403). Pulsa ATRÁS.');
+                      }
+                    };
+                    xhrR.send();
+                    break;
+                  }
+
                   // Solo abortar si el manifiesto principal 404/403 o tras 6 reintentos seguidos fallidos
                   if ((isManifestError && isFatalHttp) || self.networkRetryCount > 6) {
                     console.warn('Fallo permanente de red en HLS (' + data.details + ', HTTP ' + httpCode + '). Deteniendo.');

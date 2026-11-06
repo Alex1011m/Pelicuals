@@ -1614,15 +1614,14 @@
                       backups: resRes.backups || []
                     };
                     window.TVPlayer.play(title, resRes.streamUrl, resRes.type || 'hls', resumeTime, continueInfo);
-                  } else if (url) {
-                    window.TVPlayer.play(title, url, 'hls', resumeTime, { title: title, slug: slug, kind: kind, provider: provider, playerUrl: playerUrl });
                   } else {
                     self.openDetailModal(kind, slug, provider, title);
                   }
                 });
                 return;
-              } else if (url) {
-                window.TVPlayer.play(title, url, 'hls', resumeTime, { title: title, slug: slug, kind: kind, provider: provider });
+              } else {
+                // Si la entrada antigua no tiene playerUrl, abrir modal de detalles con slug resuelto automáticamente
+                self.openDetailModal(kind, slug, provider, title);
                 return;
               }
             }
