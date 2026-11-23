@@ -89,10 +89,12 @@
 
       this.video.addEventListener('play', function () {
         self.updatePlayPauseButton(false);
+        self.showOSD();
       }, false);
 
       this.video.addEventListener('pause', function () {
         self.updatePlayPauseButton(true);
+        self.showOSD();
       }, false);
 
       // Clic directo sobre el video para reproducir/pausar o despertar controles
@@ -107,7 +109,14 @@
 
       // Despertar OSD y restaurar cursor con cualquier interacción de ratón / touch / puntero
       if (this.modal) {
-        var onUserActivity = function () {
+        var lastMouseX = -1;
+        var lastMouseY = -1;
+        var onUserActivity = function (e) {
+          if (e && (e.type === 'mousemove' || e.type === 'pointermove')) {
+            if (e.clientX === lastMouseX && e.clientY === lastMouseY) return;
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+          }
           self.showOSD();
         };
         this.modal.addEventListener('mousemove', onUserActivity, false);
@@ -199,6 +208,7 @@
         self.showBuffering(false);
         clearTimeout(self.stallTimer);
         self.applyPendingSeek();
+        self.showOSD();
       }, false);
 
       this.video.addEventListener('canplay', function () {
@@ -1000,14 +1010,34 @@
         return true;
       }
 
-      // Verificar si el foco actual está en uno de los botones del OSD
+      // Verificar si el foco actual está en uno de los botones del OSD o en el botón flotante cerrar
       var activeEl = document.activeElement;
-      var isOsdFocused = activeEl && this.osd && this.osd.contains(activeEl);
+      var curNav = window.SpatialNav ? window.SpatialNav.currentFocused : null;
+      var currentFocus = curNav || activeEl;
+      var isCloseFocused = currentFocus && (currentFocus === this.btnFloatingClose || currentFocus.id === 'btn-player-close');
+      var isOsdFocused = currentFocus && this.osd && this.osd.contains(currentFocus);
+
+      if (isCloseFocused) {
+        switch (keyCode) {
+          case KEYS.ENTER:
+            this.close();
+            return true;
+          case KEYS.DOWN:
+            this.hideOSD();
+            return true;
+          case KEYS.LEFT:
+          case KEYS.RIGHT:
+          case KEYS.UP:
+            return true;
+        }
+      }
 
       if (isOsdFocused) {
         switch (keyCode) {
           case KEYS.ENTER:
-            activeEl.click();
+            if (currentFocus && typeof currentFocus.click === 'function') {
+              currentFocus.click();
+            }
             return true;
           case KEYS.LEFT:
             window.SpatialNav.move('left');
@@ -1016,11 +1046,12 @@
             window.SpatialNav.move('right');
             return true;
           case KEYS.DOWN:
-            if (this.video) {
-              this.video.focus();
-            }
+            this.hideOSD();
             return true;
           case KEYS.UP:
+            if (this.btnFloatingClose) {
+              window.SpatialNav.focusElement(this.btnFloatingClose);
+            }
             return true;
         }
       }
@@ -1051,6 +1082,7 @@
           return true;
 
         case KEYS.UP:
+          this.showOSD();
           var targetBtn = null;
           if (this.btnPlayPause) {
             targetBtn = this.btnPlayPause;
@@ -1065,6 +1097,10 @@
           if (targetBtn) {
             window.SpatialNav.focusElement(targetBtn);
           }
+          return true;
+
+        case KEYS.DOWN:
+          this.hideOSD();
           return true;
 
         case KEYS.STOP:
@@ -1098,20 +1134,10 @@
 
       clearTimeout(this.osdTimer);
       this.osdTimer = setTimeout(function () {
-        var activeEl = document.activeElement;
-        var currentNav = window.SpatialNav ? window.SpatialNav.currentFocused : null;
-        var isFocusedOnControls = (activeEl && (
-          (self.osd && self.osd.contains(activeEl)) ||
-          (self.btnFloatingClose && self.btnFloatingClose === activeEl)
-        )) || (currentNav && (
-          (self.osd && self.osd.contains(currentNav)) ||
-          self.btnFloatingClose === currentNav
-        ));
-
-        if (!self.video.paused && !isFocusedOnControls) {
+        if (self.video && !self.video.paused) {
           self.hideOSD();
         }
-      }, 4000);
+      }, 3500);
     },
 
     hideOSD: function () {
@@ -1123,6 +1149,21 @@
       }
       if (this.modal) {
         window.SpatialNav.addClass(this.modal, 'cursor-hidden');
+      }
+
+      // Quitar foco visual de cualquier botón de los controles para no dejar caja verde flotando
+      var activeEl = document.activeElement;
+      if (activeEl && ((this.osd && this.osd.contains(activeEl)) || this.btnFloatingClose === activeEl)) {
+        if (typeof activeEl.blur === 'function') activeEl.blur();
+      }
+      if (window.SpatialNav && window.SpatialNav.currentFocused) {
+        if ((this.osd && this.osd.contains(window.SpatialNav.currentFocused)) || this.btnFloatingClose === window.SpatialNav.currentFocused) {
+          window.SpatialNav.removeClass(window.SpatialNav.currentFocused, 'focused');
+          window.SpatialNav.currentFocused = null;
+        }
+      }
+      if (this.video && typeof this.video.focus === 'function') {
+        try { this.video.focus(); } catch (e) { }
       }
     },
 

@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#009d71">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="stylesheet" href="/css/tv.css?v=2.2.1">
+  <link rel="stylesheet" href="/css/tv.css?v=2.2.3">
 </head>
 <body>
 
@@ -29,36 +29,6 @@
         <button id="btn-open-remote-modal" class="nav-tab nav-tab-remote focusable" tabindex="0" title="Conectar Control Celular">Control</button>
       </nav>
     </header>
-
-    <!-- BANNER HERO DE INFORMACIÓN DINÁMICA ESTILO NETFLIX -->
-    <div id="tv-preview-banner" class="tv-preview-banner">
-      <div class="preview-banner-content">
-        <div class="preview-banner-top-tags">
-          <span class="preview-badge-brand">RECOMENDADO</span>
-          <span id="preview-banner-quality" class="preview-badge-quality">HD 1080p</span>
-        </div>
-        <div id="preview-banner-title" class="preview-banner-title">Smart TV Hub</div>
-        <div id="preview-banner-meta" class="preview-banner-meta">★ 8.5 • 2026 • Navega con el control o ratón virtual</div>
-        <div id="preview-banner-desc" class="preview-banner-desc">Cientos de películas, series completas, anime y canales en vivo optimizados para tu televisor.</div>
-        <div id="preview-banner-actions" class="preview-banner-actions">
-          <button id="btn-banner-play" class="btn-banner-action btn-banner-play focusable" tabindex="0">▶ VER AHORA</button>
-          <button id="btn-banner-info" class="btn-banner-action btn-banner-info focusable" tabindex="0">ⓘ MÁS INFO</button>
-          <button id="btn-banner-fav" class="btn-banner-action btn-banner-fav focusable" tabindex="0">☆ MI LISTA</button>
-        </div>
-      </div>
-      <!-- ÁREA MULTIMEDIA: PÓSTER Y VISTA PREVIA DE TRÁILER ESTILO NETFLIX -->
-      <div id="preview-banner-media" class="preview-banner-media">
-        <div id="preview-banner-thumb" class="preview-banner-thumb"></div>
-        <div id="preview-banner-video-container" class="preview-banner-video-container" style="display: none;">
-          <iframe id="preview-banner-iframe" class="preview-banner-iframe" src="about:blank" frameborder="0" allow="autoplay; encrypted-media"></iframe>
-          <div class="preview-banner-video-overlay"></div>
-          <div id="preview-trailer-badge" class="preview-trailer-badge">
-            <span class="pulse-dot"></span> TRÁILER
-          </div>
-          <button id="btn-preview-mute-toggle" class="btn-preview-mute-toggle focusable" tabindex="0" title="Activar/Desactivar sonido">&#128263;</button>
-        </div>
-      </div>
-    </div>
 
     <!-- CUERPO PRINCIPAL CON MENÚ LATERAL Y VIEWPORT -->
     <div class="tv-main-body">
@@ -237,7 +207,6 @@
     <div class="onboarding-overlay"></div>
     <div class="onboarding-container">
       <div class="onboarding-header">
-        <div class="onboarding-brand-pill">SMART TV HUB</div>
         <h1 class="onboarding-title">¿Qué te gustaría ver?</h1>
         <p class="onboarding-subtitle">Elige al menos <strong class="highlight-green">3 títulos</strong> que te llamen la atención para personalizar tus recomendaciones:</p>
         <div class="onboarding-counter-row">
@@ -277,6 +246,15 @@
         <div id="detail-overview" class="detail-overview"></div>
         <div id="detail-actions" class="detail-actions"></div>
       </div>
+      <!-- VISTA PREVIA DEL TRÁILER INTEGRADA EN EL MODAL DE DETALLES -->
+      <div id="detail-trailer-container" class="detail-trailer-container" style="display: none;">
+        <iframe id="detail-trailer-iframe" class="detail-trailer-iframe" src="about:blank" frameborder="0" allow="autoplay; encrypted-media"></iframe>
+        <div class="detail-trailer-overlay"></div>
+        <div class="detail-trailer-badge">
+          TRÁILER
+        </div>
+        <button id="btn-detail-trailer-mute" class="btn-detail-trailer-mute focusable" tabindex="0" title="Activar/Desactivar sonido">&#128263;</button>
+      </div>
     </div>
     <div id="detail-episodes-section" class="detail-episodes-section" style="display: none;">
       <div style="font-size: 22px; font-weight: 600; margin-bottom: 10px; color: #e5e9f0;">Temporadas y Episodios</div>
@@ -297,7 +275,7 @@
 
       <div class="remote-modal-body">
         <div class="remote-qr-wrapper">
-          <img id="remote-qr-img" class="remote-qr-img" src="" alt="Código QR Control Remoto">
+          <img id="remote-qr-img" class="remote-qr-img" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'><rect width='180' height='180' fill='%23081538'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2364748b' font-size='14'>Generando QR...</text></svg>" alt="Código QR Control Remoto">
         </div>
 
         <div class="remote-info-wrapper">
@@ -364,9 +342,9 @@
   <!-- SCRIPTS EN ES5 PURO (ORDEN ESTRICTO DE CARGA) -->
   <script src="/js/paho-mqtt.min.js"></script>
   <script src="/js/hls.min.js"></script>
-  <script src="/js/spatial-nav.js?v=2.2.1"></script>
-  <script src="/js/tv-player.js?v=2.2.1"></script>
-  <script src="/js/tv-app.js?v=2.2.1"></script>
+  <script src="/js/spatial-nav.js?v=2.2.4"></script>
+  <script src="/js/tv-player.js?v=2.2.4"></script>
+  <script src="/js/tv-app.js?v=2.2.4"></script>
 </body>
 </html>
 

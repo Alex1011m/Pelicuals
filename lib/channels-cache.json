@@ -287,19 +287,9 @@
         "title": "Antena 3",
         "subtitle": "General",
         "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Logo_Antena_3_2025_%28Naranja%29.svg/960px-Logo_Antena_3_2025_%28Naranja%29.svg.png",
-        "rawTitle": "Antena 3",
+        "rawTitle": "Antena 3 (1080p)",
         "provider": "iptv",
-        "streamUrl": "https://cdn.stmify.com/zapitv/stream/ANTENA_3/test.mpd",
-        "type": "hls"
-      },
-      {
-        "id": "Antena3Internacional_es_SD",
-        "title": "Antena 3 Internacional",
-        "subtitle": "General",
-        "thumb": "https://upload.wikimedia.org/wikipedia/commons/8/83/Antena3Internacional2025.png",
-        "rawTitle": "Antena 3 Internacional (1080p)",
-        "provider": "iptv",
-        "streamUrl": "http://38.252.238.18:8000/play/a04a/index.m3u8",
+        "streamUrl": "https://ignac16.github.io/voxel-tv-streams/a3.mpd",
         "type": "hls"
       },
       {
@@ -323,23 +313,43 @@
         "type": "hls"
       },
       {
+        "id": "Atreseries_es_SD",
+        "title": "Atreseries",
+        "subtitle": "Series",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Atreseries_2020_logo.svg/960px-Atreseries_2020_logo.svg.png",
+        "rawTitle": "Atreseries (480p)",
+        "provider": "iptv",
+        "streamUrl": "https://cdn.jsdelivr.net/gh/Ignac16/voxel-tv@main/src/constants/channels/a3s.mpd",
+        "type": "hls"
+      },
+      {
+        "id": "Atreseries_es_HD",
+        "title": "Atreseries HD",
+        "subtitle": "Series",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Atreseries_2020_logo.svg/960px-Atreseries_2020_logo.svg.png",
+        "rawTitle": "Atreseries HD (1080p)",
+        "provider": "iptv",
+        "streamUrl": "https://ignac16.github.io/voxel-tv-streams/a3s.mpd",
+        "type": "hls"
+      },
+      {
+        "id": "AXN_es_SD",
+        "title": "AXN (Spain)",
+        "subtitle": "Movies",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/AXN_logo_%282015%29.svg/960px-AXN_logo_%282015%29.svg.png",
+        "rawTitle": "AXN (Spain)",
+        "provider": "iptv",
+        "streamUrl": "http://sultanios.alwaysdata.net/vavo.php?ID=4238619703",
+        "type": "hls"
+      },
+      {
         "id": "AXNMovies_es_SD",
         "title": "AXN Movies (Spain)",
         "subtitle": "Movies",
         "thumb": "https://static.wikia.nocookie.net/logopedia/images/d/d2/AXN_Movies_logo.svg/revision/latest/scale-to-width-down/512",
         "rawTitle": "AXN Movies (Spain)",
         "provider": "iptv",
-        "streamUrl": "https://cdn.stmify.com/zapitv/stream/AXN_MOVIES/axn_white.mpd",
-        "type": "hls"
-      },
-      {
-        "id": "AXNWhite_us_SD",
-        "title": "AXN White (United States)",
-        "subtitle": "Entertainment",
-        "thumb": "https://i.imgur.com/47IKxmt.png",
-        "rawTitle": "AXN White (United States)",
-        "provider": "iptv",
-        "streamUrl": "https://onyx1.mofta1.cfd/axwhite/usergenx23rnd.m3u8",
+        "streamUrl": "http://sultanios.alwaysdata.net/vavo.php?ID=2493319111",
         "type": "hls"
       },
       {
@@ -441,16 +451,6 @@
         "provider": "iptv",
         "streamUrl": "https://directes-tv-int.3catdirectes.cat/live-content/bondia-hls/master.m3u8",
         "type": "hls"
-      },
-      {
-        "id": "CadenaElite_es_SD",
-        "title": "Cadena Elite",
-        "subtitle": "Music",
-        "thumb": "https://i.imgur.com/3yeGDTP.png",
-        "rawTitle": "Cadena Elite (720p) [Not 24/7]",
-        "provider": "iptv",
-        "streamUrl": "https://cloudvideo.servers10.com:8081/8004/index.m3u8",
-        "type": "hls"
       }
     ]
   },
@@ -482,7 +482,7 @@
         "title": "Acustik TV",
         "subtitle": "News",
         "thumb": "https://i.imgur.com/dhiNIng.png",
-        "rawTitle": "Acustik TV",
+        "rawTitle": "Acustik TV (720p)",
         "provider": "iptv",
         "streamUrl": "https://s5.mexside.net:1936/clientetv/clientetv/playlist.m3u8",
         "type": "hls"
@@ -522,7 +522,7 @@
         "title": "Antena TV",
         "subtitle": "General",
         "thumb": "https://i.imgur.com/1sAgSME.png",
-        "rawTitle": "Antena TV",
+        "rawTitle": "Antena TV (1080p)",
         "provider": "iptv",
         "streamUrl": "https://5ca9af4645e15.streamlock.net/grd/videogrd/playlist.m3u8",
         "type": "hls"
@@ -535,16 +535,6 @@
         "rawTitle": "Asi Sucede Guanajuato (720p) [Not 24/7]",
         "provider": "iptv",
         "streamUrl": "https://stream.oursnetworktv.com/latin/encoder13/playlist.m3u8",
-        "type": "hls"
-      },
-      {
-        "id": "AXNLatinAmerica_us_Mexico",
-        "title": "AXN Latin America Mexico",
-        "subtitle": "Movies",
-        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/AXN_logo_%282015%29.svg/960px-AXN_logo_%282015%29.svg.png",
-        "rawTitle": "AXN Latin America Mexico",
-        "provider": "iptv",
-        "streamUrl": "http://190.11.225.124:5000/live/axn_hd/playlist.m3u8",
         "type": "hls"
       },
       {
@@ -584,7 +574,7 @@
         "thumb": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Azteca_Internacional_logo_2023.png",
         "rawTitle": "Azteca Internacional (1080p)",
         "provider": "iptv",
-        "streamUrl": "https://azt-mun.otteravision.com/azt/mun/mun.m3u8",
+        "streamUrl": "http://167.249.23.102:8000/play/a0a3/index.m3u8",
         "type": "hls"
       },
       {
@@ -595,6 +585,16 @@
         "rawTitle": "Azteca Uno (1080p)",
         "provider": "iptv",
         "streamUrl": "http://38.44.109.41:8003/play/a033/index.m3u8",
+        "type": "hls"
+      },
+      {
+        "id": "AztecaUno_mx_Plus1",
+        "title": "Azteca Uno +1",
+        "subtitle": "General",
+        "thumb": "https://i.imgur.com/rRxgBtI.png",
+        "rawTitle": "Azteca Uno +1 (720p)",
+        "provider": "iptv",
+        "streamUrl": "https://azt-oo.otteravision.com/out/v1/da53d7d388be437e92bf8f464018eb48/index.m3u8",
         "type": "hls"
       },
       {
@@ -804,7 +804,7 @@
         "thumb": "https://i.imgur.com/PAvnVN9.png",
         "rawTitle": "Canal 26 (Mexico) (1080p)",
         "provider": "iptv",
-        "streamUrl": "https://60417ddeaf0d9.streamlock.net/telemetrika3/smil:telemetrika3.smil/playlist.m3u8",
+        "streamUrl": "https://5fe2654d6127d.streamlock.net/telemetrika3/_definst_/videotelemetrika3/playlist.m3u8",
         "type": "hls"
       },
       {
@@ -892,7 +892,7 @@
         "title": "CB TV Michoacan",
         "subtitle": "General",
         "thumb": "https://i.imgur.com/oFeCIeD.png",
-        "rawTitle": "CB TV Michoacan",
+        "rawTitle": "CB TV Michoacan (720p)",
         "provider": "iptv",
         "streamUrl": "https://5ca3e84a76d30.streamlock.net/cbtv/videoc3b3t3v3/playlist.m3u8",
         "type": "hls"
@@ -904,7 +904,7 @@
         "thumb": "https://i.imgur.com/2V0R0xT.png",
         "rawTitle": "CineLatino (720p)",
         "provider": "iptv",
-        "streamUrl": "http://206.135.11.174:8010/play/a0lq/index.m3u8",
+        "streamUrl": "http://168.196.127.137:6001/play/a08o/index.m3u8",
         "type": "hls"
       }
     ]
@@ -927,7 +927,7 @@
         "title": "24/7 Canal de Noticias",
         "subtitle": "News",
         "thumb": "https://i.imgur.com/4hDCB1M.png",
-        "rawTitle": "24/7 Canal de Noticias",
+        "rawTitle": "24/7 Canal de Noticias (360p)",
         "provider": "iptv",
         "streamUrl": "https://panel.host-live.com:19360/cn247tv/cn247tv.m3u8",
         "type": "hls"
@@ -953,23 +953,13 @@
         "type": "hls"
       },
       {
-        "id": "AdultSwimLatinAmerica_us_Panregional",
-        "title": "Adult Swim Latin America",
-        "subtitle": "Entertainment",
-        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Adult_Swim_2003_logo.svg/960px-Adult_Swim_2003_logo.svg.png",
-        "rawTitle": "Adult Swim Latin America",
-        "provider": "iptv",
-        "streamUrl": "http://170.244.209.30:8000/play/a02v/index.m3u8",
-        "type": "hls"
-      },
-      {
         "id": "AiredeSantaFe_ar_SD",
         "title": "Aire de Santa Fe",
         "subtitle": "General",
         "thumb": "https://i.imgur.com/60vSWW0.png",
         "rawTitle": "Aire de Santa Fe (1080p)",
         "provider": "iptv",
-        "streamUrl": "https://unlimited1-us.dps.live/airedesantafetv/airedesantafetv.smil/playlist.m3u8",
+        "streamUrl": "https://mdstrm.com/live-stream-playlist/6931a0eb06778645348008e0.m3u8",
         "type": "hls"
       },
       {
@@ -1127,7 +1117,7 @@
         "title": "Cadena103.TV",
         "subtitle": "Argentina",
         "thumb": "https://i.imgur.com/vBsry35.png",
-        "rawTitle": "Cadena103.TV",
+        "rawTitle": "Cadena103.TV (720p)",
         "provider": "iptv",
         "streamUrl": "https://streamlov.alsolnet.com/cadena103/live/playlist.m3u8",
         "type": "hls"
@@ -1180,6 +1170,16 @@
         "rawTitle": "Canal 2 NexTV Rafaela (720p)",
         "provider": "iptv",
         "streamUrl": "https://edge.enhdtv.com/nexthd/index.m3u8",
+        "type": "hls"
+      },
+      {
+        "id": "Canal3Arroyito_ar_SD",
+        "title": "Canal 3 Arroyito",
+        "subtitle": "General",
+        "thumb": "https://i.imgur.com/FHVdMwg.jpeg",
+        "rawTitle": "Canal 3 Arroyito (1080p)",
+        "provider": "iptv",
+        "streamUrl": "https://envivo.cespalarroyito.coop/live/Canal3Arroyito.m3u8",
         "type": "hls"
       },
       {
@@ -1237,7 +1237,7 @@
         "title": "Canal 4 Esquel",
         "subtitle": "Argentina",
         "thumb": "https://i.imgur.com/6kbOr16.png",
-        "rawTitle": "Canal 4 Esquel",
+        "rawTitle": "Canal 4 Esquel (720p)",
         "provider": "iptv",
         "streamUrl": "https://stream.arcast.com.ar/canal4esquel/canal4esquel/playlist.m3u8",
         "type": "hls"
@@ -1508,6 +1508,16 @@
         "type": "hls"
       },
       {
+        "id": "Canal8Sincelejo_co_SD",
+        "title": "Canal 8 Sincelejo",
+        "subtitle": "General",
+        "thumb": "https://i.imgur.com/6lAA8lL.png",
+        "rawTitle": "Canal 8 Sincelejo (720p)",
+        "provider": "iptv",
+        "streamUrl": "http://181.78.21.38:8000/play/a0df/index.m3u8",
+        "type": "hls"
+      },
+      {
         "id": "Canal8TVPlus_co_SD",
         "title": "Canal 8 TV+",
         "subtitle": "General",
@@ -1664,7 +1674,7 @@
         "thumb": "https://i.imgur.com/5PhTaHp.png",
         "rawTitle": "Canal RCN (1080p)",
         "provider": "iptv",
-        "streamUrl": "http://138.121.15.230:9002/RCN/index.m3u8",
+        "streamUrl": "http://38.134.250.110:8000/play/a00i/index.m3u8",
         "type": "hls"
       },
       {
@@ -1694,7 +1704,7 @@
         "thumb": "https://i.imgur.com/ZS5WTCd.png",
         "rawTitle": "Canal TRO (1080p)",
         "provider": "iptv",
-        "streamUrl": "https://liveingesta118.cdnmedia.tv/canaltro2live/smil:live.smil/playlist.m3u8",
+        "streamUrl": "http://138.94.3.106:8000/play/a07i/index.m3u8",
         "type": "hls"
       },
       {
@@ -1744,7 +1754,7 @@
         "thumb": "https://i.imgur.com/h7LWbt5.png",
         "rawTitle": "Caracol Internacional (1080p)",
         "provider": "iptv",
-        "streamUrl": "http://167.249.23.102:8000/play/a0ax/index.m3u8",
+        "streamUrl": "http://45.5.117.57:8200/play/a0e9/index.m3u8",
         "type": "hls"
       },
       {
@@ -1754,7 +1764,7 @@
         "thumb": "https://i.imgur.com/WbfdJbk.png",
         "rawTitle": "Caracol TV (1080p)",
         "provider": "iptv",
-        "streamUrl": "http://138.121.15.230:9002/CARACOL/index.m3u8",
+        "streamUrl": "http://38.190.100.202:8000/play/a09v/index.m3u8",
         "type": "hls"
       },
       {
@@ -1764,7 +1774,7 @@
         "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Cartoon_Network_2010_logo.svg/960px-Cartoon_Network_2010_logo.svg.png",
         "rawTitle": "Cartoon Network Latin America North Atlantic (1080p)",
         "provider": "iptv",
-        "streamUrl": "http://38.252.238.18:8000/play/a053/index.m3u8",
+        "streamUrl": "http://45.173.12.70:8000/play/a0fj",
         "type": "hls"
       },
       {
@@ -1855,16 +1865,6 @@
         "rawTitle": "CNC Tulua (1080p)",
         "provider": "iptv",
         "streamUrl": "https://live.amelbatv.co:81/cnctulualive/index.fmp4.m3u8",
-        "type": "hls"
-      },
-      {
-        "id": "CNCValledupar_co_SD",
-        "title": "CNC Valledupar",
-        "subtitle": "General",
-        "thumb": "https://i.imgur.com/y5N6PCg.jpg",
-        "rawTitle": "CNC Valledupar (720p)",
-        "provider": "iptv",
-        "streamUrl": "https://live20.bozztv.com/akamaissh101/ssh101/cncvalledupar1/playlist.m3u8",
         "type": "hls"
       }
     ]
@@ -2069,7 +2069,7 @@
         "thumb": "https://yt3.googleusercontent.com/U4INXhwmEUOABHoemQBpI6C9t4jb9iBmDvZ3ZT3lAb9Au_jVl32NL8XDpy-9cBjRJ2LP69Ovzg=s900-c-k-c0x00ffffff-no-rj",
         "rawTitle": "All Time Movies (576p)",
         "provider": "iptv",
-        "streamUrl": "https://tvsen6.aynaott.com/a2cKGQtB/index.m3u8",
+        "streamUrl": "https://fta.ektv.in/live/54/54_0.m3u8",
         "type": "hls"
       },
       {
@@ -2103,16 +2103,6 @@
         "type": "hls"
       },
       {
-        "id": "AMC_us_EastHD",
-        "title": "AMC (United States)",
-        "subtitle": "Movies",
-        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/AMC_logo_2019.svg/960px-AMC_logo_2019.svg.png",
-        "rawTitle": "AMC (United States) (720p)",
-        "provider": "iptv",
-        "streamUrl": "http://23.239.31.26:8989/amc/index.m3u8",
-        "type": "hls"
-      },
-      {
         "id": "AMCEurope_uk_Bulgary",
         "title": "AMC Europe Bulgary",
         "subtitle": "Movies",
@@ -2140,16 +2130,6 @@
         "rawTitle": "AMC Europe Hungary",
         "provider": "iptv",
         "streamUrl": "http://88.212.7.14/live/amc_hun/index.m3u8",
-        "type": "hls"
-      },
-      {
-        "id": "AMCEurope_uk_Romania",
-        "title": "AMC Europe Romania",
-        "subtitle": "Movies",
-        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/AMC_logo_2019.svg/960px-AMC_logo_2019.svg.png",
-        "rawTitle": "AMC Europe Romania",
-        "provider": "iptv",
-        "streamUrl": "https://iron1.jarvisx1.cfd/amece/usergenrx3oq1kr.m3u8",
         "type": "hls"
       },
       {
@@ -2283,13 +2263,23 @@
         "type": "hls"
       },
       {
+        "id": "AXN_es_SD",
+        "title": "AXN (Spain)",
+        "subtitle": "Movies",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/AXN_logo_%282015%29.svg/960px-AXN_logo_%282015%29.svg.png",
+        "rawTitle": "AXN (Spain)",
+        "provider": "iptv",
+        "streamUrl": "http://sultanios.alwaysdata.net/vavo.php?ID=4238619703",
+        "type": "hls"
+      },
+      {
         "id": "AXNAdria_us_SD",
         "title": "AXN Adria",
         "subtitle": "Movies",
         "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/AXN_logo_%282015%29.svg/960px-AXN_logo_%282015%29.svg.png",
-        "rawTitle": "AXN Adria",
+        "rawTitle": "AXN Adria (576p)",
         "provider": "iptv",
-        "streamUrl": "http://5.57.74.130:8000/play/a0at/index.m3u8",
+        "streamUrl": "http://87.238.211.217:2209/stream/104/index.m3u8",
         "type": "hls"
       },
       {
@@ -2313,13 +2303,23 @@
         "type": "hls"
       },
       {
-        "id": "AXNBlack_us_Bulgary",
-        "title": "AXN Black (United States)",
+        "id": "AXNAsia_sg_Thailand",
+        "title": "AXN Asia Thailand",
+        "subtitle": "Movies;Series",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/AXN_logo_%282015%29.svg/960px-AXN_logo_%282015%29.svg.png",
+        "rawTitle": "AXN Asia Thailand",
+        "provider": "iptv",
+        "streamUrl": "http://103.253.74.210:7070/stream/89/index.m3u8",
+        "type": "hls"
+      },
+      {
+        "id": "AXNBlack_de_SD",
+        "title": "AXN Black (Germany)",
         "subtitle": "Movies",
         "thumb": "https://i.imgur.com/Peo1QiZ.png",
-        "rawTitle": "AXN Black (United States)",
+        "rawTitle": "AXN Black (Germany)",
         "provider": "iptv",
-        "streamUrl": "http://85.14.32.26:8800/udp/239.100.10.17:5000",
+        "streamUrl": "http://46.244.99.71:8181/stream/35/index.m3u8",
         "type": "hls"
       }
     ]
@@ -2378,16 +2378,6 @@
         "type": "hls"
       },
       {
-        "id": "ACCNetwork_us_SD",
-        "title": "ACC Network",
-        "subtitle": "Sports",
-        "thumb": "https://i.imgur.com/TpCkbkT.png",
-        "rawTitle": "ACC Network (720p)",
-        "provider": "iptv",
-        "streamUrl": "http://23.239.31.26:8989/accnetwork/index.m3u8",
-        "type": "hls"
-      },
-      {
         "id": "ACISportTV_it_SD",
         "title": "ACI Sport TV SD",
         "subtitle": "Sports",
@@ -2415,6 +2405,36 @@
         "rawTitle": "ADO TV (720p)",
         "provider": "iptv",
         "streamUrl": "https://strhls.streamakaci.tv/ortb/ortb2-multi/playlist.m3u8",
+        "type": "hls"
+      },
+      {
+        "id": "AdriaticSport1_ba_SD",
+        "title": "Adriatic Sport 1",
+        "subtitle": "Sports",
+        "thumb": "https://channels2.digital.ugbb.net/wp-content/uploads/2022/04/logo-adriatic-sport-1.png",
+        "rawTitle": "Adriatic Sport 1",
+        "provider": "iptv",
+        "streamUrl": "http://sultanios.alwaysdata.net/vavo.php?ID=3645291205",
+        "type": "hls"
+      },
+      {
+        "id": "AdriaticSport2_ba_SD",
+        "title": "Adriatic Sport 2",
+        "subtitle": "Sports",
+        "thumb": "https://channels2.digital.ugbb.net/wp-content/uploads/2022/04/logo-adriatic-sport-2.png",
+        "rawTitle": "Adriatic Sport 2",
+        "provider": "iptv",
+        "streamUrl": "http://sultanios.alwaysdata.net/vavo.php?ID=2665922581",
+        "type": "hls"
+      },
+      {
+        "id": "AdriaticSport3_ba_SD",
+        "title": "Adriatic Sport 3",
+        "subtitle": "Sports",
+        "thumb": "https://channels2.digital.ugbb.net/wp-content/uploads/2022/04/logo-adriatic-sport-3.png",
+        "rawTitle": "Adriatic Sport 3",
+        "provider": "iptv",
+        "streamUrl": "http://sultanios.alwaysdata.net/vavo.php?ID=2743527845",
         "type": "hls"
       },
       {
@@ -2454,17 +2474,17 @@
         "thumb": "https://raw.githubusercontent.com/RoqueDJ/iptv-svg/main/1792421696158.png",
         "rawTitle": "American Ninja Warrior (1080p)",
         "provider": "iptv",
-        "streamUrl": "https://d4whmvwm0rdvi.cloudfront.net/10007/99951318/hls/master.m3u8?ads.xumo_channelId=99951318&ads.asnw=169843&ads.afid=405342864&ads.sfid=19647852&ads.csid=xumo_web_NBCUAmericanNinjaWarrior_ssai_cro&ads._fw_is_lat=0&ads._fw_us_privacy=&ads._fw_coppa=0&ads._fw_did=a5090924-15b1-4b7f-b6cd-2f06e2ba51e1&ads._fw_vcid2=512116:a5090924-15b1-4b7f-b6cd-2f06e2ba51e1&ads._fw_app_bundle=web.xumo.com&ads._fw_app_store_url=&ads._fw_content_category=&ads._fw_content_genre=&ads._fw_content_language=en&ads._fw_content_rating=&ads._fw_deviceMake=GitHubAction&ads._fw_device_model=PythonScript&ads._fw_deviceType=3-Connected_TV&ads.appVersion=1.0.0&ads.appName=XumoPlay&ads.xumo_contentId=4063&ads.xumo_contentName=NBCUAmericanNinjaWarrior&ads.xumo_providerId=4063&ads.xumo_providerName=NBCUAmericanNinjaWarrior&ads.channelId=99951318",
+        "streamUrl": "https://d4whmvwm0rdvi.cloudfront.net/10007/99951318/hls/master.m3u8?ads._fw_app_bundle=web.xumo.com&ads._fw_app_store_url=&ads._fw_content_category=&ads._fw_content_genre=&ads._fw_content_language=en&ads._fw_content_rating=&ads._fw_coppa=0&ads._fw_deviceMake=GitHubAction&ads._fw_deviceType=3-Connected_TV&ads._fw_device_model=PythonScript&ads._fw_did=a5090924-15b1-4b7f-b6cd-2f06e2ba51e1&ads._fw_is_lat=0&ads._fw_us_privacy=&ads._fw_vcid2=512116:a5090924-15b1-4b7f-b6cd-2f06e2ba51e1&ads.afid=405342864&ads.appName=XumoPlay&ads.appVersion=1.0.0&ads.asnw=169843&ads.channelId=99951318&ads.csid=xumo_web_NBCUAmericanNinjaWarrior_ssai_cro&ads.sfid=19647852&ads.xumo_channelId=99951318&ads.xumo_contentId=4063&ads.xumo_contentName=NBCUAmericanNinjaWarrior&ads.xumo_providerId=4063&ads.xumo_providerName=NBCUAmericanNinjaWarrior",
         "type": "hls"
       },
       {
         "id": "AntenaPlayEvents_ro_SD",
-        "title": "AntenaPlay Events",
+        "title": "AntenaPlay Events (576i)",
         "subtitle": "Sports",
         "thumb": "https://static.wikia.nocookie.net/logopedia/images/8/87/Antena_Play_symbol_white_2022.svg/revision/latest/scale-to-width-down/1000?cb=20251128201145",
-        "rawTitle": "AntenaPlay Events (576p) [Not 24/7]",
+        "rawTitle": "AntenaPlay Events (576i) [Not 24/7]",
         "provider": "iptv",
-        "streamUrl": "https://live4dai.antenaplay.ro/live2_sdi09/live2_sdi09_600k.m3u8",
+        "streamUrl": "https://live77cdn2.antenaplay.ro/live2_sport07/live2_sport07_3500k.m3u8",
         "type": "hls"
       },
       {
@@ -2668,6 +2688,36 @@
         "type": "hls"
       },
       {
+        "id": "beINSports1_qa_MENA",
+        "title": "beIN Sports 1",
+        "subtitle": "Sports",
+        "thumb": "https://i.imgur.com/Vtk2cGI.png",
+        "rawTitle": "beIN Sports 1",
+        "provider": "iptv",
+        "streamUrl": "https://vg162.adcdsd123321.shop/7.m3u8",
+        "type": "hls"
+      },
+      {
+        "id": "beINSports1Turk_tr_SD",
+        "title": "beIN Sports 1 Turk",
+        "subtitle": "Sports",
+        "thumb": "https://static.wikia.nocookie.net/logopedia/images/2/27/BeinSports1.svg/revision/latest?cb=20230910184457",
+        "rawTitle": "beIN Sports 1 Turk",
+        "provider": "iptv",
+        "streamUrl": "http://57.129.0.61:1990/stream/117/index.m3u8",
+        "type": "hls"
+      },
+      {
+        "id": "beINSportsUSA_us_SD",
+        "title": "beIN Sports USA",
+        "subtitle": "Sports",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/BeIN_Sports_logo_%28vertical_version%29.svg/500px-BeIN_Sports_logo_%28vertical_version%29.svg.png",
+        "rawTitle": "beIN Sports USA (576p)",
+        "provider": "iptv",
+        "streamUrl": "https://tvsen6.aynaott.com/beinsports/index.m3u8",
+        "type": "hls"
+      },
+      {
         "id": "beINSPORTSXTRA_us_SD",
         "title": "beIN SPORTS XTRA",
         "subtitle": "Sports",
@@ -2725,56 +2775,6 @@
         "rawTitle": "Belarus-5 Internet (1080p) [Not 24/7]",
         "provider": "iptv",
         "streamUrl": "https://edge59.dc.beltelecom.by/ngtrk/smil:belarus5int.smil/playlist.m3u8",
-        "type": "hls"
-      },
-      {
-        "id": "BellatorMMA_us_SD",
-        "title": "Bellator MMA",
-        "subtitle": "Sports",
-        "thumb": "https://i.imgur.com/VBKoLHk.png",
-        "rawTitle": "Bellator MMA",
-        "provider": "iptv",
-        "streamUrl": "https://jmp2.uk/plu-5ebc8688f3697d00072f7cf8.m3u8",
-        "type": "hls"
-      },
-      {
-        "id": "BoksTV_ru_SD",
-        "title": "Boks TV",
-        "subtitle": "Sports",
-        "thumb": "https://i.imgur.com/R1UjyfX.png",
-        "rawTitle": "Boks TV (720p)",
-        "provider": "iptv",
-        "streamUrl": "http://31.148.48.15/Boks_TV/index.m3u8",
-        "type": "hls"
-      },
-      {
-        "id": "BrondbyTV_se_DK",
-        "title": "Brondby TV",
-        "subtitle": "Sports",
-        "thumb": "https://images.pluto.tv/channels/685029cda1e091e16ff57fc8/colorLogoPNG_1750246109707.png",
-        "rawTitle": "Brondby TV",
-        "provider": "iptv",
-        "streamUrl": "https://jmp2.uk/plu-685029cda1e091e16ff57fc8.m3u8",
-        "type": "hls"
-      },
-      {
-        "id": "CanaldoInter_br_SD",
-        "title": "Canal do Inter",
-        "subtitle": "Sports",
-        "thumb": "https://i.imgur.com/TQFWEIS.png",
-        "rawTitle": "Canal do Inter (720p) [Not 24/7]",
-        "provider": "iptv",
-        "streamUrl": "https://video01.soultv.com.br/internacional/internacional/playlist.m3u8",
-        "type": "hls"
-      },
-      {
-        "id": "CanalShowsport_ar_SD",
-        "title": "Canal Showsport",
-        "subtitle": "Sports",
-        "thumb": "https://i.imgur.com/0L9tW3Z.png",
-        "rawTitle": "Canal Showsport (720p)",
-        "provider": "iptv",
-        "streamUrl": "https://livestream.lumpentv.com.ar/hls/lumpen.m3u8",
         "type": "hls"
       }
     ]
@@ -2859,7 +2859,7 @@
         "thumb": "https://i.imgur.com/l3EcRnZ.png",
         "rawTitle": "6 TV Telugu (576p)",
         "provider": "iptv",
-        "streamUrl": "https://yuppparoriglin.akamaized.net/181224/smil:6tv.smil/playlist.m3u8?hdnts=st=1735898689~exp=1835898688~acl=*~hmac=f5fe24724fe05481e3841f9eb5ab8efdee0a3dd83645ae9dcf45703f525bab7b",
+        "streamUrl": "https://mumbai-edge.smartplaytv.in/6TVTelugu/index.m3u8",
         "type": "hls"
       },
       {
@@ -2927,7 +2927,7 @@
         "title": "24/7 Canal de Noticias",
         "subtitle": "News",
         "thumb": "https://i.imgur.com/4hDCB1M.png",
-        "rawTitle": "24/7 Canal de Noticias",
+        "rawTitle": "24/7 Canal de Noticias (360p)",
         "provider": "iptv",
         "streamUrl": "https://panel.host-live.com:19360/cn247tv/cn247tv.m3u8",
         "type": "hls"
@@ -3143,6 +3143,16 @@
         "type": "hls"
       },
       {
+        "id": "A24Paraguay_py_SD",
+        "title": "A24 Paraguay",
+        "subtitle": "News",
+        "thumb": "https://i.imgur.com/XWBmjBk.png",
+        "rawTitle": "A24 Paraguay",
+        "provider": "iptv",
+        "streamUrl": "https://tv.mitvparaguay.com/hls?type=hls&id=a24",
+        "type": "hls"
+      },
+      {
         "id": "AHaber_tr_SD",
         "title": "A Haber",
         "subtitle": "News",
@@ -3221,16 +3231,6 @@
         "provider": "iptv",
         "streamUrl": "http://115.42.65.142:9981/stream/channelid/852828604",
         "type": "hls"
-      },
-      {
-        "id": "ABCNews_au_Sydney",
-        "title": "ABC News",
-        "subtitle": "News",
-        "thumb": "https://i.imgur.com/BrW7gk8.png",
-        "rawTitle": "ABC News (720p)",
-        "provider": "iptv",
-        "streamUrl": "https://abc-news-dmd-streams-1.akamaized.net/out/v1/701126012d044971b3fa89406a440133/index.m3u8",
-        "type": "hls"
       }
     ]
   },
@@ -3242,7 +3242,7 @@
         "title": "3ABN Kids",
         "subtitle": "Animation;Kids;Religious",
         "thumb": "https://i.imgur.com/z3npqO1.png",
-        "rawTitle": "3ABN Kids",
+        "rawTitle": "3ABN Kids (720p)",
         "provider": "iptv",
         "streamUrl": "https://3abn.bozztv.com/3abn2/Kids_live/smil:Kids_live.smil/playlist.m3u8",
         "type": "hls"
@@ -3285,6 +3285,16 @@
         "rawTitle": "90s Kids TV 2",
         "provider": "iptv",
         "streamUrl": "https://jmp2.uk/plu-6452c77ed3fdde00080eb3a8.m3u8",
+        "type": "hls"
+      },
+      {
+        "id": "123TV_ve_SD",
+        "title": "123TV",
+        "subtitle": "Kids",
+        "thumb": "https://i.imgur.com/xXGeZms.png",
+        "rawTitle": "123TV (480p)",
+        "provider": "iptv",
+        "streamUrl": "http://200.59.191.177:8000/play/a0lb/index.m3u8",
         "type": "hls"
       },
       {
@@ -3342,7 +3352,7 @@
         "title": "Akili Kids!",
         "subtitle": "Kids",
         "thumb": "https://i.imgur.com/xFm2co6.png",
-        "rawTitle": "Akili Kids!",
+        "rawTitle": "Akili Kids! (720p)",
         "provider": "iptv",
         "streamUrl": "https://m6.livecdn.io/akilikids.co.ke/akilikids.smil/playlist.m3u8",
         "type": "hls"
@@ -3538,16 +3548,6 @@
         "type": "hls"
       },
       {
-        "id": "BBCThreeCBBC_uk_HD",
-        "title": "BBC Three/CBBC",
-        "subtitle": "Animation;Family;Kids",
-        "thumb": "https://i.imgur.com/CGXC5fp.png",
-        "rawTitle": "BBC Three/CBBC (720p)",
-        "provider": "iptv",
-        "streamUrl": "http://193.46.58.239:8080/CBBCHD/index.m3u8",
-        "type": "hls"
-      },
-      {
         "id": "BeJoykids_it_HD",
         "title": "BeJoy.kids",
         "subtitle": "Kids",
@@ -3555,6 +3555,16 @@
         "rawTitle": "BeJoy.kids (1080p)",
         "provider": "iptv",
         "streamUrl": "https://stream.paroledivita.org/bejoy.m3u8",
+        "type": "hls"
+      },
+      {
+        "id": "BeninTVJunior_bj_SD",
+        "title": "Benin TV Junior",
+        "subtitle": "Kids",
+        "thumb": "https://i.imgur.com/bWxjtuJ.png",
+        "rawTitle": "Benin TV Junior (720p)",
+        "provider": "iptv",
+        "streamUrl": "https://srtblive.streamakaci.tv/ortb/ortb2-multi/playlist_dvr.m3u8",
         "type": "hls"
       },
       {
@@ -3638,6 +3648,16 @@
         "type": "hls"
       },
       {
+        "id": "BoingPlus_it_SD",
+        "title": "Boing Plus",
+        "subtitle": "Kids",
+        "thumb": "https://i.imgur.com/STbfHwE.png",
+        "rawTitle": "Boing Plus",
+        "provider": "iptv",
+        "streamUrl": "http://95.141.36.9:8080/stream/181/index.m3u8",
+        "type": "hls"
+      },
+      {
         "id": "Bolajon_uz_SD",
         "title": "Bolajon",
         "subtitle": "Kids",
@@ -3648,43 +3668,23 @@
         "type": "hls"
       },
       {
-        "id": "Boomerang_us_SD",
-        "title": "Boomerang",
+        "id": "Boomerang_fr_HD",
+        "title": "Boomerang (France) HD",
         "subtitle": "Kids",
         "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Boomerang_2014_logo.svg/960px-Boomerang_2014_logo.svg.png",
-        "rawTitle": "Boomerang (720p)",
+        "rawTitle": "Boomerang (France) HD (720p)",
         "provider": "iptv",
-        "streamUrl": "http://23.237.104.106:8080/USA_BOOMERANG/index.m3u8",
+        "streamUrl": "http://41.205.93.154/BOOMERANG/index.m3u8",
         "type": "hls"
       },
       {
-        "id": "BoxKidsTV_br_SD",
-        "title": "Box Kids TV",
+        "id": "Boomerang_it_SD",
+        "title": "Boomerang (Italy)",
         "subtitle": "Kids",
-        "thumb": "https://upload.wikimedia.org/wikipedia/commons/1/18/Boxkidstv.png",
-        "rawTitle": "Box Kids TV (720p)",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Boomerang_2014_logo.svg/960px-Boomerang_2014_logo.svg.png",
+        "rawTitle": "Boomerang (Italy)",
         "provider": "iptv",
-        "streamUrl": "http://170.83.49.66:8083/BOXKIDSHD/index.m3u8",
-        "type": "hls"
-      },
-      {
-        "id": "BratTV_us_SD",
-        "title": "Brat TV",
-        "subtitle": "Kids",
-        "thumb": "https://i.imgur.com/Kkcp9Bk.png",
-        "rawTitle": "Brat TV (1080p)",
-        "provider": "iptv",
-        "streamUrl": "https://streams2.sofast.tv/v1/master/611d79b11b77e2f571934fd80ca1413453772ac7/04072b68-dc6a-4d5e-98af-f356ba8d5063/playlist.m3u8",
-        "type": "hls"
-      },
-      {
-        "id": "BravoKidsTV_hr_SD",
-        "title": "Bravo! Kids TV",
-        "subtitle": "Kids",
-        "thumb": "https://i.imgur.com/JcJ6fQ9.png",
-        "rawTitle": "Bravo! Kids TV",
-        "provider": "iptv",
-        "streamUrl": "https://streaming.radiohub.hr/RadioHub_WEB_streaming/BHWUC27pGZ/3.m3u8",
+        "streamUrl": "http://sultanios.alwaysdata.net/vavo.php?ID=2705627802",
         "type": "hls"
       }
     ]
@@ -3717,7 +3717,7 @@
         "title": "3ABN Praise Him Music Network",
         "subtitle": "Music;Religious",
         "thumb": "https://i.imgur.com/iBcqT8L.png",
-        "rawTitle": "3ABN Praise Him Music Network",
+        "rawTitle": "3ABN Praise Him Music Network (720p)",
         "provider": "iptv",
         "streamUrl": "https://3abn.bozztv.com/3abn1/PraiseHim/smil:PraiseHim.smil/playlist.m3u8",
         "type": "hls"
@@ -3797,9 +3797,9 @@
         "title": "7X Music",
         "subtitle": "Music",
         "thumb": "https://jiotvimages.cdn.jio.com/dare_images/images/7X_Music.png",
-        "rawTitle": "7X Music (360p)",
+        "rawTitle": "7X Music (1080p)",
         "provider": "iptv",
-        "streamUrl": "https://cdn2.in/7xPunjabihls/live.m3u8",
+        "streamUrl": "https://7xshreeshyam.akamaized.net/7XPunjabi/index.m3u8",
         "type": "hls"
       },
       {
@@ -3887,7 +3887,7 @@
         "title": "70-80 TV",
         "subtitle": "Music",
         "thumb": "https://i.imgur.com/y4kNV3Q.png",
-        "rawTitle": "70-80 TV",
+        "rawTitle": "70-80 TV (1080p)",
         "provider": "iptv",
         "streamUrl": "https://585b674743bbb.streamlock.net/9050/9050/playlist.m3u8",
         "type": "hls"
@@ -3987,7 +3987,7 @@
         "title": "ACE Country Radio KPVM-LD",
         "subtitle": "Music",
         "thumb": "https://i.imgur.com/iPtuku6.png",
-        "rawTitle": "ACE Country Radio KPVM-LD",
+        "rawTitle": "ACE Country Radio KPVM-LD (480p)",
         "provider": "iptv",
         "streamUrl": "https://2-fss-1.streamhoster.com/pl_122/206858-4412960-1/playlist.m3u8",
         "type": "hls"
@@ -4037,7 +4037,7 @@
         "title": "AFN TV",
         "subtitle": "Music",
         "thumb": "https://i.imgur.com/LctanF8.png",
-        "rawTitle": "AFN TV",
+        "rawTitle": "AFN TV (720p)",
         "provider": "iptv",
         "streamUrl": "https://bozztv.com/1gbw5/tintv2/tintv2/playlist.m3u8",
         "type": "hls"
@@ -4234,7 +4234,7 @@
         "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/2018_Animal_Planet_logo.svg/960px-2018_Animal_Planet_logo.svg.png",
         "rawTitle": "Animal Planet (United States) (720p)",
         "provider": "iptv",
-        "streamUrl": "http://23.239.31.26:8989/animalplanet/index.m3u8",
+        "streamUrl": "http://23.237.104.106:8080/USA_ANIMAL_PLANET/index.m3u8",
         "type": "hls"
       },
       {
@@ -4335,16 +4335,6 @@
         "rawTitle": "BBC Earth Hungary",
         "provider": "iptv",
         "streamUrl": "http://88.212.7.14/live/bbce_hun/index.m3u8",
-        "type": "hls"
-      },
-      {
-        "id": "BBCEarth_uk_Romania",
-        "title": "BBC Earth Romania",
-        "subtitle": "Documentary",
-        "thumb": "https://i.imgur.com/nGSsUd4.png",
-        "rawTitle": "BBC Earth Romania",
-        "provider": "iptv",
-        "streamUrl": "https://iron1.jarvisx1.cfd/ert/usergenrx8ofzq1kr.m3u8",
         "type": "hls"
       },
       {
@@ -4595,6 +4585,16 @@
         "rawTitle": "Detetives Medicos",
         "provider": "iptv",
         "streamUrl": "https://jmp2.uk/plu-638df93ae2f2a3000737c168.m3u8",
+        "type": "hls"
+      },
+      {
+        "id": "DiscoveringChina_cn_SD",
+        "title": "Discovering China",
+        "subtitle": "Culture;Documentary",
+        "thumb": "https://i.imgur.com/wr2bLaA.png",
+        "rawTitle": "Discovering China (1080p)",
+        "provider": "iptv",
+        "streamUrl": "https://fastlive.cctvplus.com/out/v1/8442c3bfd4c64a3984389328f6087879/index.m3u8",
         "type": "hls"
       }
     ]

@@ -168,7 +168,6 @@
 
       var self = this;
       window.SpatialNav.onFocusChange = function (elem) {
-        self.updatePreviewBanner(elem);
         self.handleFocusSidebar(elem);
       };
 
@@ -190,7 +189,6 @@
 
       this.setupTabs();
       this.setupSidebar();
-      this.setupBannerActions();
       this.updateFavoritesBadge();
       this.loadCategory('channels');
 
@@ -468,200 +466,41 @@
       }
     },
 
-    setupBannerActions: function () {
+    startDetailTrailer: function (title, slug, directKey) {
+      if (!title && !slug && !directKey) return;
       var self = this;
-      var btnPlay = document.getElementById('btn-banner-play');
-      var btnInfo = document.getElementById('btn-banner-info');
-      var btnFav = document.getElementById('btn-banner-fav');
+      var cacheKey = (slug || title || '').toLowerCase();
 
-      if (btnPlay) {
-        btnPlay.addEventListener('click', function () {
-          if (!self.currentPreviewItem) return;
-          if (self.currentPreviewItem.type === 'pelispedia') {
-            self.openDetailModal(self.currentPreviewItem.kind, self.currentPreviewItem.slug, self.currentPreviewItem.provider);
-          } else if (self.currentPreviewItem.url) {
-            var isLiveBanner = (self.currentPreviewItem.kind === 'canal') || (self.currentPreviewItem.provider === 'pluto') || (self.currentPreviewItem.provider === 'channels') || (self.currentPreviewItem.provider === 'iptv') || (self.currentCategory === 'channels');
-            var bannerPlayInfo = {
-              title: self.currentPreviewItem.title,
-              url: self.currentPreviewItem.url,
-              type: self.currentPreviewItem.type,
-              kind: isLiveBanner ? 'canal' : (self.currentPreviewItem.kind || 'movie'),
-              isLive: isLiveBanner,
-              provider: self.currentPreviewItem.provider || (isLiveBanner ? 'channels' : 'pelispedia')
-            };
-            window.TVPlayer.play(self.currentPreviewItem.title, self.currentPreviewItem.url, self.currentPreviewItem.type, 0, bannerPlayInfo);
-          }
-        }, false);
+      this.stopDetailTrailer();
+
+      if (directKey) {
+        if (cacheKey) self.trailerKeyCache[cacheKey] = directKey;
+        return this.playDetailTrailerIframe(directKey);
       }
 
-      if (btnInfo) {
-        btnInfo.addEventListener('click', function () {
-          if (!self.currentPreviewItem) return;
-          if (self.currentPreviewItem.type === 'pelispedia') {
-            self.openDetailModal(self.currentPreviewItem.kind, self.currentPreviewItem.slug, self.currentPreviewItem.provider);
-          }
-        }, false);
-      }
-
-      if (btnFav) {
-        btnFav.addEventListener('click', function () {
-          if (!self.currentPreviewItem) return;
-          var isFav = self.toggleFavorite(self.currentPreviewItem);
-          btnFav.innerHTML = isFav ? '★ EN MI LISTA' : '☆ MI LISTA';
-        }, false);
-      }
-
-      var btnMute = document.getElementById('btn-preview-mute-toggle');
-      if (btnMute) {
-        btnMute.addEventListener('click', function (e) {
-          e.stopPropagation();
-          self.toggleTrailerMute();
-        }, false);
-      }
-    },
-
-    updatePreviewBanner: function (elem) {
-      if (!elem) return;
-      var titleEl = document.getElementById('preview-banner-title');
-      var metaEl = document.getElementById('preview-banner-meta');
-      var descEl = document.getElementById('preview-banner-desc');
-      var thumbEl = document.getElementById('preview-banner-thumb');
-      var favBtn = document.getElementById('btn-banner-fav');
-      var qualityEl = document.getElementById('preview-banner-quality');
-      if (!titleEl || !metaEl || !descEl) return;
-
-      // Resetear cualquier timer de tráiler previo y apagar vista previa
-      if (this.trailerTimer) {
-        clearTimeout(this.trailerTimer);
-        this.trailerTimer = null;
-      }
-      this.stopTrailerPreview();
-
-      if (window.SpatialNav.hasClass(elem, 'sidebar-item')) {
-        var labelEl = elem.querySelector('.sidebar-label');
-        var labelText = labelEl ? labelEl.innerText : 'Menú Lateral';
-        titleEl.innerText = 'Filtro: ' + labelText;
-        metaEl.innerText = 'Menú Lateral • Películas, Series y Anime';
-        descEl.innerText = 'Presiona OK o la Flecha Derecha para ver y explorar los títulos de esta categoría.';
-        if (thumbEl) thumbEl.style.display = 'none';
-      } else if (window.SpatialNav.hasClass(elem, 'tv-card')) {
-        var title = elem.getAttribute('data-title') || '';
-        var meta = elem.getAttribute('data-meta') || '';
-        var overview = elem.getAttribute('data-overview') || '';
-        var slug = elem.getAttribute('data-slug') || '';
-        var kind = elem.getAttribute('data-kind') || '';
-        var provider = elem.getAttribute('data-provider') || '';
-        var url = elem.getAttribute('data-url') || '';
-        var type = elem.getAttribute('data-type') || '';
-        var trailer = elem.getAttribute('data-trailer') || '';
-        var backdrop = elem.getAttribute('data-backdrop') || '';
-
-        var thumbUrl = backdrop || '';
-        if (!thumbUrl) {
-          var cardThumb = elem.querySelector('.card-thumb');
-          if (cardThumb && cardThumb.style.backgroundImage) {
-            var bgMatch = cardThumb.style.backgroundImage.match(/url\(["']?([^"']+)["']?\)/);
-            if (bgMatch && bgMatch[1]) thumbUrl = bgMatch[1];
-          }
-        }
-
-        titleEl.innerText = title;
-        metaEl.innerText = meta;
-        descEl.innerText = overview || 'Presiona OK para ver detalles y reproducir a pantalla completa.';
-
-        if (thumbEl) {
-          if (thumbUrl) {
-            thumbEl.style.display = 'block';
-            thumbEl.style.backgroundImage = 'url("' + thumbUrl + '")';
-          } else {
-            thumbEl.style.display = 'none';
-          }
-        }
-
-        var isCam = meta.indexOf('CINE') !== -1 || meta.indexOf('CAM') !== -1;
-        if (qualityEl) {
-          qualityEl.innerText = isCam ? 'CINE (CAM)' : 'HD 1080p';
-          qualityEl.style.color = isCam ? '#ff9800' : '#e0e8ff';
-          qualityEl.style.borderColor = isCam ? '#ff9800' : 'rgba(13, 52, 186, 0.7)';
-        }
-
-        this.currentPreviewItem = {
-          title: title,
-          meta: meta,
-          overview: overview,
-          slug: slug,
-          kind: kind,
-          provider: provider,
-          url: url,
-          type: type,
-          poster: thumbUrl,
-          thumb: thumbUrl,
-          trailer: trailer
-        };
-
-        if (favBtn && slug) {
-          var isFav = this.isFavorite(slug);
-          favBtn.innerHTML = isFav ? '★ EN MI LISTA' : '☆ MI LISTA';
-        }
-
-        // Si el usuario permanece detenido más de 2.5 segundos sobre una película/serie, reproducir tráiler silencioso (Estilo Netflix)
-        var isLiveChannel = (kind === 'canal') || (provider === 'pluto') || (provider === 'channels') || (provider === 'iptv') || (this.currentCategory === 'channels');
-        if (!isLiveChannel && (title || slug)) {
-          var self = this;
-          this.trailerTimer = setTimeout(function () {
-            self.startTrailerPreview(elem);
-          }, 2500);
-        }
-      } else if (window.SpatialNav.hasClass(elem, 'nav-tab')) {
-        titleEl.innerText = 'Smart TV Hub';
-        metaEl.innerText = 'Sección: ' + elem.innerText;
-        descEl.innerText = 'Usa las flechas Abajo y Derecha en el mando a distancia para explorar los contenidos.';
-        if (thumbEl) thumbEl.style.display = 'none';
-      }
-    },
-
-    startTrailerPreview: function (elem) {
-      if (!elem || window.SpatialNav.currentFocused !== elem) return;
-      if (this.detailModal && this.detailModal.style.display === 'block') return;
-      if (window.TVPlayer && window.TVPlayer.modal && window.TVPlayer.modal.style.display === 'block') return;
-
-      var self = this;
-      var title = elem.getAttribute('data-title') || (this.currentPreviewItem ? this.currentPreviewItem.title : '');
-      var slug = elem.getAttribute('data-slug') || (this.currentPreviewItem ? this.currentPreviewItem.slug : '');
-      var trailerKey = elem.getAttribute('data-trailer');
-
-      if (trailerKey) {
-        return this.playTrailerIframe(trailerKey, elem);
-      }
-
-      var cacheKey = (slug || title).toLowerCase();
-      if (this.trailerKeyCache[cacheKey]) {
-        return this.playTrailerIframe(this.trailerKeyCache[cacheKey], elem);
+      if (cacheKey && this.trailerKeyCache[cacheKey]) {
+        return this.playDetailTrailerIframe(this.trailerKeyCache[cacheKey]);
       }
 
       var trailerQuery = title || slug;
-      if (!trailerQuery) return;
-
       var trailerApi = '/api/movies?action=trailer&q=' + encodeURIComponent(trailerQuery);
       this.fetchJson(trailerApi, function (err, res) {
         if (err || !res || !res.key) return;
-        if (window.SpatialNav.currentFocused !== elem) return;
-        self.trailerKeyCache[cacheKey] = res.key;
-        elem.setAttribute('data-trailer', res.key);
-        self.playTrailerIframe(res.key, elem);
+        if (cacheKey) self.trailerKeyCache[cacheKey] = res.key;
+        if (self.detailModal && self.detailModal.style.display !== 'none') {
+          self.playDetailTrailerIframe(res.key);
+        }
       });
     },
 
-    playTrailerIframe: function (key, elem) {
+    playDetailTrailerIframe: function (key) {
       if (!key) return;
-      if (elem && window.SpatialNav.currentFocused !== elem) return;
-      if (this.detailModal && this.detailModal.style.display === 'block') return;
+      if (!this.detailModal || this.detailModal.style.display === 'none') return;
       if (window.TVPlayer && window.TVPlayer.modal && window.TVPlayer.modal.style.display === 'block') return;
 
-      var container = document.getElementById('preview-banner-video-container');
-      var iframe = document.getElementById('preview-banner-iframe');
-      var thumb = document.getElementById('preview-banner-thumb');
-      var muteBtn = document.getElementById('btn-preview-mute-toggle');
+      var container = document.getElementById('detail-trailer-container');
+      var iframe = document.getElementById('detail-trailer-iframe');
+      var muteBtn = document.getElementById('btn-detail-trailer-mute');
       if (!container || !iframe) return;
 
       this.currentTrailerKey = key;
@@ -673,44 +512,48 @@
 
       var embedUrl = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(key) +
                      '?autoplay=1&mute=' + muteVal +
-                     '&controls=0&modestbranding=1&rel=0&loop=1&playlist=' + encodeURIComponent(key) +
+                     '&controls=1&modestbranding=1&rel=0&loop=1&playlist=' + encodeURIComponent(key) +
                      '&enablejsapi=1';
 
       iframe.src = embedUrl;
       container.style.display = 'block';
-      if (thumb) {
-        thumb.style.opacity = '0';
-      }
     },
 
-    stopTrailerPreview: function () {
-      if (this.trailerTimer) {
-        clearTimeout(this.trailerTimer);
-        this.trailerTimer = null;
-      }
+    stopDetailTrailer: function () {
       this.currentTrailerKey = null;
-      var container = document.getElementById('preview-banner-video-container');
-      var iframe = document.getElementById('preview-banner-iframe');
-      var thumb = document.getElementById('preview-banner-thumb');
+      var container = document.getElementById('detail-trailer-container');
+      var iframe = document.getElementById('detail-trailer-iframe');
       if (container) {
         container.style.display = 'none';
       }
       if (iframe && iframe.src && iframe.src !== 'about:blank') {
         iframe.src = 'about:blank';
       }
-      if (thumb) {
-        thumb.style.opacity = '1';
-      }
     },
 
-    toggleTrailerMute: function () {
+    stopTrailerPreview: function () {
+      this.stopDetailTrailer();
+    },
+
+    toggleDetailTrailerMute: function () {
       this.trailerMuted = !this.trailerMuted;
-      var muteBtn = document.getElementById('btn-preview-mute-toggle');
+      var muteBtn = document.getElementById('btn-detail-trailer-mute');
       if (muteBtn) {
         muteBtn.innerHTML = this.trailerMuted ? '&#128263;' : '&#128266;';
       }
       if (this.currentTrailerKey) {
-        this.playTrailerIframe(this.currentTrailerKey);
+        this.playDetailTrailerIframe(this.currentTrailerKey);
+      }
+    },
+
+    unmuteDetailTrailer: function () {
+      this.trailerMuted = false;
+      var muteBtn = document.getElementById('btn-detail-trailer-mute');
+      if (muteBtn) {
+        muteBtn.innerHTML = '&#128266;';
+      }
+      if (this.currentTrailerKey) {
+        this.playDetailTrailerIframe(this.currentTrailerKey);
       }
     },
 
@@ -1594,7 +1437,7 @@
           }, false);
 
           card.addEventListener('click', function () {
-            self.stopTrailerPreview();
+            self.stopDetailTrailer();
             var title = card.getAttribute('data-title');
             var url = card.getAttribute('data-url');
             var type = card.getAttribute('data-type');
@@ -1770,7 +1613,7 @@
 
     openDetailModal: function (kind, slug, provider, itemTitle) {
       var self = this;
-      this.stopTrailerPreview();
+      this.stopDetailTrailer();
       provider = provider || 'pelispedia';
       this.detailModal.style.display = 'block';
 
@@ -1792,13 +1635,24 @@
       var detailApi = '/api/movies?action=detail&kind=' + encodeURIComponent(kind) + '&slug=' + encodeURIComponent(slug) + '&provider=' + encodeURIComponent(provider) + (itemTitle ? '&title=' + encodeURIComponent(itemTitle) : '');
       this.fetchJson(detailApi, function (err, data) {
         if (err || !data || data.status !== 'ok') {
-          alert('Error al cargar la información del contenido.');
-          self.closeDetailModal();
+          document.getElementById('detail-title').innerText = itemTitle || 'Detalles no disponibles';
+          document.getElementById('detail-overview').innerText = 'No se pudo obtener la información de este título con el proveedor actual. Por favor intenta con otro título o vuelve más tarde.';
+          document.getElementById('detail-actions').innerHTML = '<button id="btn-close-modal-err" class="btn-tv btn-tv-primary focusable" tabindex="0">VOLVER</button>';
+          var errCloseBtn = document.getElementById('btn-close-modal-err');
+          if (errCloseBtn) {
+            errCloseBtn.addEventListener('click', function () {
+              self.closeDetailModal();
+            }, false);
+            window.SpatialNav.focusElement(errCloseBtn);
+          }
           return;
         }
 
         data.slug = data.slug || slug;
         self.currentSerieDetail = data;
+
+        // Iniciar la vista previa del tráiler integrada en el modal de detalles
+        self.startDetailTrailer(data.title, data.slug, data.trailer);
 
         document.getElementById('detail-title').innerText = data.title;
         document.getElementById('detail-overview').innerText = data.overview || 'Sin sinopsis disponible.';
@@ -1854,6 +1708,7 @@
           } else {
             actionsHtml += '<button id="btn-play-movie" class="btn-tv btn-tv-primary focusable" tabindex="0">► REPRODUCIR PELÍCULA</button>';
           }
+          actionsHtml += '<button id="btn-toggle-trailer" class="btn-tv focusable" tabindex="0">🎬 VER TRÁILER</button>';
           actionsHtml += '<button id="btn-toggle-fav" class="btn-tv focusable" tabindex="0">' + favBtnText + '</button>';
           actionsHtml += '<button id="btn-close-modal" class="btn-tv focusable" tabindex="0">VOLVER</button>';
           document.getElementById('detail-actions').innerHTML = actionsHtml;
@@ -1864,7 +1719,7 @@
           var closeBtn = document.getElementById('btn-close-modal');
 
           function startMovie(startTime) {
-            self.stopTrailerPreview();
+            self.stopDetailTrailer();
             var targetBtn = resumeBtn || playBtn;
             if (targetBtn) targetBtn.innerText = 'Extrayendo stream...';
             var resolveApi = '/api/movies?action=resolve&player_url=' + encodeURIComponent(data.player_url) + '&provider=' + encodeURIComponent(data.provider || 'pelispedia');
@@ -1920,12 +1775,15 @@
             self.closeDetailModal();
           }, false);
 
+          bindTrailerButtons();
+
           window.SpatialNav.focusElement(resumeBtn || playBtn);
         } else {
           // Es una Serie o Anime
           if (savedProgress && savedProgress.time > 15) {
             actionsHtml += '<button id="btn-resume-serie" class="btn-tv btn-tv-primary focusable" tabindex="0">► REANUDAR ' + self.escapeHtml(savedProgress.title) + ' (' + self.formatTime(savedProgress.time) + ')</button>';
           }
+          actionsHtml += '<button id="btn-toggle-trailer" class="btn-tv focusable" tabindex="0">🎬 VER TRÁILER</button>';
           actionsHtml += '<button id="btn-toggle-fav" class="btn-tv focusable" tabindex="0">' + favBtnText + '</button>';
           actionsHtml += '<button id="btn-close-modal" class="btn-tv focusable" tabindex="0">VOLVER</button>';
           document.getElementById('detail-actions').innerHTML = actionsHtml;
@@ -1933,7 +1791,7 @@
           var resumeSerieBtn = document.getElementById('btn-resume-serie');
           if (resumeSerieBtn) {
             resumeSerieBtn.addEventListener('click', function () {
-              self.stopTrailerPreview();
+              self.stopDetailTrailer();
               if (savedProgress.playerUrl) {
                 resumeSerieBtn.innerText = 'Extrayendo...';
                 var resolveApi = '/api/movies?action=resolve&player_url=' + encodeURIComponent(savedProgress.playerUrl) + '&provider=' + encodeURIComponent(savedProgress.provider || data.provider || 'pelispedia');
@@ -1983,8 +1841,36 @@
             self.closeDetailModal();
           }, false);
 
+          bindTrailerButtons();
+
           document.getElementById('detail-episodes-section').style.display = 'block';
           self.renderSeasonsAndEpisodes(data);
+        }
+
+        function bindTrailerButtons() {
+          var trailerBtn = document.getElementById('btn-toggle-trailer');
+          if (trailerBtn) {
+            trailerBtn.addEventListener('click', function () {
+              if (self.trailerMuted) {
+                self.unmuteDetailTrailer();
+                trailerBtn.innerHTML = '🔊 SILENCIAR TRÁILER';
+              } else {
+                self.toggleDetailTrailerMute();
+                trailerBtn.innerHTML = '🎬 VER TRÁILER';
+              }
+            }, false);
+          }
+
+          var muteTrailerBtn = document.getElementById('btn-detail-trailer-mute');
+          if (muteTrailerBtn) {
+            muteTrailerBtn.onclick = function (e) {
+              e.stopPropagation();
+              self.toggleDetailTrailerMute();
+              if (trailerBtn) {
+                trailerBtn.innerHTML = self.trailerMuted ? '🎬 VER TRÁILER' : '🔊 SILENCIAR TRÁILER';
+              }
+            };
+          }
         }
       });
     },
@@ -2127,6 +2013,7 @@
     },
 
     closeDetailModal: function () {
+      this.stopDetailTrailer();
       if (this.detailModal) {
         this.detailModal.style.display = 'none';
       }

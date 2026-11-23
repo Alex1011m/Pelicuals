@@ -9,7 +9,7 @@
         "subtitle": "Películas • Señal Oficial HD",
         "overview": "Si tu sueño es vivir en Hollywood y no puedes viajar, Pluto TV Cine Estelar tiene la solución para tu problema. Vas a pasar los 365 días del año viendo a las estrellas más grande del cine desde la comodidad de tu casa.",
         "category": "Pluto TV: Películas y Cine 24/7",
-        "thumb": "https://images.pluto.tv/channels/5dcde437229eff00091b6c30/colorLogoPNG_1791579490743.png",
+        "thumb": "https://images.pluto.tv/channels/5dcde437229eff00091b6c30/colorLogoPNG_1793741871709.png",
         "streamUrl": "/api/pluto-stream?id=5dcde437229eff00091b6c30&ext=.m3u8",
         "type": "hls",
         "provider": "pluto"
@@ -221,7 +221,7 @@
       {
         "id": "670ed8dfc7626f000884c3a8",
         "number": 0,
-        "title": "Pluto TV Cine Estelar",
+        "title": "Pluto Tv Cine Estelar",
         "subtitle": "Películas • Señal Oficial HD",
         "overview": "Si tu sueño es vivir en Hollywood y no puedes viajar, Pluto TV Cine Estelar tiene la solución para tu problema. Vas a pasar los 365 días del año viendo a las estrellas más grande del cine desde la comodidad de tu casa.",
         "category": "Pluto TV: Películas y Cine 24/7",
@@ -233,7 +233,7 @@
       {
         "id": "670edb8149c4060008e3aec8",
         "number": 0,
-        "title": "Pluto TV Cine Acción",
+        "title": "Pluto Tv Cine Acción",
         "subtitle": "Películas • Señal Oficial HD",
         "overview": "Pluto TV Cine Acción es imprescindible. Lo más extremo que se pueda filmar llega hasta tus pupilas para dilatarlas por completo y traspasar la pantalla. Respira hondo y prepárate bien porque serán 24 horas por día de adrenalina.",
         "category": "Pluto TV: Películas y Cine 24/7",
@@ -404,6 +404,18 @@
         "provider": "pluto"
       },
       {
+        "id": "65662c1357fe4a00086b3eb1",
+        "number": 136,
+        "title": "Pluto TV Series de Aventura y Fantasía",
+        "subtitle": "Series • Señal Oficial HD",
+        "overview": "Embárcate en emocionantes travesías hacia lo desconocido con nuestras series de aventura y fantasía. Desde expediciones audaces hasta descubrimientos épicos, cada episodio es un viaje repleto de emociones, acción y exploración.",
+        "category": "Pluto TV: Series y Retro",
+        "thumb": "https://images.pluto.tv/channels/65662c1357fe4a00086b3eb1/colorLogoPNG_1790011926686.png",
+        "streamUrl": "/api/pluto-stream?id=65662c1357fe4a00086b3eb1&ext=.m3u8",
+        "type": "hls",
+        "provider": "pluto"
+      },
+      {
         "id": "5dcde1317578340009b751d0",
         "number": 140,
         "title": "Pluto TV Series",
@@ -412,6 +424,18 @@
         "category": "Pluto TV: Series y Retro",
         "thumb": "https://images.pluto.tv/channels/5dcde1317578340009b751d0/colorLogoPNG.png",
         "streamUrl": "/api/pluto-stream?id=5dcde1317578340009b751d0&ext=.m3u8",
+        "type": "hls",
+        "provider": "pluto"
+      },
+      {
+        "id": "6aa7f3a7af45eb18db141eee",
+        "number": 142,
+        "title": "Medium",
+        "subtitle": "Series • Señal Oficial HD",
+        "overview": "MEDIUM es una cautivadora serie dramática inspirada en la historia de vida de la médium Allison Dubois, esposa y madre de tres hijos, quien intenta comprender su intuición natural sobre las personas y su capacidad para comunicarse con los muertos.",
+        "category": "Pluto TV: Series y Retro",
+        "thumb": "https://images.pluto.tv/channels/6aa7f3a7af45eb18db141eee/colorLogoPNG_1789392312820.png",
+        "streamUrl": "/api/pluto-stream?id=6aa7f3a7af45eb18db141eee&ext=.m3u8",
         "type": "hls",
         "provider": "pluto"
       },
@@ -520,6 +544,18 @@
         "category": "Pluto TV: Series y Retro",
         "thumb": "https://images.pluto.tv/channels/5de802659167b10009e7deba/colorLogoPNG.png",
         "streamUrl": "/api/pluto-stream?id=5de802659167b10009e7deba&ext=.m3u8",
+        "type": "hls",
+        "provider": "pluto"
+      },
+      {
+        "id": "6aa960fa5532ad57085cf7e4",
+        "number": 209,
+        "title": "La Niñera",
+        "subtitle": "Retro • Señal Oficial HD",
+        "overview": "Fran Fine es una joven ingeniosa que se convierte en la niñera de los hijos de un viudo rico, Maxwell Sheffield, un millonario productor de Broadway.",
+        "category": "Pluto TV: Series y Retro",
+        "thumb": "https://images.pluto.tv/channels/6aa960fa5532ad57085cf7e4/colorLogoPNG_1790087436804.png",
+        "streamUrl": "/api/pluto-stream?id=6aa960fa5532ad57085cf7e4&ext=.m3u8",
         "type": "hls",
         "provider": "pluto"
       },
@@ -1115,6 +1151,18 @@
         "provider": "pluto"
       },
       {
+        "id": "6320d2755e54db000783fd87",
+        "number": 830,
+        "title": "Claro Sports FAST",
+        "subtitle": "Deportes • Señal Oficial HD",
+        "overview": "Disfruta de la mejor cobertura deportiva en Latinoamérica, producciones propias y eventos exclusivos, a través del canal Claro Sports FAST en Pluto TV.",
+        "category": "Pluto TV: Deportes y Competencia",
+        "thumb": "https://images.pluto.tv/channels/6320d2755e54db000783fd87/colorLogoPNG_1791496367503.png",
+        "streamUrl": "/api/pluto-stream?id=6320d2755e54db000783fd87&ext=.m3u8",
+        "type": "hls",
+        "provider": "pluto"
+      },
+      {
         "id": "63f7e3f9dff38e00082a57af",
         "number": 839,
         "title": "AYM Sports 3",
@@ -1215,6 +1263,18 @@
   {
     "category": "Pluto TV: Comedia y South Park",
     "items": [
+      {
+        "id": "6aa2faa150694e8e54750880",
+        "number": 151,
+        "title": "The King of Queens",
+        "subtitle": "Comedia • Señal Oficial HD",
+        "overview": "Doug Heffernan, el repartidor, tiene deseos simples: entre ellos, una televisión de 70 pulgadas. Cuando la esposa de Doug, Carrie, lo sorprende con una pantalla grande, que con gusto instala en el sótano, él se vuelve la envidia del vecindario.",
+        "category": "Pluto TV: Comedia y South Park",
+        "thumb": "https://images.pluto.tv/channels/6aa2faa150694e8e54750880/colorLogoPNG_1789066693028.png",
+        "streamUrl": "/api/pluto-stream?id=6aa2faa150694e8e54750880&ext=.m3u8",
+        "type": "hls",
+        "provider": "pluto"
+      },
       {
         "id": "65df731cec9fda0008b7aa8d",
         "number": 922,
@@ -1871,7 +1931,7 @@
         "number": 1504,
         "title": "MTV Rocks",
         "subtitle": "Música • Señal Oficial HD",
-        "overview": "��Eres fanático de las guitarras ruidosas y los riffs asesinos? MTV Rocks te ofrece la mejor mezcla de videos musicales de rock.",
+        "overview": "¿Eres fanático de las guitarras ruidosas y los riffs asesinos? MTV Rocks te ofrece la mejor mezcla de videos musicales de rock.",
         "category": "Pluto TV: Música y Conciertos",
         "thumb": "https://images.pluto.tv/channels/66a01b52a4ee27000808ea36/colorLogoPNG.png",
         "streamUrl": "/api/pluto-stream?id=66a01b52a4ee27000808ea36&ext=.m3u8",
@@ -2258,11 +2318,11 @@
       {
         "id": "68b88712e777774982269ce9",
         "number": 1155,
-        "title": "Tastemade Viajes",
+        "title": "Tastemade Home & Travel",
         "subtitle": "Estilo de Vida • Señal Oficial HD",
-        "overview": "Tastemade Viajes, es un canal que ofrece 24/7 contenido de viajes, destinos impactantes, gastronomía y cultura de todo el mundo, junto a personalidades como Stanley Tucci y Eva Longoria.",
+        "overview": "Tastemade Home & Travel, es un canal que ofrece 24/7 contenido de viajes, destinos impactantes, gastronomía y cultura de todo el mundo, junto a personalidades como Stanley Tucci y Eva Longoria.",
         "category": "Pluto TV: Entretenimiento, Reality y Novelas",
-        "thumb": "https://images.pluto.tv/channels/68b88712e777774982269ce9/colorLogoPNG_1759784097851.png",
+        "thumb": "https://images.pluto.tv/channels/68b88712e777774982269ce9/colorLogoPNG_1793803234766.png",
         "streamUrl": "/api/pluto-stream?id=68b88712e777774982269ce9&ext=.m3u8",
         "type": "hls",
         "provider": "pluto"
@@ -2306,11 +2366,11 @@
       {
         "id": "5f998c1fc54853000797bacd",
         "number": 1209,
-        "title": "Tastemade",
+        "title": "Tastemade Food",
         "subtitle": "Estilo de Vida • Señal Oficial HD",
-        "overview": "Un canal con contenido premium de comida, viajes, hogar y diseño de todo el mundo. Vas a poder disfrutar desde los documentales más originales hasta las recetas más clásicas las 24 horas del día, los 7 días de la semana.",
+        "overview": "Un canal con contenido premium de comida de todo el mundo. Vas a poder disfrutar desde los documentales más originales hasta las recetas más clásicas las 24 horas del día, los 7 días de la semana.",
         "category": "Pluto TV: Entretenimiento, Reality y Novelas",
-        "thumb": "https://images.pluto.tv/channels/5f998c1fc54853000797bacd/colorLogoPNG_1730999716441.png",
+        "thumb": "https://images.pluto.tv/channels/5f998c1fc54853000797bacd/colorLogoPNG_1793802456063.png",
         "streamUrl": "/api/pluto-stream?id=5f998c1fc54853000797bacd&ext=.m3u8",
         "type": "hls",
         "provider": "pluto"
