@@ -17,8 +17,23 @@ module.exports = function (req, res) {
     });
   }
 
-  // 2. Catálogo principal de películas y series
-  if (action === 'catalog') {
+  // 2. Catálogo principal de películas y series (con soporte para refresco en caliente)
+  if (action === 'catalog' || action === 'refresh') {
+    var shouldForceRefresh = (action === 'refresh') || (req.query && (req.query.refresh === '1' || req.query.refresh === 'true'));
+    if (shouldForceRefresh) {
+      return scraperManager.refreshCatalog(function (err, rows) {
+        if (err || !rows) {
+          // Si el scrape en caliente falla, responder con la caché de seguridad
+          scraperManager.getCatalog(providerId, function (err2, cachedRows) {
+            if (err2 || !cachedRows) return res.status(500).json({ status: 'error', message: 'Error al obtener catálogo' });
+            res.status(200).json({ status: 'ok', rows: cachedRows, refreshed: false });
+          });
+          return;
+        }
+        res.status(200).json({ status: 'ok', rows: rows, refreshed: true });
+      });
+    }
+
     scraperManager.getCatalog(providerId, function (err, rows) {
       if (err || !rows) {
         return res.status(500).json({ status: 'error', message: 'Error al obtener catálogo' });

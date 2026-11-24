@@ -213,8 +213,20 @@
         "subtitle": "Películas • Señal Oficial HD",
         "overview": "Pluto TV Cine Familia es el canal ideal para todos en casa. Tiene los mejores contenidos de Comedia, Animación, Cine de Entretenimiento y hasta Clásicos. Aquí la diversión y el entretenimiento familiar están asegurados todos los días del año.",
         "category": "Pluto TV: Películas y Cine 24/7",
-        "thumb": "https://images.pluto.tv/channels/5dd6ddb30a1d8a000908ed4c/colorLogoPNG_1785959252371.png",
+        "thumb": "https://images.pluto.tv/channels/5dd6ddb30a1d8a000908ed4c/colorLogoPNG_1795537730894.png",
         "streamUrl": "/api/pluto-stream?id=5dd6ddb30a1d8a000908ed4c&ext=.m3u8",
+        "type": "hls",
+        "provider": "pluto"
+      },
+      {
+        "id": "5dd6ed41526c77000941411c",
+        "number": 91,
+        "title": "Pluto TV Cine Navidad",
+        "subtitle": "Películas • Señal Oficial HD",
+        "overview": "Las mejores películas y especiales navideños están en un solo lugar: Pluto TV Pluto TV Cine Navidad. Reúne a toda tu familia y prepárense para descubrir que este canal es el mejor regalo para disfrutar.",
+        "category": "Pluto TV: Películas y Cine 24/7",
+        "thumb": "https://images.pluto.tv/channels/5dd6ed41526c77000941411c/colorLogoPNG_1794848931881.png",
+        "streamUrl": "/api/pluto-stream?id=5dd6ed41526c77000941411c&ext=.m3u8",
         "type": "hls",
         "provider": "pluto"
       },
@@ -842,6 +854,18 @@
         "category": "Pluto TV: Dibujos Animados e Infantil",
         "thumb": "https://images.pluto.tv/channels/5fcea93ffcf94500071c4b2f/colorLogoPNG.png",
         "streamUrl": "/api/pluto-stream?id=5fcea93ffcf94500071c4b2f&ext=.m3u8",
+        "type": "hls",
+        "provider": "pluto"
+      },
+      {
+        "id": "6495c6ad115d060008bf6b52",
+        "number": 1400,
+        "title": "PAW Patrol Patrulla de Cachorros",
+        "subtitle": "Kids • Señal Oficial HD",
+        "overview": "Únete a la Patrulla Canina en sus emocionantes misiones de rescate, donde estos valientes cachorros liderados por Ryder usan su ingenio, habilidades y trabajo en equipo para proteger a la comunidad, enseñando valiosas lecciones de amistad.",
+        "category": "Pluto TV: Dibujos Animados e Infantil",
+        "thumb": "https://images.pluto.tv/channels/6495c6ad115d060008bf6b52/colorLogoPNG_1790867210933.png",
+        "streamUrl": "/api/pluto-stream?id=6495c6ad115d060008bf6b52&ext=.m3u8",
         "type": "hls",
         "provider": "pluto"
       },

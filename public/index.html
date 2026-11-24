@@ -25,13 +25,18 @@
         <button class="nav-tab focusable active-tab" data-category="channels" tabindex="0">Canales de TV</button>
         <button class="nav-tab focusable" data-category="movies" tabindex="0">Películas y Series</button>
         <button class="nav-tab focusable" data-category="search" tabindex="0">Buscar</button>
-        <button id="btn-open-personalize" class="nav-tab nav-tab-personalize focusable" tabindex="0" title="Personalizar recomendaciones">★ Para Ti</button>
+        <button id="btn-refresh-catalog" class="nav-tab nav-tab-refresh focusable" tabindex="0" title="Actualizar cartelera en vivo">Actualizar</button>
+        <button id="btn-mobile-filters" class="nav-tab nav-tab-mobile-filters focusable" tabindex="0" title="Filtrar por género">Filtros</button>
+        <button id="btn-open-personalize" class="nav-tab nav-tab-personalize focusable" tabindex="0" title="Personalizar recomendaciones">Para Ti</button>
         <button id="btn-open-remote-modal" class="nav-tab nav-tab-remote focusable" tabindex="0" title="Conectar Control Celular">Control</button>
       </nav>
     </header>
 
     <!-- CUERPO PRINCIPAL CON MENÚ LATERAL Y VIEWPORT -->
     <div class="tv-main-body">
+      <!-- TELÓN DE FONDO PARA CIERRE DEL MENÚ EN DISPOSITIVOS TÁCTILES -->
+      <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
       <!-- MENÚ LATERAL EXPANDIBLE Y OCULTABLE (SMART TV SIDEBAR) -->
       <aside id="tv-sidebar" class="tv-sidebar tv-sidebar-collapsed">
         <div class="sidebar-header">
@@ -342,9 +347,9 @@
   <!-- SCRIPTS EN ES5 PURO (ORDEN ESTRICTO DE CARGA) -->
   <script src="/js/paho-mqtt.min.js"></script>
   <script src="/js/hls.min.js"></script>
-  <script src="/js/spatial-nav.js?v=2.2.5"></script>
-  <script src="/js/tv-player.js?v=2.2.5"></script>
-  <script src="/js/tv-app.js?v=2.2.5"></script>
+  <script src="/js/spatial-nav.js?v=2.2.6"></script>
+  <script src="/js/tv-player.js?v=2.2.6"></script>
+  <script src="/js/tv-app.js?v=2.2.6"></script>
 </body>
 </html>
 

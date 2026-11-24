@@ -2450,3 +2450,433 @@
    -webkit-transform: scale(1.04);
    transform: scale(1.04);
  }
+
+/* ==========================================================================
+   BOTON DE ACTUALIZAR CARTELERA Y BOTON DE FILTROS MOVILES
+   ========================================================================== */
+.nav-tab-refresh {
+  background: rgba(0, 157, 113, 0.15) !important;
+  border-color: #009d71 !important;
+  color: #009d71 !important;
+}
+
+.nav-tab-refresh:hover,
+.nav-tab-refresh:focus,
+.nav-tab-refresh.focused {
+  background: #009d71 !important;
+  color: #020718 !important;
+}
+
+/* El boton de filtros solo es visible en pantallas tactiles/moviles */
+#btn-mobile-filters {
+  display: none !important;
+}
+
+/* Telon de fondo para cerrar el menu lateral en dispositivos moviles */
+.sidebar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(2, 7, 24, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 85;
+  opacity: 0;
+  pointer-events: none;
+  -webkit-transition: opacity 0.25s ease;
+  transition: opacity 0.25s ease;
+}
+
+.sidebar-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ==========================================================================
+   RESPONSIVE: TABLETS Y PANTALLAS MEDIANAS (769px a 1024px)
+   ========================================================================== */
+@media (min-width: 769px) and (max-width: 1024px) {
+  #btn-mobile-filters {
+    display: inline-flex !important;
+  }
+
+  .tv-header {
+    padding: 10px 20px;
+  }
+
+  .tv-sidebar {
+    width: 68px;
+  }
+
+  .tv-sidebar.tv-sidebar-expanded {
+    width: 240px;
+    z-index: 95;
+  }
+
+  .tv-content-viewport {
+    margin-left: 68px;
+    width: calc(100% - 68px);
+    padding: 16px 20px;
+  }
+
+  .tv-card {
+    width: 175px !important;
+    min-width: 175px !important;
+    max-width: 175px !important;
+    height: 290px !important;
+  }
+
+  .tv-card .card-poster {
+    height: 235px !important;
+  }
+
+  .tv-card-channel {
+    width: 220px !important;
+    min-width: 220px !important;
+    max-width: 220px !important;
+    height: 165px !important;
+  }
+
+  .tv-card-channel .card-thumb {
+    height: 120px !important;
+  }
+
+  .detail-modal-layout {
+    gap: 20px;
+  }
+
+  #detail-poster {
+    width: 210px !important;
+    max-width: 210px !important;
+  }
+
+  .onboarding-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE: TELEFONOS MOVILES (<= 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* Barra de navegacion superior tactil y compacta */
+  .tv-header {
+    padding: 8px 12px;
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+
+  .tv-brand {
+    flex-shrink: 0;
+  }
+
+  .brand-logo-img {
+    max-height: 26px;
+  }
+
+  .tv-nav-tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    gap: 6px;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+
+  .tv-nav-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-tab {
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  /* Mostrar boton para desplegar filtros en movil */
+  #btn-mobile-filters {
+    display: inline-flex !important;
+    background: rgba(13, 52, 186, 0.35) !important;
+    border-color: #0D34BA !important;
+  }
+
+  /* Menu lateral estilo Drawer Off-Canvas */
+  .tv-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 260px !important;
+    max-width: 80vw !important;
+    z-index: 90 !important;
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%);
+    -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.9);
+    background: #081a4a !important;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tv-sidebar.tv-sidebar-expanded {
+    -webkit-transform: translateX(0) !important;
+    transform: translateX(0) !important;
+  }
+
+  .tv-sidebar .sidebar-label {
+    opacity: 1 !important;
+    display: inline-block !important;
+  }
+
+  /* Viewport a pantalla completa sin margen lateral en telefono */
+  .tv-content-viewport {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding: 10px 12px 24px 12px !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Titulos de seccion fluidos */
+  .row-title {
+    font-size: 16px !important;
+    margin-top: 14px !important;
+    margin-bottom: 8px !important;
+    letter-spacing: 0.2px;
+  }
+
+  /* Carruseles con desplazamiento tactil fluido */
+  .cards-carousel {
+    gap: 10px !important;
+    padding: 4px 0 14px 0 !important;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+
+  /* Tarjetas de Peliculas/Series en Movil */
+  .tv-card {
+    width: 135px !important;
+    min-width: 135px !important;
+    max-width: 135px !important;
+    height: 245px !important;
+    border-radius: 10px !important;
+    scroll-snap-align: start;
+  }
+
+  .tv-card .card-poster {
+    height: 195px !important;
+    border-radius: 9px 9px 0 0 !important;
+  }
+
+  .tv-card .card-info {
+    padding: 6px 6px 4px 6px !important;
+  }
+
+  .tv-card .card-title {
+    font-size: 12px !important;
+    line-height: 1.25 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tv-card .card-meta {
+    font-size: 10px !important;
+    margin-top: 2px !important;
+  }
+
+  /* Tarjetas de Canales de TV en Movil */
+  .tv-card-channel {
+    width: 170px !important;
+    min-width: 170px !important;
+    max-width: 170px !important;
+    height: 140px !important;
+    border-radius: 10px !important;
+    scroll-snap-align: start;
+  }
+
+  .tv-card-channel .card-thumb {
+    height: 98px !important;
+    border-radius: 9px 9px 0 0 !important;
+  }
+
+  .tv-card-channel .channel-logo {
+    max-height: 40px !important;
+  }
+
+  .tv-card-channel .card-info {
+    padding: 6px 8px !important;
+  }
+
+  .tv-card-channel .card-title {
+    font-size: 12px !important;
+  }
+
+  /* Modal de detalles adaptable a telefono */
+  .tv-modal-content {
+    width: 95% !important;
+    max-width: 480px !important;
+    max-height: 92vh !important;
+    overflow-y: auto !important;
+    padding: 16px 14px !important;
+    border-radius: 16px !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .detail-modal-layout {
+    -webkit-box-orient: vertical !important;
+    -webkit-box-direction: normal !important;
+    -webkit-flex-direction: column !important;
+    flex-direction: column !important;
+    -webkit-box-align: center !important;
+    -webkit-align-items: center !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+
+  #detail-poster {
+    width: 140px !important;
+    max-width: 140px !important;
+    height: 205px !important;
+    border-radius: 10px !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7) !important;
+    margin: 0 auto !important;
+  }
+
+  .detail-info {
+    width: 100% !important;
+    text-align: center;
+  }
+
+  #detail-title {
+    font-size: 18px !important;
+    text-align: center !important;
+    margin-bottom: 6px !important;
+  }
+
+  .detail-meta {
+    -webkit-box-pack: center !important;
+    -webkit-justify-content: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .detail-quality-banner {
+    font-size: 11px !important;
+    padding: 8px 10px !important;
+    text-align: left !important;
+    border-radius: 8px !important;
+    margin-bottom: 10px !important;
+  }
+
+  #detail-overview {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    text-align: left !important;
+    max-height: 120px !important;
+    overflow-y: auto !important;
+    padding-right: 4px;
+    margin-bottom: 12px !important;
+  }
+
+  .detail-actions {
+    display: -webkit-box !important;
+    display: -webkit-flex !important;
+    display: flex !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-box-direction: normal !important;
+    -webkit-flex-direction: column !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+
+  .detail-actions .btn-tv {
+    width: 100% !important;
+    min-height: 46px !important;
+    font-size: 14px !important;
+    -webkit-box-pack: center !important;
+    -webkit-justify-content: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+  }
+
+  /* Grilla de episodios en series/anime */
+  .episodes-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* Onboarding de gustos en movil */
+  .onboarding-modal-content {
+    width: 95% !important;
+    max-height: 94vh !important;
+    padding: 16px 12px !important;
+  }
+
+  .onboarding-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .onboarding-card {
+    height: 140px !important;
+  }
+
+  /* Controles de reproduccion OSD en telefono */
+  .player-osd {
+    padding: 12px 14px !important;
+  }
+
+  .osd-title {
+    font-size: 15px !important;
+  }
+
+  .osd-controls-row {
+    -webkit-flex-wrap: wrap !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    -webkit-box-pack: center !important;
+    -webkit-justify-content: center !important;
+    justify-content: center !important;
+  }
+
+  .btn-player-action {
+    font-size: 12px !important;
+    padding: 6px 10px !important;
+    min-height: 38px !important;
+  }
+}
+
+/* Dispositivos moviles ultra compactos (< 480px) */
+@media (max-width: 480px) {
+  .tv-card {
+    width: 120px !important;
+    min-width: 120px !important;
+    max-width: 120px !important;
+    height: 220px !important;
+  }
+
+  .tv-card .card-poster {
+    height: 170px !important;
+  }
+
+  .tv-card-channel {
+    width: 150px !important;
+    min-width: 150px !important;
+    max-width: 150px !important;
+    height: 130px !important;
+  }
+
+  .tv-card-channel .card-thumb {
+    height: 90px !important;
+  }
+
+  .onboarding-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}

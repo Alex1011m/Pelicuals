@@ -381,12 +381,20 @@
       if (!this.sidebar) return;
       window.SpatialNav.addClass(this.sidebar, 'tv-sidebar-expanded');
       this.sidebarExpanded = true;
+      var backdrop = document.getElementById('sidebar-backdrop');
+      if (backdrop && window.innerWidth <= 768) {
+        window.SpatialNav.addClass(backdrop, 'active');
+      }
     },
 
     collapseSidebar: function () {
       if (!this.sidebar) return;
       window.SpatialNav.removeClass(this.sidebar, 'tv-sidebar-expanded');
       this.sidebarExpanded = false;
+      var backdrop = document.getElementById('sidebar-backdrop');
+      if (backdrop) {
+        window.SpatialNav.removeClass(backdrop, 'active');
+      }
     },
 
     setupSidebar: function () {
@@ -405,6 +413,24 @@
         }, false);
       }
 
+      var mobileFilterBtn = document.getElementById('btn-mobile-filters');
+      if (mobileFilterBtn) {
+        mobileFilterBtn.addEventListener('click', function () {
+          if (self.sidebarExpanded) {
+            self.collapseSidebar();
+          } else {
+            self.expandSidebar();
+          }
+        }, false);
+      }
+
+      var backdrop = document.getElementById('sidebar-backdrop');
+      if (backdrop) {
+        backdrop.addEventListener('click', function () {
+          self.collapseSidebar();
+        }, false);
+      }
+
       var items = this.sidebar.querySelectorAll('.sidebar-item[data-filter]');
       for (var i = 0; i < items.length; i++) {
         (function (btn) {
@@ -416,19 +442,26 @@
       }
 
       this.sidebar.addEventListener('mouseenter', function () {
-        self.expandSidebar();
+        if (window.innerWidth > 768) {
+          self.expandSidebar();
+        }
       }, false);
 
       this.sidebar.addEventListener('mouseleave', function () {
-        var cur = window.SpatialNav.currentFocused;
-        if (!cur || !self.sidebar.contains(cur)) {
-          self.collapseSidebar();
+        if (window.innerWidth > 768) {
+          var cur = window.SpatialNav.currentFocused;
+          if (!cur || !self.sidebar.contains(cur)) {
+            self.collapseSidebar();
+          }
         }
       }, false);
     },
 
     applyMovieFilter: function (filter, activeBtn) {
       this.currentMovieFilter = filter || 'all';
+      if (window.innerWidth <= 768) {
+        this.collapseSidebar();
+      }
 
       // Actualizar botón activo en el sidebar
       var items = this.sidebar.querySelectorAll('.sidebar-item[data-filter]');
@@ -669,6 +702,13 @@
 
     setupTabs: function () {
       var self = this;
+      var refreshBtn = document.getElementById('btn-refresh-catalog');
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', function () {
+          self.refreshLiveCatalog();
+        }, false);
+      }
+
       var tabs = document.querySelectorAll('.nav-tab');
       for (var i = 0; i < tabs.length; i++) {
         (function (tab) {
@@ -677,15 +717,53 @@
               self.showOnboardingModal();
               return;
             }
+            if (tab.id === 'btn-refresh-catalog' || tab.id === 'btn-mobile-filters' || tab.id === 'btn-open-remote-modal') {
+              return;
+            }
             for (var j = 0; j < tabs.length; j++) {
-              window.SpatialNav.removeClass(tabs[j], 'active-tab');
+              if (tabs[j].id !== 'btn-refresh-catalog' && tabs[j].id !== 'btn-mobile-filters' && tabs[j].id !== 'btn-open-personalize' && tabs[j].id !== 'btn-open-remote-modal') {
+                window.SpatialNav.removeClass(tabs[j], 'active-tab');
+              }
             }
             window.SpatialNav.addClass(tab, 'active-tab');
             var cat = tab.getAttribute('data-category');
-            self.loadCategory(cat);
+            if (cat) self.loadCategory(cat);
           }, false);
         })(tabs[i]);
       }
+    },
+
+    refreshLiveCatalog: function () {
+      var self = this;
+      var refreshBtn = document.getElementById('btn-refresh-catalog');
+      if (refreshBtn) {
+        refreshBtn.innerHTML = '⏳ Actualizando...';
+      }
+      if (window.TVPlayer && typeof window.TVPlayer.showToast === 'function') {
+        window.TVPlayer.showToast('Actualizando estrenos y cartelera en vivo...');
+      }
+
+      this.cachedMovieRows = null;
+      var refreshApi = '/api/movies?action=catalog&refresh=1&_t=' + Date.now();
+      this.fetchJson(refreshApi, function (err, data) {
+        if (refreshBtn) {
+          refreshBtn.innerHTML = 'Actualizar';
+        }
+        if (err || !data || !data.rows) {
+          if (window.TVPlayer && typeof window.TVPlayer.showToast === 'function') {
+            window.TVPlayer.showToast('Error al conectar con los servidores.');
+          }
+          return;
+        }
+
+        self.cachedMovieRows = data.rows;
+        if (self.currentCategory === 'movies') {
+          self.renderMovieRows(data.rows, self.currentMovieFilter);
+        }
+        if (window.TVPlayer && typeof window.TVPlayer.showToast === 'function') {
+          window.TVPlayer.showToast('¡Catálogo actualizado con los últimos estrenos!');
+        }
+      });
     },
 
     loadCategory: function (category) {
@@ -696,8 +774,13 @@
       if (category === 'movies') {
         if (this.sidebar) this.sidebar.style.display = 'flex';
         if (viewport) {
-          viewport.style.marginLeft = '88px';
-          viewport.style.width = 'calc(100% - 88px)';
+          if (window.innerWidth <= 768) {
+            viewport.style.marginLeft = '0';
+            viewport.style.width = '100%';
+          } else {
+            viewport.style.marginLeft = '88px';
+            viewport.style.width = 'calc(100% - 88px)';
+          }
         }
       } else {
         if (this.sidebar) {

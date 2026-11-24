@@ -22,20 +22,35 @@
     html, body {
       width: 100%;
       height: 100%;
-      height: 100dvh;
-      overflow: hidden;
+      min-height: 100%;
       background: #020718;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      background: radial-gradient(circle at 50% 15%, #081a4a 0%, #020718 80%);
+      background: radial-gradient(circle at 50% 15%, #081a4a 0%, #020718 85%);
       color: #f1f3f5;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: -webkit-box;
+      display: -webkit-flex;
       display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -webkit-flex-direction: column;
       flex-direction: column;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
       align-items: center;
-      justify-content: space-between;
-      padding: clamp(8px, 2vh, 16px) clamp(10px, 3vw, 18px) max(12px, env(safe-area-inset-bottom, 12px));
+      padding: clamp(8px, 1.8vh, 16px) clamp(10px, 3.5vw, 20px) max(14px, env(safe-area-inset-bottom, 14px));
+      box-sizing: border-box;
+      max-width: 480px;
+      margin: 0 auto;
+      height: 100vh;
+      height: 100dvh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
     }
 
     /* BARRA SUPERIOR CON ESTADO Y LOGO */
@@ -44,11 +59,14 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 1.2vh 3vw;
-      background: #081a4a;
-      border: 1px solid rgba(13, 52, 186, 0.5);
+      padding: 10px 14px;
+      background: rgba(8, 26, 74, 0.85);
+      border: 1px solid rgba(13, 52, 186, 0.6);
       border-radius: 14px;
       flex-shrink: 0;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      margin-bottom: clamp(6px, 1.2vh, 12px);
     }
 
     .remote-brand {
@@ -101,15 +119,15 @@
       cursor: pointer;
     }
 
-    /* CONTENEDOR PRINCIPAL FLUIDO */
+    /* CONTENEDOR PRINCIPAL FLUIDO Y EQUILIBRADO */
     .remote-body {
       width: 100%;
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-evenly;
-      gap: 1vh;
+      justify-content: space-between;
+      gap: clamp(8px, 1.5vh, 16px);
       min-height: 0;
     }
 
