@@ -86,7 +86,7 @@
    -webkit-justify-content: space-between;
    justify-content: space-between;
    overflow: hidden;
-   box-shadow: 0 8px 30px rgba(2, 7, 24, 0.9), inset 0 0 25px rgba(13, 52, 186, 0.15);
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
  }
 
  .preview-banner-content {
@@ -322,39 +322,9 @@
  .pulse-dot {
    width: 6px;
    height: 6px;
-   background-color: #ffffff;
+   background-color: #00e6a8;
    border-radius: 50%;
    display: inline-block;
-   -webkit-animation: pulse-red 1.2s infinite;
-   animation: pulse-red 1.2s infinite;
- }
-
- @-webkit-keyframes pulse-red {
-   0% {
-     opacity: 0.3;
-   }
-
-   50% {
-     opacity: 1;
-   }
-
-   100% {
-     opacity: 0.3;
-   }
- }
-
- @keyframes pulse-red {
-   0% {
-     opacity: 0.3;
-   }
-
-   50% {
-     opacity: 1;
-   }
-
-   100% {
-     opacity: 0.3;
-   }
  }
 
  .btn-preview-mute-toggle {
@@ -672,16 +642,16 @@
    -webkit-flex-direction: column;
    flex-direction: column;
    overflow: hidden;
-   box-shadow: 6px 0 24px rgba(0, 0, 0, 0.7);
-   -webkit-transition: width 0.25s cubic-bezier(0.2, 0.9, 0.3, 1), background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-   transition: width 0.25s cubic-bezier(0.2, 0.9, 0.3, 1), background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+   box-shadow: 4px 0 10px rgba(0, 0, 0, 0.6);
+   -webkit-transition: width 0.25s cubic-bezier(0.2, 0.9, 0.3, 1), background 0.25s ease, border-color 0.25s ease;
+   transition: width 0.25s cubic-bezier(0.2, 0.9, 0.3, 1), background 0.25s ease, border-color 0.25s ease;
  }
 
  .tv-sidebar.tv-sidebar-expanded {
    width: 320px;
-   background: rgba(13, 16, 24, 0.98);
+   background: #0d1018;
    border-color: #009d71;
-   box-shadow: 16px 0 45px rgba(0, 0, 0, 0.95), 0 0 25px rgba(0, 157, 113, 0.25);
+   box-shadow: 4px 0 14px rgba(0, 0, 0, 0.8);
  }
 
  .sidebar-header {
@@ -1159,22 +1129,24 @@
  .focusable:focus,
  .focusable.focused {
    border-color: #00e6a8 !important;
-   box-shadow: 0 0 0 2px #00e6a8, 0 8px 24px rgba(0, 0, 0, 0.7) !important;
+   outline: 2px solid #00e6a8 !important;
+   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6) !important;
    background-color: #0d2157 !important;
    color: #ffffff !important;
-   -webkit-transform: scale(1.04);
-   transform: scale(1.04);
+   -webkit-transform: scale(1.02);
+   transform: scale(1.02);
    z-index: 10;
  }
 
  .tv-card:hover,
  .tv-card:focus,
  .tv-card.focused {
-   border-color: #009d71 !important;
-   box-shadow: 0 0 22px rgba(0, 157, 113, 0.8), 0 0 40px rgba(13, 52, 186, 0.5) !important;
+   border-color: #00e6a8 !important;
+   outline: 2px solid #00e6a8 !important;
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8) !important;
    background-color: #081538 !important;
-   -webkit-transform: scale(1.06);
-   transform: scale(1.06);
+   -webkit-transform: scale(1.03);
+   transform: scale(1.03);
    z-index: 10;
  }
 
@@ -1253,12 +1225,12 @@
    border-radius: 30px;
    cursor: pointer !important;
    outline: none;
-   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.8), 0 0 12px rgba(0, 157, 113, 0.4);
+   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
    opacity: 1;
    -webkit-transform: translateY(0);
    transform: translateY(0);
-   -webkit-transition: opacity 0.35s ease, -webkit-transform 0.35s ease, background 0.2s ease, box-shadow 0.2s ease;
-   transition: opacity 0.35s ease, transform 0.35s ease, background 0.2s ease, box-shadow 0.2s ease;
+   -webkit-transition: opacity 0.35s ease, -webkit-transform 0.35s ease, background 0.2s ease;
+   transition: opacity 0.35s ease, transform 0.35s ease, background 0.2s ease;
  }
 
  .btn-player-floating-close.hidden {
@@ -1275,9 +1247,9 @@
    background: #009d71 !important;
    color: #020718 !important;
    border-color: #ffffff !important;
-   box-shadow: 0 0 20px rgba(0, 157, 113, 0.9) !important;
-   -webkit-transform: scale(1.08);
-   transform: scale(1.08);
+   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6) !important;
+   -webkit-transform: scale(1.04);
+   transform: scale(1.04);
  }
 
  /* OCULTAMIENTO AUTOMÁTICO DEL CURSOR / RATÓN VIRTUAL DE LA SMART TV DURANTE LA REPRODUCCIÓN */
@@ -1292,6 +1264,8 @@
    background-color: #000000;
    object-fit: contain;
    cursor: pointer;
+   -webkit-transform: translateZ(0);
+   transform: translateZ(0);
  }
 
  /* ON-SCREEN DISPLAY (OSD) DEL REPRODUCTOR */
@@ -1501,7 +1475,7 @@
    overflow: hidden;
    border: 2px solid rgba(13, 52, 186, 0.65);
    background: #020718;
-   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), inset 0 0 20px rgba(13, 52, 186, 0.2);
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
    -webkit-flex-shrink: 0;
    flex-shrink: 0;
    margin-left: 20px;
@@ -2080,8 +2054,8 @@
    -webkit-animation: tv-spin 0.85s linear infinite;
    animation: tv-spin 0.85s linear infinite;
    margin-bottom: 0 !important;
-   -webkit-filter: drop-shadow(0 0 10px rgba(0, 157, 113, 0.7));
-   filter: drop-shadow(0 0 10px rgba(0, 157, 113, 0.7));
+   -webkit-transform: translateZ(0);
+   transform: translateZ(0);
  }
 
  @-webkit-keyframes tv-spin {
@@ -2178,7 +2152,7 @@
    border: 2px solid rgba(13, 52, 186, 0.6);
    border-radius: 20px;
    padding: 22px 34px 18px 34px;
-   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95), inset 0 0 45px rgba(13, 52, 186, 0.2);
+   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
    box-sizing: border-box;
  }
 

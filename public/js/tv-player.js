@@ -405,13 +405,21 @@
       var self = this;
       var video = this.video;
 
-      // Destruir instancia previa de HLS si existía
+      // Destruir y liberar por completo cualquier instancia previa de HLS y decodificador
       if (this.hlsInstance) {
-        this.hlsInstance.destroy();
+        try {
+          this.hlsInstance.stopLoad();
+          this.hlsInstance.detachMedia();
+          this.hlsInstance.destroy();
+        } catch (eHlsPrev) { }
         this.hlsInstance = null;
       }
 
-      video.pause();
+      try {
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+      } catch (ePrevVid) { }
 
       var isHls = (type === 'hls') || (streamUrl && streamUrl.indexOf('.m3u8') !== -1);
 
@@ -422,30 +430,30 @@
             enableWorker: false, // ¡ESENCIAL para Smart TVs! Evita fallos de concurrencia y límites de memoria en hilos de TV
             lowLatencyMode: false,
 
-            // Configuración óptima de búfer y reciclaje de memoria para Smart TVs (evita que se caiga por OOM)
-            backBufferLength: 30, // ¡CRÍTICO!: Elimina segmentos ya vistos de más de 30s para no saturar la RAM de la TV
-            maxBufferLength: 30, // 30 segundos hacia adelante (suficiente para aguantar picos de red lentos)
-            maxMaxBufferLength: 60,
-            maxBufferSize: 30 * 1000 * 1000, // 30 MB máximo en memoria
-            maxBufferHole: 1.0, // Salta micro-huecos de paquetes sin congelar la imagen
+            // Configuración ultra-ligera de búfer para Smart TVs de bajo consumo (RAM < 512MB)
+            backBufferLength: 5, // Elimina agresivamente segmentos reproducidos tras 5s (libera RAM al instante)
+            maxBufferLength: 10, // Solo almacena 10s hacia adelante (evita saturar la memoria)
+            maxMaxBufferLength: 15, // Techo absoluto de 15 segundos en adelante
+            maxBufferSize: 8 * 1000 * 1000, // 8 MB máximo total en memoria
+            maxBufferHole: 0.5, // Salta micro-huecos sin acumular chunks huérfanos
 
-            // Inicio rápido (inicia al instante con fragmento precargado)
+            // Inicio inmediato sin precarga excesiva en RAM
             startLevel: -1,
             startPosition: (startTime > 0 ? startTime : -1),
-            startFragPrefetch: true,
-            abrEwmaDefaultEstimate: 1200000,
+            startFragPrefetch: false, // NO precargar fragmentos adicionales innecesariamente
+            abrEwmaDefaultEstimate: 1000000,
 
-            // Recuperación de red automática con reintentos amplios
-            fragLoadingTimeOut: 30000,
-            fragLoadingMaxRetry: 8,
+            // Tiempos de espera y reintentos adaptados para no saturar la red ni la memoria
+            fragLoadingTimeOut: 20000,
+            fragLoadingMaxRetry: 5,
             fragLoadingRetryDelay: 1000,
-            levelLoadingTimeOut: 25000,
-            levelLoadingMaxRetry: 6,
+            levelLoadingTimeOut: 20000,
+            levelLoadingMaxRetry: 4,
 
-            // Anti-atasco por desincronización de timestamps o frames corruptos
+            // Anti-atasco ligero
             highBufferWatchdogPeriod: 2,
             nudgeOffset: 0.2,
-            nudgeMaxRetry: 10,
+            nudgeMaxRetry: 5,
 
             renderTextTracksNatively: true
           });
@@ -743,14 +751,20 @@
       this.showBuffering(false);
 
       if (this.hlsInstance) {
-        this.hlsInstance.destroy();
+        try {
+          this.hlsInstance.stopLoad();
+          this.hlsInstance.detachMedia();
+          this.hlsInstance.destroy();
+        } catch (eHls) { }
         this.hlsInstance = null;
       }
 
-      this.video.pause();
       this.modal.style.display = 'none';
       try {
+        this.video.pause();
+        this.video.removeAttribute('src');
         this.video.src = '';
+        this.video.load(); // Libera el hardware video decoder y buffers nativos de la TV
       } catch (eSrc) { }
 
       if (this.toastEl) {

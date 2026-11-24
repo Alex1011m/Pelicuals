@@ -526,8 +526,15 @@
       if (container) {
         container.style.display = 'none';
       }
-      if (iframe && iframe.src && iframe.src !== 'about:blank') {
-        iframe.src = 'about:blank';
+      if (iframe) {
+        try {
+          iframe.src = 'about:blank';
+          iframe.removeAttribute('src');
+        } catch (eIf) { }
+      }
+      var trailerBtn = document.getElementById('btn-toggle-trailer');
+      if (trailerBtn) {
+        trailerBtn.innerHTML = '🎬 VER TRÁILER';
       }
     },
 
@@ -1651,8 +1658,9 @@
         data.slug = data.slug || slug;
         self.currentSerieDetail = data;
 
-        // Iniciar la vista previa del tráiler integrada en el modal de detalles
-        self.startDetailTrailer(data.title, data.slug, data.trailer);
+        // Limpiar cualquier trailer previo pero NO auto-cargar iframe para proteger la memoria RAM del Smart TV
+        self.stopDetailTrailer();
+        self.currentDetailTrailerData = { title: data.title, slug: data.slug, directKey: data.trailer };
 
         document.getElementById('detail-title').innerText = data.title;
         document.getElementById('detail-overview').innerText = data.overview || 'Sin sinopsis disponible.';
@@ -1851,12 +1859,15 @@
           var trailerBtn = document.getElementById('btn-toggle-trailer');
           if (trailerBtn) {
             trailerBtn.addEventListener('click', function () {
-              if (self.trailerMuted) {
-                self.unmuteDetailTrailer();
-                trailerBtn.innerHTML = '🔊 SILENCIAR TRÁILER';
-              } else {
-                self.toggleDetailTrailerMute();
+              if (self.currentTrailerKey) {
+                // Detener tráiler y liberar el iframe de YouTube
+                self.stopDetailTrailer();
                 trailerBtn.innerHTML = '🎬 VER TRÁILER';
+              } else {
+                // Cargar e iniciar tráiler bajo demanda solo cuando el usuario lo presiona
+                trailerBtn.innerHTML = '⏹ DETENER TRÁILER';
+                var trData = self.currentDetailTrailerData || { title: data.title, slug: data.slug, directKey: data.trailer };
+                self.startDetailTrailer(trData.title, trData.slug, trData.directKey);
               }
             }, false);
           }
@@ -1866,9 +1877,6 @@
             muteTrailerBtn.onclick = function (e) {
               e.stopPropagation();
               self.toggleDetailTrailerMute();
-              if (trailerBtn) {
-                trailerBtn.innerHTML = self.trailerMuted ? '🎬 VER TRÁILER' : '🔊 SILENCIAR TRÁILER';
-              }
             };
           }
         }
@@ -2113,6 +2121,11 @@
         } catch (eSave) { }
       }
       this.remotePin = savedPin;
+
+      if (this.remoteMqttClient) {
+        try { this.remoteMqttClient.disconnect(); } catch (eDisc) { }
+        this.remoteMqttClient = null;
+      }
 
       var rxClientId = 'tv_rx_' + this.remotePin + '_' + Math.random().toString(16).substr(2, 6);
       var client = new window.Paho.MQTT.Client('broker.hivemq.com', 8884, '/mqtt', rxClientId);
